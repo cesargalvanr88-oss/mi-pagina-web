@@ -1515,8 +1515,7 @@
                 if(confirmed) { saveStoredOperations(defaultOperationsData); renderQuestionsList(); hideQuestionForm(); }
             });
         });
-    </script>
-    // Ruta al archivo de configuración dentro de la carpeta "examen de certificacion AME" en SharePoint
+        // Ruta al archivo de configuración dentro de la carpeta "examen de certificacion AME" en SharePoint
     const SHAREPOINT_CONFIG_URL = 'ame_config.json';
 
     // --- INICIALIZACIÓN ASÍNCRONA (CARGA DESDE SHAREPOINT) ---
@@ -1560,5 +1559,7 @@
         
         alert("¡Cambios guardados! Se ha descargado el archivo 'ame_config.json'. Súbelo a la carpeta 'examen de certificacion AME' en SharePoint para actualizar a todos los técnicos.");
     }
+        initApp();
+    </script>
 </body>
 </html>
