@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Certificación Operativa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between">
+
+    <header class="bg-blue-700 text-white shadow-lg">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white text-blue-700 rounded-xl flex items-center justify-center font-black text-lg shadow-inner shrink-0">
+                    AME
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold leading-tight">Sistema de Certificación Operativa</h1>
+                    <p class="text-xs text-blue-200">Evaluación de Operaciones para Certificación AME</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="btn-admin-questions" class="bg-blue-800 hover:bg-blue-900 text-xs px-3 py-1.5 rounded-lg border border-blue-500 font-semibold transition flex items-center space-x-1.5" title="Gestionar Preguntas e Imágenes Fijas">
+                    <i class="fa-solid fa-pen-to-square text-amber-300"></i>
+                    <span class="hidden sm:inline">Gestionar Preguntas</span>
+                </button>
+                <button id="btn-admin-history" class="bg-blue-800 hover:bg-blue-900 text-xs px-3 py-1.5 rounded-lg border border-blue-500 font-semibold transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-file-excel text-emerald-400"></i>
+                    <span class="hidden sm:inline">Historial / Excel General</span>
+                </button>
+                <div id="quiz-badge" class="hidden bg-blue-800 px-3 py-1 rounded-full text-xs font-semibold tracking-wide border border-blue-600">
+                    Pregunta <span id="current-q-num">1</span>/<span id="total-q-badge">14</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto w-full p-4 flex-grow flex items-center justify-center">
+
+        <!-- Pantalla de Inicio -->
+        <div id="start-screen" class="bg-white rounded-2xl shadow-xl p-6 sm:p-10 w-full text-center space-y-6">
+            <div class="w-24 h-24 bg-blue-50 border-2 border-blue-200 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-2 shadow-lg">
+                <i class="fa-solid fa-clipboard-check text-4xl"></i>
+            </div>
+            <div>
+                <h2 id="welcome-title" class="text-2xl sm:text-3xl font-bold text-slate-900">¡Bienvenido a la Evaluación!</h2>
+                <p id="welcome-subtitle" class="text-slate-600 mt-2 text-sm sm:text-base">
+                    Seleccione la operación a evaluar e ingrese los datos del personal.
+                </p>
+            </div>
+
+            <!-- Formulario de Registro -->
+            <div id="registration-form-box" class="bg-slate-50 p-5 rounded-xl border border-slate-200 text-left space-y-4 max-w-xl mx-auto">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-1.5">
+                    <i class="fa-solid fa-id-card text-blue-600"></i>
+                    <span>Registro del Técnico y Operación</span>
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="user-operation">Operación / Examen a Evaluar *</label>
+                        <select id="user-operation" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition">
+                            <!-- Opciones cargadas dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="user-name">Nombre Completo del Técnico *</label>
+                        <input id="user-name" type="text" placeholder="Ej. Juan Pérez García" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="user-id">Número de empleado *</label>
+                        <input id="user-id" type="text" placeholder="Ej. EMP-10482" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="user-shift">Turno</label>
+                        <select id="user-shift" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition">
+                            <option value="Turno 1">Turno 1 (Matutino)</option>
+                            <option value="Turno 2">Turno 2 (Vespertino)</option>
+                            <option value="Turno 3">Turno 3 (Nocturno)</option>
+                            <option value="Mixto / Especial">Mixto / Especial</option>
+                        </select>
+                    </div>
+                </div>
+                <p id="start-validation-msg" class="hidden text-rose-600 text-xs font-semibold flex items-center space-x-1">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Por favor complete el Nombre y el número de empleado antes de continuar.</span>
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4 pt-2">
+                <button id="btn-start" class="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 transition duration-200 flex items-center justify-center space-x-2">
+                    <span>Iniciar Examen</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button id="btn-generate-link" class="w-full sm:w-auto px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition duration-200 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-link"></i>
+                    <span>Generar Enlace para Técnico</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Container del Cuestionario -->
+        <div id="quiz-screen" class="hidden w-full space-y-6">
+            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div>
+                    <span id="active-op-badge" class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-md font-bold text-xs uppercase">
+                        Operación: PVA Gap Filler
+                    </span>
+                </div>
+                <div class="w-full sm:w-1/2">
+                    <div class="flex justify-between items-center mb-1 text-xs font-semibold text-slate-500">
+                        <span>Progreso del examen</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                        <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Pregunta -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
+                <h3 id="question-text" class="text-lg sm:text-xl font-bold text-slate-900 leading-snug"></h3>
+
+                <!-- Contenedor de Galería de Fotos Fijas -->
+                <div id="question-images-gallery" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <!-- Inyectado dinámicamente -->
+                </div>
+
+                <!-- Opciones -->
+                <div id="options-container" class="space-y-3"></div>
+
+                <!-- Botones de Acción -->
+                <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                    <button id="btn-prev" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-semibold transition flex items-center space-x-2 disabled:opacity-30 disabled:hover:bg-transparent">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>Anterior</span>
+                    </button>
+
+                    <button id="btn-next" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold shadow-md transition flex items-center space-x-2 disabled:opacity-50">
+                        <span id="btn-next-text">Siguiente</span>
+                        <i id="btn-next-icon" class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Resultados -->
+        <div id="result-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 sm:p-10 w-full text-center space-y-8">
+            <div id="result-icon-bg" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner">
+                <i id="result-icon" class="fa-solid"></i>
+            </div>
+
+            <div class="space-y-2">
+                <h2 id="result-title" class="text-2xl sm:text-3xl font-bold"></h2>
+                <p id="result-message" class="text-slate-600 text-sm sm:text-base"></p>
+            </div>
+
+            <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4 text-left max-w-lg mx-auto grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+                <div class="sm:col-span-2">
+                    <span class="block font-semibold text-slate-500">Operación Evaluada:</span>
+                    <span id="res-eval-op" class="font-bold text-blue-900 text-base">-</span>
+                </div>
+                <div>
+                    <span class="block font-semibold text-slate-500">Técnico:</span>
+                    <span id="res-eval-name" class="font-bold text-slate-800">-</span>
+                </div>
+                <div>
+                    <span class="block font-semibold text-slate-500">Número de empleado:</span>
+                    <span id="res-eval-id" class="font-bold text-slate-800">-</span>
+                </div>
+                <div class="sm:col-span-2">
+                    <span class="block font-semibold text-slate-500">Turno / Fecha:</span>
+                    <span id="res-eval-shift" class="font-bold text-slate-800">-</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="p-2">
+                    <span class="block text-xs font-semibold text-slate-500 uppercase">Calificación</span>
+                    <span id="score-text" class="text-2xl font-black text-slate-800">0 / 14</span>
+                </div>
+                <div class="p-2">
+                    <span class="block text-xs font-semibold text-slate-500 uppercase">Porcentaje</span>
+                    <span id="percent-text" class="text-2xl font-black text-slate-800">0%</span>
+                </div>
+                <div class="p-2">
+                    <span class="block text-xs font-semibold text-slate-500 uppercase">Aciertos</span>
+                    <span id="correct-count" class="text-2xl font-black text-emerald-600">0</span>
+                </div>
+                <div class="p-2">
+                    <span class="block text-xs font-semibold text-slate-500 uppercase">Errores</span>
+                    <span id="incorrect-count" class="text-2xl font-black text-rose-600">0</span>
+                </div>
+            </div>
+
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-emerald-800 text-xs flex flex-col sm:flex-row items-center justify-between gap-2 max-w-lg mx-auto">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-base shrink-0"></i>
+                    <span>Examen registrado en el archivo unificado de operaciones.</span>
+                </div>
+                <span id="total-saved-badge" class="font-bold bg-emerald-200 text-emerald-900 px-2.5 py-1 rounded-md text-[11px] shrink-0">
+                    0 registros acumulados
+                </span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-3">
+                <button id="btn-export-single" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-file-excel text-lg"></i>
+                    <span>Descargar Excel Unificado Todos los Exámenes</span>
+                </button>
+                <button id="btn-export-individual" class="px-4 py-3 bg-slate-700 hover:bg-slate-800 text-white font-semibold rounded-xl shadow-md transition flex items-center justify-center space-x-2 text-xs">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>Solo Ficha Individual</span>
+                </button>
+                <button id="btn-restart" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Nuevo Examen</span>
+                </button>
+                <button id="btn-review" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-xl transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Revisar Respuestas</span>
+                </button>
+            </div>
+
+            <div id="review-container" class="hidden text-left space-y-4 pt-6 border-t border-slate-200">
+                <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-list-check text-blue-600"></i>
+                    <span>Revisión Detallada</span>
+                </h3>
+                <div id="review-list" class="space-y-4"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal de Historial Completo / Exportar Todo -->
+    <div id="history-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-table-list text-emerald-400 text-xl"></i>
+                    <h3 class="font-bold text-lg">Historial General de Certificaciones</h3>
+                </div>
+                <button id="btn-close-modal" class="text-slate-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 flex-grow overflow-y-auto space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Registros Almacenados: <span id="history-count" class="text-blue-600">0</span></p>
+                        <p class="text-xs text-slate-500">Todas las evaluaciones realizadas se reportan en este Excel consolidado.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <label class="cursor-pointer px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow transition flex items-center justify-center space-x-1.5" title="Cargar un Excel previo">
+                            <i class="fa-solid fa-file-import"></i>
+                            <span>Importar / Anexar Excel</span>
+                            <input type="file" id="input-import-excel" accept=".xlsx, .xls" class="hidden">
+                        </label>
+                        <button id="btn-export-all" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-file-excel text-sm"></i>
+                            <span>Descargar Todo en 1 Excel</span>
+                        </button>
+                        <button id="btn-clear-history" class="px-3 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold rounded-lg transition flex items-center justify-center space-x-1" title="Borrar Historial">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Barra de Filtros de Historial -->
+                <div class="bg-blue-50/70 p-4 rounded-xl border border-blue-200 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-blue-900 mb-1">Filtrar por Técnico / ID:</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            </span>
+                            <input type="text" id="filter-search" placeholder="Nombre o número de empleado..." class="w-full pl-8 pr-3 py-1.5 bg-white border border-blue-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-blue-900 mb-1">Filtrar por Operación / Estación:</label>
+                        <select id="filter-operation" class="w-full px-3 py-1.5 bg-white border border-blue-300 rounded-lg text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="">-- Todas las operaciones --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-blue-900 mb-1">Filtrar por Estatus:</label>
+                        <select id="filter-status" class="w-full px-3 py-1.5 bg-white border border-blue-300 rounded-lg text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="">-- Todos los estatus --</option>
+                            <option value="APROBADO">Aprobados</option>
+                            <option value="NO APROBADO">No Aprobados</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <th class="p-3">Fecha / Hora</th>
+                                <th class="p-3">Operación / Examen</th>
+                                <th class="p-3">Número de empleado</th>
+                                <th class="p-3">Nombre del Técnico</th>
+                                <th class="p-3">Turno</th>
+                                <th class="p-3 text-center">Calificación</th>
+                                <th class="p-3 text-center">Porcentaje</th>
+                                <th class="p-3 text-center">Resultado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500">
+                <span id="filtered-records-counter">Mostrando todos los registros</span>
+                <button id="btn-close-modal-footer" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Gestión de Preguntas, Operaciones e Imágenes Fijas -->
+    <div id="questions-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="bg-blue-900 text-white px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-pen-to-square text-amber-300 text-xl"></i>
+                    <h3 class="font-bold text-lg">Administración de Operaciones, Preguntas y Fotos Fijas</h3>
+                </div>
+                <button id="btn-close-q-modal" class="text-slate-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 flex-grow overflow-y-auto space-y-6">
+                <div class="bg-blue-50/70 p-4 rounded-xl border border-blue-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="w-full sm:w-2/3">
+                        <label class="block text-xs font-bold text-blue-900 mb-1">Seleccionar Operación a Administrar:</label>
+                        <select id="admin-op-selector" class="w-full p-2 border border-blue-300 rounded-lg text-sm font-bold bg-white text-slate-800 focus:ring-2 focus:ring-blue-500"></select>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button id="btn-add-new-op" class="w-full sm:w-auto px-3.5 py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold rounded-lg transition flex items-center justify-center space-x-1.5 shadow">
+                            <i class="fa-solid fa-folder-plus"></i>
+                            <span>Nueva Operación</span>
+                        </button>
+                        <button id="btn-delete-current-op" class="px-3 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold rounded-lg transition flex items-center justify-center space-x-1" title="Eliminar la operación seleccionada">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="new-op-form-container" class="hidden bg-amber-50 border border-amber-300 p-4 rounded-xl space-y-3">
+                    <h4 class="text-xs font-bold text-amber-900 flex items-center space-x-1">
+                        <i class="fa-solid fa-plus-circle text-amber-600"></i>
+                        <span>Crear Nueva Operación / Examen</span>
+                    </h4>
+                    <div class="flex gap-2">
+                        <input id="input-new-op-name" type="text" placeholder="Nombre de la operación" class="w-full p-2 border border-amber-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white">
+                        <button id="btn-confirm-add-op" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded transition shrink-0">Guardar</button>
+                        <button id="btn-cancel-add-op" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded transition shrink-0">Cancelar</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Preguntas Activas: <span id="q-modal-count" class="text-blue-600 font-extrabold">0</span></p>
+                        <p class="text-xs text-slate-500">Administra las preguntas y añade múltiples fotos fijas de referencia.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <button id="btn-change-admin-pin" class="px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold rounded-lg transition flex items-center space-x-1" title="Cambiar clave admin">
+                            <i class="fa-solid fa-key"></i>
+                            <span>Cambiar Clave Admin</span>
+                        </button>
+                        <button id="btn-new-question" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-plus text-sm"></i>
+                            <span>Nueva Pregunta</span>
+                        </button>
+                        <button id="btn-reset-default-questions" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg transition flex items-center space-x-1" title="Restaurar por defecto">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Restablecer</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Formulario de Edición/Creación de Pregunta con Fotos Fijas Múltiples -->
+                <div id="question-form-container" class="hidden bg-blue-50/70 border-2 border-blue-200 rounded-xl p-5 space-y-4 shadow-sm">
+                    <div class="flex justify-between items-center border-b border-blue-200 pb-2">
+                        <h4 id="form-title" class="text-sm font-bold text-blue-900 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <span>Agregar Nueva Pregunta</span>
+                        </h4>
+                        <button id="btn-cancel-q-form" class="text-xs text-slate-500 hover:text-slate-800 font-semibold">Cancelar</button>
+                    </div>
+
+                    <input type="hidden" id="edit-q-id">
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1" for="input-q-text">Pregunta / Reactivo *</label>
+                        <textarea id="input-q-text" rows="2" placeholder="Ej. ¿Cuál es el componente indicado?" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                    </div>
+
+                    <!-- Sección de Fotos Fijas Múltiples -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
+                                <i class="fa-solid fa-images text-blue-600"></i>
+                                <span>Galería de Fotos Fijas de Referencia</span>
+                            </label>
+                            <button type="button" id="btn-add-photo-input" class="px-2.5 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-[11px] font-bold rounded transition flex items-center space-x-1">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Agregar Otra Foto Fija</span>
+                            </button>
+                        </div>
+                        <div id="photos-inputs-container" class="space-y-2">
+                            <!-- Inputs de URLs de fotos fijas generados dinámicamente -->
+                        </div>
+                        <p class="text-[11px] text-slate-500">Añada las URLs web de las fotos fijas que el técnico visualizará durante el examen.</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="block text-xs font-bold text-slate-700">Opciones de Respuesta * (Selecciona cuál es la correcta)</label>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="p-3 bg-white rounded-lg border border-slate-200 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-600">Opción A</span>
+                                    <label class="text-xs flex items-center space-x-1 cursor-pointer text-emerald-700 font-semibold">
+                                        <input type="radio" name="correct-opt" value="a" class="accent-emerald-600" checked>
+                                        <span>Correcta</span>
+                                    </label>
+                                </div>
+                                <input type="text" id="opt-a-text" placeholder="Texto opción A" class="w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+
+                            <div class="p-3 bg-white rounded-lg border border-slate-200 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-600">Opción B</span>
+                                    <label class="text-xs flex items-center space-x-1 cursor-pointer text-emerald-700 font-semibold">
+                                        <input type="radio" name="correct-opt" value="b" class="accent-emerald-600">
+                                        <span>Correcta</span>
+                                    </label>
+                                </div>
+                                <input type="text" id="opt-b-text" placeholder="Texto opción B" class="w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+
+                            <div class="p-3 bg-white rounded-lg border border-slate-200 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-600">Opción C</span>
+                                    <label class="text-xs flex items-center space-x-1 cursor-pointer text-emerald-700 font-semibold">
+                                        <input type="radio" name="correct-opt" value="c" class="accent-emerald-600">
+                                        <span>Correcta</span>
+                                    </label>
+                                </div>
+                                <input type="text" id="opt-c-text" placeholder="Texto opción C" class="w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <p id="q-form-validation-msg" class="hidden text-rose-600 text-xs font-semibold flex items-center space-x-1">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Por favor complete el enunciado de la pregunta y las 3 opciones.</span>
+                    </p>
+
+                    <div class="flex justify-end space-x-2 pt-2">
+                        <button id="btn-save-q-form" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Guardar Pregunta</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="questions-list" class="space-y-3"></div>
+            </div>
+
+            <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end">
+                <button id="btn-close-q-modal-footer" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-lg transition">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Enlace Compartible -->
+    <div id="share-link-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[85] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 text-left space-y-4 border border-slate-200">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div class="flex items-center space-x-2 text-indigo-700 font-bold text-base">
+                    <i class="fa-solid fa-share-nodes text-xl"></i>
+                    <span>Generar Enlace de Examen</span>
+                </div>
+                <button id="btn-close-share-modal" class="text-slate-400 hover:text-slate-700 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Comparta este enlace con el técnico. Al abrirlo, el sistema configurará automáticamente la operación y las fotos fijas asociadas.
+            </p>
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-700">Operación a Evaluar:</label>
+                <input id="share-op-name" type="text" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-lg text-xs font-bold text-blue-900">
+            </div>
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-700">Enlace Directo:</label>
+                <div class="flex gap-2">
+                    <input id="share-url-input" type="text" readonly class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono text-slate-800 select-all">
+                    <button id="btn-copy-url" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg transition shrink-0 flex items-center space-x-1.5 shadow">
+                        <i class="fa-solid fa-copy"></i>
+                        <span>Copiar</span>
+                    </button>
+                </div>
+                <p id="copy-success-tip" class="hidden text-emerald-600 text-xs font-semibold flex items-center space-x-1">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>¡Enlace copiado al portapapeles!</span>
+                </p>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button id="btn-close-share-footer" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-lg transition">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-800 text-slate-400 py-4 text-center text-xs">
+        <p>Sistema Multi-Operación de Evaluación con Fotos Fijas — Operaciones Pilot Factory</p>
+    </footer>
+
+    <!-- Modales de Seguridad, Alerta y Auth Admin -->
+    <div id="security-warning-overlay" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 transition-all">
+        <div class="bg-slate-900 border-2 border-rose-600 rounded-2xl shadow-2xl max-w-md w-full p-6 text-center space-y-5 text-white">
+            <div class="w-16 h-16 bg-rose-500/20 text-rose-500 rounded-full flex items-center justify-center mx-auto text-3xl border border-rose-500/40">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-xl font-black text-rose-400 tracking-wide uppercase">Acceso Restringido</h3>
+                <p id="security-warning-msg" class="text-slate-300 text-sm leading-relaxed">Protección activa de código y datos fuente.</p>
+            </div>
+            <button id="btn-close-security-warning" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 font-bold rounded-xl text-sm transition shadow-lg">Entendido</button>
+        </div>
+    </div>
+
+    <div id="custom-dialog-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-center space-y-4 border border-slate-200">
+            <div id="custom-dialog-icon-bg" class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto text-xl">
+                <i id="custom-dialog-icon" class="fa-solid fa-circle-info"></i>
+            </div>
+            <h4 id="custom-dialog-title" class="text-lg font-bold text-slate-800">Mensaje del Sistema</h4>
+            <p id="custom-dialog-msg" class="text-slate-600 text-sm leading-relaxed"></p>
+            <div id="custom-dialog-buttons" class="flex justify-center gap-3 pt-2">
+                <button id="btn-dialog-ok" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition">Aceptar</button>
+                <button id="btn-dialog-cancel" class="hidden px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-lg transition">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-auth-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[80] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-slate-200">
+            <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold text-slate-800">Acceso Administrador</h4>
+                <p class="text-slate-500 text-xs mt-1">Ingrese la clave para gestionar preguntas y fotos fijas.</p>
+            </div>
+            <div class="text-left space-y-1">
+                <label class="block text-xs font-semibold text-slate-700" for="admin-pin-input">Contraseña / PIN Admin</label>
+                <div class="relative">
+                    <input id="admin-pin-input" type="password" placeholder="Contraseña" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    <button id="btn-toggle-pin-visibility" type="button" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 text-sm">
+                        <i class="fa-solid fa-eye" id="pin-eye-icon"></i>
+                    </button>
+                </div>
+                <p id="admin-auth-error" class="hidden text-rose-600 text-xs font-semibold mt-1 flex items-center space-x-1">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>Contraseña incorrecta.</span>
+                </p>
+            </div>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button id="btn-cancel-admin-auth" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-lg transition">Cancelar</button>
+                <button id="btn-confirm-admin-auth" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-lg shadow transition">Ingresar</button>
+            </div>
+            <p class="text-[11px] text-slate-400 italic">Por defecto: <strong class="text-slate-600 font-mono">admin123</strong></p>
+        </div>
+    </div>
+
+    <script>
+        (function initAntiCloningProtection() {
+            const securityOverlay = document.getElementById('security-warning-overlay');
+            const securityMsgElem = document.getElementById('security-warning-msg');
+            const btnCloseSecurity = document.getElementById('btn-close-security-warning');
+
+            function triggerSecurityWarning(msg) {
+                if (securityMsgElem && msg) securityMsgElem.textContent = msg;
+                if (securityOverlay) securityOverlay.classList.remove('hidden');
+            }
+
+            if (btnCloseSecurity) {
+                btnCloseSecurity.addEventListener('click', () => securityOverlay.classList.add('hidden'));
+            }
+
+            document.addEventListener('contextmenu', e => { e.preventDefault(); triggerSecurityWarning('Menú contextual bloqueado por seguridad.'); });
+            document.addEventListener('keydown', e => {
+                if (e.keyCode === 123 || e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c','K','k'].includes(e.key))) {
+                    e.preventDefault();
+                    triggerSecurityWarning('Inspección de código deshabilitada.');
+                    return false;
+                }
+            });
+        })();
+
+        // Banco de Preguntas por Defecto con array de fotos fijas (images: [])
+        const defaultOperationsData = {
+            "PVA Gap Filler": [
+                {
+                    id: 1,
+                    question: "¿Cuál es la función principal del material Gap Filler en el proceso ilustrado?",
+                    images: [
+                        "https://placehold.co/600x300/3b82f6/ffffff?text=Foto+Fija+1:+Esquema+Aplicacion",
+                        "https://placehold.co/600x300/1e40af/ffffff?text=Foto+Fija+2:+Detalle+Componente"
+                    ],
+                    options: [
+                        { id: "a", text: "Transferencia térmica y disipación de calor entre componentes" },
+                        { id: "b", text: "Lubricante de alta velocidad para motores" },
+                        { id: "c", text: "Aislante eléctrico de recubrimiento exterior" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 2,
+                    question: "¿Qué verificación previa de seguridad se debe realizar antes de operar el equipo PVA?",
+                    images: [],
+                    options: [
+                        { id: "a", text: "Comprobar presiones neumáticas, paros de emergencia y EPP" },
+                        { id: "b", text: "Aumentar la velocidad del dispensado sin revisar" },
+                        { id: "c", text: "Desactivar los sensores de presencia de piezas" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 3,
+                    question: "¿Qué parámetro de calidad debe inspeccionarse visualmente en el cordón?",
+                    images: [
+                        "https://placehold.co/600x300/10b981/ffffff?text=Foto+Fija:+Inspeccion+Visual+Cordon"
+                    ],
+                    options: [
+                        { id: "a", text: "Continuidad del cordón, ancho y ausencia de burbujas" },
+                        { id: "b", text: "El color de la etiqueta del proveedor" },
+                        { id: "c", text: "La temperatura ambiente del almacén general" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 4,
+                    question: "¿Qué acción se realiza si se detecta una desviación o burbuja en el dispensado?",
+                    images: [],
+                    options: [
+                        { id: "a", text: "Detener la línea, purgar el dispensador y notificar a Calidad/Calibración" },
+                        { id: "b", text: "Ignorar la burbuja y continuar con el empaque" },
+                        { id: "c", text: "Limpiar manualmente sin consultar la hoja de datos" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 5,
+                    question: "¿Cuál es el procedimiento correcto para la purga de la boquilla dispensadora?",
+                    images: [],
+                    options: [
+                        { id: "a", text: "Realizar ciclos de prueba en recipiente de desperdicio según la WI vigente" },
+                        { id: "b", text: "Desmontar la boquilla y golpearla contra la mesa" },
+                        { id: "c", text: "Aplicar solvente directamente sobre el cabezal energizado" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 6,
+                    question: "¿Qué tipo de Equipo de Protección Personal (EPP) es obligatorio?",
+                    images: [
+                        "https://placehold.co/600x300/6366f1/ffffff?text=Foto+Fija:+EPP+Requerido"
+                    ],
+                    options: [
+                        { id: "a", text: "Lentes de seguridad, guantes de nitrito y bata/overol antiestática" },
+                        { id: "b", text: "Casco de obra y botas con casquillo únicamente" },
+                        { id: "c", text: "Tapones auditivos y faja sacrolumbar exclusivamente" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 7,
+                    question: "¿Qué se debe verificar en el sistema de control de temperatura antes de iniciar?",
+                    images: [],
+                    options: [
+                        { id: "a", text: "Que los valores de temperatura de cartuchos y mangueras estén en rango" },
+                        { id: "b", text: "Que el calentador esté desconectado" },
+                        { id: "c", text: "Que la temperatura supere el límite máximo" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 8,
+                    question: "¿Cómo se clasifican y descartan los residuos de cartuchos y material sobrante?",
+                    images: [],
+                    options: [
+                        { id: "a", text: "En contenedores especiales para residuos peligrosos conforme a norma" },
+                        { id: "b", text: "En el bote de basura municipal general de la planta" },
+                        { id: "c", text: "Se vierten por el drenaje del área" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 9,
+                    question: "¿Qué indica una alarma de presión baja en el sistema neumático?",
+                    images: [],
+                    options: [
+                        { id: "a", text: "Posible obstrucción, falta de suministro o fuga en líneas" },
+                        { id: "b", text: "Que la máquina está lista para operar a máxima velocidad" },
+                        { id: "c", text: "Que el turno ha finalizado automáticamente" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 10,
+                    question: "¿Cuál es la importancia de escanear el código de barras o QR?",
+                    images: [
+                        "https://placehold.co/600x300/f59e0b/ffffff?text=Foto+Fija:+Trazabilidad+QR"
+                    ],
+                    options: [
+                        { id: "a", text: "Asegurar la trazabilidad completa del proceso y control FIFO" },
+                        { id: "b", text: "Registrar asistencia del operador en el sistema" },
+                        { id: "c", text: "Verificar el inventario de herramientas de mano" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 11,
+                    question: "¿Qué debe hacerse inmediatamente si ocurre una parada de emergencia?",
+                    images: [],
+                    options: [
+                        { id: "a", text: "No reiniciar hasta identificar la causa raíz con el supervisor" },
+                        { id: "b", text: "Liberar el botón de emergencia y presionar Start inmediatamente" },
+                        { id: "c", text: "Desconectar el cable principal sin avisar" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 12,
+                    question: "¿Quién es el responsable de firmar el formato de liberación de primera pieza?",
+                    images: [],
+                    options: [
+                        { id: "a", text: "El operador certificado y el inspector de calidad asignado" },
+                        { id: "b", text: "Cualquier persona visitante de otra área" },
+                        { id: "c", text: "El departamento de recursos humanos" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 13,
+                    question: "¿Cuál es el impacto de una mala dosificación de Gap Filler?",
+                    images: [],
+                    options: [
+                        { id: "a", text: "Sobrecalentamiento crítico de componentes electrónicos" },
+                        { id: "b", text: "Cambio estético menor sin repercusión funcional" },
+                        { id: "c", text: "Aumento en la velocidad del microcontrolador" }
+                    ],
+                    correct: "a"
+                },
+                {
+                    id: 14,
+                    question: "¿Dónde se deben consultar los diagramas de ruta y tolerancias?",
+                    images: [],
+                    options: [
+                        { id: "a", text: "En la Hoja de Instrucción de Trabajo (WI) y planos oficiales" },
+                        { id: "b", text: "En apuntes personales o fotografías en el celular" },
+                        { id: "c", text: "De memoria según experiencia previa" }
+                    ],
+                    correct: "a"
+                }
+            ]
+        };
+
+        function getStoredOperations() {
+            try {
+                const data = localStorage.getItem('multi_ops_questions_bank_v3_photos');
+                return data ? JSON.parse(data) : defaultOperationsData;
+            } catch (e) {
+                return defaultOperationsData;
+            }
+        }
+
+        function saveStoredOperations(opsData) {
+            try {
+                localStorage.setItem('multi_ops_questions_bank_v3_photos', JSON.stringify(opsData));
+            } catch (e) {}
+            populateOperationDropdowns();
+            updateQuestionCountBadges();
+        }
+
+        function showCustomNotice(message, title = "Aviso", type = "info", onConfirm = null) {
+            const modal = document.getElementById('custom-dialog-modal');
+            document.getElementById('custom-dialog-title').textContent = title;
+            document.getElementById('custom-dialog-msg').textContent = message;
+            const btnCancel = document.getElementById('btn-dialog-cancel');
+            
+            if (onConfirm) btnCancel.classList.remove('hidden');
+            else btnCancel.classList.add('hidden');
+
+            modal.classList.remove('hidden');
+            document.getElementById('btn-dialog-ok').onclick = () => { modal.classList.add('hidden'); if(onConfirm) onConfirm(true); };
+            btnCancel.onclick = () => { modal.classList.add('hidden'); if(onConfirm) onConfirm(false); };
+        }
+
+        const userOperationSelect = document.getElementById('user-operation');
+        const adminOpSelector = document.getElementById('admin-op-selector');
+
+        function populateOperationDropdowns() {
+            const ops = getStoredOperations();
+            const keys = Object.keys(ops);
+            const curUser = userOperationSelect ? userOperationSelect.value : '';
+            const curAdmin = adminOpSelector ? adminOpSelector.value : '';
+
+            if (userOperationSelect) userOperationSelect.innerHTML = '';
+            if (adminOpSelector) adminOpSelector.innerHTML = '';
+
+            keys.forEach(opName => {
+                const count = ops[opName].length;
+                if (userOperationSelect) {
+                    const optU = document.createElement('option');
+                    optU.value = opName;
+                    optU.textContent = `${opName} (${count} preguntas)`;
+                    userOperationSelect.appendChild(optU);
+                }
+                if (adminOpSelector) {
+                    const optA = document.createElement('option');
+                    optA.value = opName;
+                    optA.textContent = `${opName} (${count} preguntas)`;
+                    adminOpSelector.appendChild(optA);
+                }
+            });
+
+            if (userOperationSelect && keys.includes(curUser)) userOperationSelect.value = curUser;
+            if (adminOpSelector && keys.includes(curAdmin)) adminOpSelector.value = curAdmin;
+            updateQuestionCountBadges();
+        }
+
+        if (userOperationSelect) {
+            userOperationSelect.addEventListener('change', updateQuestionCountBadges);
+        }
+        if (adminOpSelector) {
+            adminOpSelector.addEventListener('change', renderQuestionsList);
+        }
+
+        function updateQuestionCountBadges() {
+            const ops = getStoredOperations();
+            const selectedOp = (userOperationSelect && userOperationSelect.value) ? userOperationSelect.value : Object.keys(ops)[0];
+            const qList = ops[selectedOp] || [];
+            
+            const startTotalQuestions = document.getElementById('start-total-questions');
+            if (startTotalQuestions) startTotalQuestions.textContent = qList.length;
+
+            const totalQBadge = document.getElementById('total-q-badge');
+            if (totalQBadge) totalQBadge.textContent = qList.length;
+        }
+
+        let questions = [];
+        let currentIndex = 0;
+        let userAnswers = {};
+        let currentEvaluatedUser = { operation: '', name: '', id: '', shift: '' };
+        let lastExamResult = null;
+        let isAdminAuthenticated = false;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            populateOperationDropdowns();
+            const urlParams = new URLSearchParams(window.location.search);
+            const opParam = urlParams.get('op');
+            if (opParam) {
+                const decodedOp = decodeURIComponent(opParam);
+                const ops = getStoredOperations();
+                if (ops[decodedOp]) {
+                    userOperationSelect.value = decodedOp;
+                    document.getElementById('welcome-title').textContent = `Evaluación: ${decodedOp}`;
+                    document.getElementById('welcome-subtitle').textContent = `Ingrese sus datos para iniciar la evaluación en línea.`;
+                    document.getElementById('btn-generate-link').classList.add('hidden');
+                }
+            }
+        });
+
+        // Enlace compartible
+        const shareLinkModal = document.getElementById('share-link-modal');
+        document.getElementById('btn-generate-link').addEventListener('click', () => {
+            const selectedOp = userOperationSelect.value;
+            document.getElementById('share-op-name').value = selectedOp;
+            const shareableUrl = `${window.location.href.split('?')[0]}?op=${encodeURIComponent(selectedOp)}`;
+            document.getElementById('share-url-input').value = shareableUrl;
+            document.getElementById('copy-success-tip').classList.add('hidden');
+            shareLinkModal.classList.remove('hidden');
+        });
+        document.getElementById('btn-close-share-modal').addEventListener('click', () => shareLinkModal.classList.add('hidden'));
+        document.getElementById('btn-close-share-footer').addEventListener('click', () => shareLinkModal.classList.add('hidden'));
+        document.getElementById('btn-copy-url').addEventListener('click', () => {
+            const input = document.getElementById('share-url-input');
+            input.select();
+            document.execCommand('copy');
+            document.getElementById('copy-success-tip').classList.remove('hidden');
+        });
+
+        // Auth Admin
+        const adminAuthModal = document.getElementById('admin-auth-modal');
+        const adminPinInput = document.getElementById('admin-pin-input');
+        function getAdminPin() { return localStorage.getItem('pva_admin_pin') || 'admin123'; }
+
+        document.getElementById('btn-admin-questions').addEventListener('click', () => {
+            if (!isAdminAuthenticated) {
+                document.getElementById('admin-auth-error').classList.add('hidden');
+                adminPinInput.value = '';
+                adminAuthModal.classList.remove('hidden');
+                setTimeout(() => adminPinInput.focus(), 100);
+            } else {
+                openQuestionsModalActual();
+            }
+        });
+
+        document.getElementById('btn-confirm-admin-auth').addEventListener('click', verifyAdminPin);
+        adminPinInput.addEventListener('keyup', e => { if(e.key === 'Enter') verifyAdminPin(); });
+        document.getElementById('btn-cancel-admin-auth').addEventListener('click', () => adminAuthModal.classList.add('hidden'));
+
+        function verifyAdminPin() {
+            if (adminPinInput.value.trim() === getAdminPin()) {
+                isAdminAuthenticated = true;
+                adminAuthModal.classList.add('hidden');
+                openQuestionsModalActual();
+            } else {
+                document.getElementById('admin-auth-error').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('btn-change-admin-pin').addEventListener('click', () => {
+            const newPin = prompt("Ingrese la nueva contraseña de administrador:", getAdminPin());
+            if (newPin && newPin.trim()) {
+                localStorage.setItem('pva_admin_pin', newPin.trim());
+                showCustomNotice("Contraseña actualizada con éxito.", "Éxito", "success");
+            }
+        });
+
+        // Examen Logic
+        document.getElementById('btn-start').addEventListener('click', () => {
+            const operation = userOperationSelect.value;
+            const name = document.getElementById('user-name').value.trim();
+            const id = document.getElementById('user-id').value.trim();
+            const shift = document.getElementById('user-shift').value;
+
+            if (!name || !id) {
+                document.getElementById('start-validation-msg').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('start-validation-msg').classList.add('hidden');
+            currentEvaluatedUser = { operation, name, id, shift };
+
+            const ops = getStoredOperations();
+            const activeBank = ops[operation] || [];
+            if (activeBank.length === 0) {
+                showCustomNotice("La operación no tiene preguntas configuradas.", "Atención", "warning");
+                return;
+            }
+
+            questions = [...activeBank].map(q => ({
+                ...q,
+                options: [...q.options].sort(() => Math.random() - 0.5)
+            })).sort(() => Math.random() - 0.5);
+
+            currentIndex = 0;
+            userAnswers = {};
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-badge').classList.remove('hidden');
+            document.getElementById('active-op-badge').textContent = `Operación: ${operation}`;
+            renderQuestion();
+        });
+
+        function renderQuestion() {
+            const currentQ = questions[currentIndex];
+            document.getElementById('current-q-num').textContent = currentIndex + 1;
+            document.getElementById('total-q-badge').textContent = questions.length;
+            
+            const progress = Math.round((currentIndex / questions.length) * 100);
+            document.getElementById('progress-percent').textContent = `${progress}%`;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            document.getElementById('question-text').textContent = `${currentIndex + 1}. ${currentQ.question}`;
+
+            // Manejo de galería de fotos fijas
+            const galleryContainer = document.getElementById('question-images-gallery');
+            galleryContainer.innerHTML = '';
+            
+            let photoList = [];
+            if (Array.isArray(currentQ.images)) {
+                photoList = currentQ.images.filter(img => img && img.trim() !== "");
+            } else if (currentQ.image && currentQ.image.trim() !== "") {
+                photoList = [currentQ.image];
+            }
+
+            if (photoList.length > 0) {
+                galleryContainer.classList.remove('hidden');
+                photoList.forEach((imgUrl, pIdx) => {
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.className = "bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center";
+                    imgWrapper.innerHTML = `
+                        <span class="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">Foto Fija #${pIdx + 1}</span>
+                        <img src="${imgUrl}" alt="Foto fija de referencia ${pIdx + 1}" class="max-h-56 w-auto mx-auto rounded-lg object-contain" onerror="this.src='https://placehold.co/600x300/cbd5e1/475569?text=Error+Cargando+Imagen'">
+                    `;
+                    galleryContainer.appendChild(imgWrapper);
+                });
+            } else {
+                galleryContainer.classList.add('hidden');
+            }
+
+            const optContainer = document.getElementById('options-container');
+            optContainer.innerHTML = '';
+
+            currentQ.options.forEach(opt => {
+                const isSelected = userAnswers[currentQ.id] === opt.id;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `w-full text-left p-4 rounded-xl border-2 transition-all flex items-center justify-between group ${
+                    isSelected ? 'border-blue-600 bg-blue-50/60 text-blue-900 shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700'
+                }`;
+                btn.onclick = () => { userAnswers[currentQ.id] = opt.id; renderQuestion(); };
+
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs uppercase ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}">
+                            ${opt.id}
+                        </span>
+                        <span class="text-sm sm:text-base font-medium">${opt.text}</span>
+                    </div>
+                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300'}">
+                        ${isSelected ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                    </div>
+                `;
+                optContainer.appendChild(btn);
+            });
+
+            document.getElementById('btn-prev').disabled = currentIndex === 0;
+            if (currentIndex === questions.length - 1) {
+                document.getElementById('btn-next-text').textContent = "Finalizar";
+                document.getElementById('btn-next-icon').className = "fa-solid fa-check";
+            } else {
+                document.getElementById('btn-next-text').textContent = "Siguiente";
+                document.getElementById('btn-next-icon').className = "fa-solid fa-chevron-right";
+            }
+        }
+
+        document.getElementById('btn-next').addEventListener('click', () => {
+            if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); }
+            else { finishQuiz(); }
+        });
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+        });
+
+        function finishQuiz() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('quiz-badge').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            let correctCount = 0;
+            questions.forEach(q => { if (userAnswers[q.id] === q.correct) correctCount++; });
+
+            const percentage = Math.round((correctCount / questions.length) * 100);
+            const passed = percentage >= 80;
+            const timestamp = new Date().toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' });
+
+            lastExamResult = {
+                timestamp,
+                operation: currentEvaluatedUser.operation,
+                userName: currentEvaluatedUser.name,
+                userId: currentEvaluatedUser.id,
+                userShift: currentEvaluatedUser.shift,
+                correctCount,
+                total: questions.length,
+                percentage,
+                status: passed ? 'APROBADO' : 'NO APROBADO'
+            };
+
+            const history = JSON.parse(localStorage.getItem('pva_evaluations_history') || '[]');
+            history.unshift(lastExamResult);
+            localStorage.setItem('pva_evaluations_history', JSON.stringify(history));
+
+            document.getElementById('total-saved-badge').textContent = `${history.length} registros`;
+            document.getElementById('res-eval-op').textContent = currentEvaluatedUser.operation;
+            document.getElementById('res-eval-name').textContent = currentEvaluatedUser.name;
+            document.getElementById('res-eval-id').textContent = currentEvaluatedUser.id;
+            document.getElementById('res-eval-shift').textContent = `${currentEvaluatedUser.shift} (${timestamp})`;
+
+            document.getElementById('score-text').textContent = `${correctCount} / ${questions.length}`;
+            document.getElementById('percent-text').textContent = `${percentage}%`;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = questions.length - correctCount;
+
+            const iconBg = document.getElementById('result-icon-bg');
+            const icon = document.getElementById('result-icon');
+            const title = document.getElementById('result-title');
+            const msg = document.getElementById('result-message');
+
+            if (passed) {
+                iconBg.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner bg-emerald-100 text-emerald-600 border border-emerald-300";
+                icon.className = "fa-solid fa-circle-check";
+                title.textContent = "¡Aprobado con Éxito!";
+                title.className = "text-2xl sm:text-3xl font-bold text-emerald-700";
+                msg.textContent = "Has demostrado el conocimiento requerido.";
+            } else {
+                iconBg.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner bg-rose-100 text-rose-600 border border-rose-300";
+                icon.className = "fa-solid fa-circle-xmark";
+                title.textContent = "No Aprobado";
+                title.className = "text-2xl sm:text-3xl font-bold text-rose-700";
+                msg.textContent = "No alcanzaste el puntaje mínimo (80%).";
+            }
+            buildReviewList();
+        }
+
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            document.getElementById('user-name').value = '';
+            document.getElementById('user-id').value = '';
+            populateOperationDropdowns();
+        });
+
+        document.getElementById('btn-review').addEventListener('click', () => {
+            const rc = document.getElementById('review-container');
+            rc.classList.toggle('hidden');
+        });
+
+        document.getElementById('btn-export-individual').addEventListener('click', () => {
+            if (!lastExamResult) return;
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet([{
+                "Fecha": lastExamResult.timestamp,
+                "Operación": lastExamResult.operation,
+                "Técnico": lastExamResult.userName,
+                "N° Empleado": lastExamResult.userId,
+                "Turno": lastExamResult.userShift,
+                "Calificación": `${lastExamResult.correctCount}/${lastExamResult.total}`,
+                "Porcentaje": `${lastExamResult.percentage}%`,
+                "Resultado": lastExamResult.status
+            }]);
+            XLSX.utils.book_append_sheet(wb, ws, "Ficha");
+            XLSX.writeFile(wb, `Examen_${lastExamResult.userId}.xlsx`);
+        });
+
+        function buildReviewList() {
+            const list = document.getElementById('review-list');
+            list.innerHTML = '';
+            questions.forEach((q, idx) => {
+                const uAns = userAnswers[q.id];
+                const isCorrect = uAns === q.correct;
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border ${isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200'} space-y-2`;
+                
+                const uOpt = q.options.find(o => o.id === uAns);
+                const cOpt = q.options.find(o => o.id === q.correct);
+
+                let photoArr = Array.isArray(q.images) ? q.images : (q.image ? [q.image] : []);
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <p class="font-bold text-sm text-slate-800">${idx + 1}. ${q.question}</p>
+                        <span class="px-2 py-0.5 rounded text-xs font-bold ${isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            ${isCorrect ? 'Correcto' : 'Incorrecto'}
+                        </span>
+                    </div>
+                    ${photoArr.length > 0 ? `<div class="flex flex-wrap gap-2 my-2">${photoArr.map(img => `<img src="${img}" class="h-24 object-contain rounded border bg-white p-1" onerror="this.src='https://placehold.co/100x100/cbd5e1/475569?text=Error'">`).join('')}</div>` : ''}
+                    <div class="text-xs space-y-1">
+                        <p class="text-slate-600">Tu respuesta: <span class="font-bold ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${uOpt ? uOpt.text : 'Sin responder'}</span></p>
+                        ${!isCorrect ? `<p class="text-emerald-700 font-semibold">Respuesta correcta: ${cOpt ? cOpt.text : ''}</p>` : ''}
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // Exportar e Historial
+        document.getElementById('btn-export-single').addEventListener('click', () => {
+            const history = JSON.parse(localStorage.getItem('pva_evaluations_history') || '[]');
+            if (history.length === 0) { showCustomNotice("No hay registros", "Atención", "warning"); return; }
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(history);
+            XLSX.utils.book_append_sheet(wb, ws, "Historial General");
+            XLSX.writeFile(wb, "Historial_Certificaciones.xlsx");
+        });
+
+        document.getElementById('btn-export-all').addEventListener('click', () => {
+            const history = JSON.parse(localStorage.getItem('pva_evaluations_history') || '[]');
+            if (history.length === 0) { showCustomNotice("No hay registros", "Atención", "warning"); return; }
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(history);
+            XLSX.utils.book_append_sheet(wb, ws, "Historial General");
+            XLSX.writeFile(wb, "Historial_Certificaciones.xlsx");
+        });
+
+        // Importación de Excel histórico
+        document.getElementById('input-import-excel').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = new Uint8Array(evt.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const importedRows = XLSX.utils.sheet_to_json(worksheet);
+
+                    if (importedRows && importedRows.length > 0) {
+                        const currentHistory = JSON.parse(localStorage.getItem('pva_evaluations_history') || '[]');
+                        const merged = [...importedRows, ...currentHistory];
+                        localStorage.setItem('pva_evaluations_history', JSON.stringify(merged));
+                        cachedHistoryRecords = merged;
+                        renderFilteredHistoryTable();
+                        showCustomNotice(`Se importaron ${importedRows.length} registros exitosamente.`, "Importación Exitosa", "success");
+                    } else {
+                        showCustomNotice("El archivo Excel no contiene registros válidos.", "Aviso", "warning");
+                    }
+                } catch(err) {
+                    showCustomNotice("Error al procesar el archivo Excel.", "Error", "error");
+                }
+                e.target.value = '';
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        let cachedHistoryRecords = [];
+
+        document.getElementById('btn-admin-history').addEventListener('click', () => {
+            cachedHistoryRecords = JSON.parse(localStorage.getItem('pva_evaluations_history') || '[]');
+            
+            const filterOpSelect = document.getElementById('filter-operation');
+            filterOpSelect.innerHTML = '<option value="">-- Todas las operaciones --</option>';
+            const opsSet = [...new Set(cachedHistoryRecords.map(item => item.operation))];
+            opsSet.forEach(op => {
+                const opt = document.createElement('option');
+                opt.value = op;
+                opt.textContent = op;
+                filterOpSelect.appendChild(opt);
+            });
+
+            document.getElementById('filter-search').value = '';
+            filterOpSelect.value = '';
+            document.getElementById('filter-status').value = '';
+
+            renderFilteredHistoryTable();
+            document.getElementById('history-modal').classList.remove('hidden');
+        });
+
+        function renderFilteredHistoryTable() {
+            const searchTerm = document.getElementById('filter-search').value.toLowerCase().trim();
+            const selectedOp = document.getElementById('filter-operation').value;
+            const selectedStatus = document.getElementById('filter-status').value;
+
+            const filtered = cachedHistoryRecords.filter(item => {
+                const matchSearch = !searchTerm || 
+                    (item.userName && item.userName.toLowerCase().includes(searchTerm)) || 
+                    (item.userId && item.userId.toLowerCase().includes(searchTerm));
+                const matchOp = !selectedOp || item.operation === selectedOp;
+                const matchStatus = !selectedStatus || item.status === selectedStatus;
+                return matchSearch && matchOp && matchStatus;
+            });
+
+            document.getElementById('history-count').textContent = cachedHistoryRecords.length;
+            document.getElementById('filtered-records-counter').textContent = `Mostrando ${filtered.length} de ${cachedHistoryRecords.length} registros`;
+
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">No se encontraron registros con los filtros seleccionados.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50";
+                tr.innerHTML = `
+                    <td class="p-3">${item.timestamp}</td>
+                    <td class="p-3 font-bold text-blue-900">${item.operation}</td>
+                    <td class="p-3 font-mono">${item.userId}</td>
+                    <td class="p-3">${item.userName}</td>
+                    <td class="p-3">${item.userShift}</td>
+                    <td class="p-3 text-center">${item.correctCount}/${item.total}</td>
+                    <td class="p-3 text-center font-bold">${item.percentage}%</td>
+                    <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.status==='APROBADO'?'bg-emerald-100 text-emerald-800':'bg-rose-100 text-rose-800'}">${item.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('filter-search').addEventListener('input', renderFilteredHistoryTable);
+        document.getElementById('filter-operation').addEventListener('change', renderFilteredHistoryTable);
+        document.getElementById('filter-status').addEventListener('change', renderFilteredHistoryTable);
+
+        document.getElementById('btn-close-modal').addEventListener('click', () => document.getElementById('history-modal').classList.add('hidden'));
+        document.getElementById('btn-close-modal-footer').addEventListener('click', () => document.getElementById('history-modal').classList.add('hidden'));
+
+        document.getElementById('btn-clear-history').addEventListener('click', () => {
+            showCustomNotice("¿Deseas borrar todo el historial?", "Confirmar", "danger", confirmed => {
+                if(confirmed) { 
+                    localStorage.removeItem('pva_evaluations_history'); 
+                    cachedHistoryRecords = [];
+                    renderFilteredHistoryTable(); 
+                }
+            });
+        });
+
+        // Gestión de Preguntas modal con múltiples fotos fijas
+        function openQuestionsModalActual() {
+            populateOperationDropdowns();
+            renderQuestionsList();
+            hideQuestionForm();
+            document.getElementById('questions-modal').classList.remove('hidden');
+        }
+        document.getElementById('btn-close-q-modal').addEventListener('click', () => document.getElementById('questions-modal').classList.add('hidden'));
+        document.getElementById('btn-close-q-modal-footer').addEventListener('click', () => document.getElementById('questions-modal').classList.add('hidden'));
+
+        document.getElementById('btn-add-new-op').addEventListener('click', () => document.getElementById('new-op-form-container').classList.remove('hidden'));
+        document.getElementById('btn-cancel-add-op').addEventListener('click', () => document.getElementById('new-op-form-container').classList.add('hidden'));
+        document.getElementById('btn-confirm-add-op').addEventListener('click', () => {
+            const name = document.getElementById('input-new-op-name').value.trim();
+            if (!name) return;
+            const ops = getStoredOperations();
+            if (ops[name]) { showCustomNotice("La operación ya existe.", "Error", "error"); return; }
+            ops[name] = [];
+            saveStoredOperations(ops);
+            document.getElementById('new-op-form-container').classList.add('hidden');
+            adminOpSelector.value = name;
+            renderQuestionsList();
+        });
+
+        document.getElementById('btn-delete-current-op').addEventListener('click', () => {
+            const cur = adminOpSelector.value;
+            const ops = getStoredOperations();
+            if (Object.keys(ops).length <= 1) { showCustomNotice("Debe haber al menos una operación.", "Atención", "warning"); return; }
+            showCustomNotice(`¿Eliminar la operación "${cur}"?`, "Confirmar", "danger", confirmed => {
+                if(confirmed) { delete ops[cur]; saveStoredOperations(ops); adminOpSelector.value = Object.keys(ops)[0]; renderQuestionsList(); }
+            });
+        });
+
+        function renderQuestionsList() {
+            const curOp = adminOpSelector.value;
+            const ops = getStoredOperations();
+            const qList = ops[curOp] || [];
+            document.getElementById('q-modal-count').textContent = qList.length;
+            const container = document.getElementById('questions-list');
+            container.innerHTML = '';
+
+            if (qList.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed">No hay preguntas registradas.</div>`;
+                return;
+            }
+
+            qList.forEach((q, idx) => {
+                let photoArr = Array.isArray(q.images) ? q.images : (q.image ? [q.image] : []);
+                photoArr = photoArr.filter(p => p && p.trim() !== "");
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3";
+                card.innerHTML = `
+                    <div class="space-y-1 flex-grow">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold rounded text-xs">#${idx+1}</span>
+                            <h5 class="font-bold text-slate-800 text-sm">${q.question}</h5>
+                        </div>
+                        ${photoArr.length > 0 ? `<div class="text-[11px] text-indigo-600 font-mono flex items-center gap-2"><i class="fa-solid fa-images"></i><span>${photoArr.length} foto(s) fija(s)</span></div>` : ''}
+                        <div class="flex flex-wrap gap-2 text-xs pt-1">
+                            ${q.options.map(opt => `<span class="px-2 py-1 rounded border ${opt.id === q.correct ? 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold' : 'bg-slate-50 border-slate-200 text-slate-600'}">${opt.id.toUpperCase()}) ${opt.text}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="flex space-x-2 shrink-0">
+                        <button onclick="editQuestion(${q.id})" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded border"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteQuestion(${q.id})" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded border"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        const qForm = document.getElementById('question-form-container');
+        document.getElementById('btn-new-question').addEventListener('click', () => showQuestionForm(null));
+        document.getElementById('btn-cancel-q-form').addEventListener('click', hideQuestionForm);
+
+        function renderPhotoInputRow(urlVal = '') {
+            const container = document.getElementById('photos-inputs-container');
+            const row = document.createElement('div');
+            row.className = "flex gap-2 items-center photo-input-row";
+            row.innerHTML = `
+                <input type="url" value="${urlVal}" placeholder="https://ejemplo.com/foto-fija.jpg" class="w-full p-2 border border-slate-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none photo-url-field">
+                <button type="button" class="px-3 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold rounded-lg transition shrink-0 btn-remove-photo-row" title="Eliminar foto">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
+            row.querySelector('.btn-remove-photo-row').addEventListener('click', () => row.remove());
+            container.appendChild(row);
+        }
+
+        document.getElementById('btn-add-photo-input').addEventListener('click', () => renderPhotoInputRow(''));
+
+        function showQuestionForm(q) {
+            qForm.classList.remove('hidden');
+            document.getElementById('q-form-validation-msg').classList.add('hidden');
+            document.getElementById('photos-inputs-container').innerHTML = '';
+
+            if (q) {
+                document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square"></i><span>Editar Pregunta</span>`;
+                document.getElementById('edit-q-id').value = q.id;
+                document.getElementById('input-q-text').value = q.question;
+                
+                let photoArr = Array.isArray(q.images) ? q.images : (q.image ? [q.image] : []);
+                if (photoArr.length === 0) {
+                    renderPhotoInputRow('');
+                } else {
+                    photoArr.forEach(pUrl => renderPhotoInputRow(pUrl));
+                }
+
+                const a = q.options.find(o => o.id === 'a');
+                const b = q.options.find(o => o.id === 'b');
+                const c = q.options.find(o => o.id === 'c');
+                document.getElementById('opt-a-text').value = a ? a.text : '';
+                document.getElementById('opt-b-text').value = b ? b.text : '';
+                document.getElementById('opt-c-text').value = c ? c.text : '';
+                document.querySelector(`input[name="correct-opt"][value="${q.correct}"]`).checked = true;
+            } else {
+                document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-circle-plus"></i><span>Nueva Pregunta</span>`;
+                document.getElementById('edit-q-id').value = '';
+                document.getElementById('input-q-text').value = '';
+                renderPhotoInputRow('');
+                document.getElementById('opt-a-text').value = '';
+                document.getElementById('opt-b-text').value = '';
+                document.getElementById('opt-c-text').value = '';
+                document.querySelector('input[name="correct-opt"][value="a"]').checked = true;
+            }
+            qForm.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideQuestionForm() { qForm.classList.add('hidden'); }
+
+        document.getElementById('btn-save-q-form').addEventListener('click', () => {
+            const qText = document.getElementById('input-q-text').value.trim();
+            
+            const photoFields = document.querySelectorAll('.photo-url-field');
+            const imagesArr = [];
+            photoFields.forEach(f => {
+                if (f.value.trim() !== "") imagesArr.push(f.value.trim());
+            });
+
+            const tA = document.getElementById('opt-a-text').value.trim();
+            const tB = document.getElementById('opt-b-text').value.trim();
+            const tC = document.getElementById('opt-c-text').value.trim();
+            const correct = document.querySelector('input[name="correct-opt"]:checked')?.value || 'a';
+            const qId = document.getElementById('edit-q-id').value;
+
+            if (!qText || !tA || !tB || !tC) {
+                document.getElementById('q-form-validation-msg').classList.remove('hidden');
+                return;
+            }
+
+            const curOp = adminOpSelector.value;
+            const ops = getStoredOperations();
+            let qList = ops[curOp] || [];
+
+            if (qId) {
+                const idNum = parseInt(qId, 10);
+                qList = qList.map(q => q.id === idNum ? {
+                    id: idNum, question: qText, images: imagesArr,
+                    options: [{id:'a', text:tA}, {id:'b', text:tB}, {id:'c', text:tC}],
+                    correct
+                } : q);
+            } else {
+                const maxId = qList.reduce((m, q) => q.id > m ? q.id : m, 0);
+                qList.push({
+                    id: maxId + 1, question: qText, images: imagesArr,
+                    options: [{id:'a', text:tA}, {id:'b', text:tB}, {id:'c', text:tC}],
+                    correct
+                });
+            }
+
+            ops[curOp] = qList;
+            saveStoredOperations(ops);
+            hideQuestionForm();
+            renderQuestionsList();
+        });
+
+        window.editQuestion = function(id) {
+            const ops = getStoredOperations();
+            const q = (ops[adminOpSelector.value] || []).find(item => item.id === id);
+            if (q) showQuestionForm(q);
+        };
+
+        window.deleteQuestion = function(id) {
+            showCustomNotice("¿Deseas eliminar esta pregunta?", "Confirmar", "danger", confirmed => {
+                if(confirmed) {
+                    const curOp = adminOpSelector.value;
+                    const ops = getStoredOperations();
+                    ops[curOp] = (ops[curOp] || []).filter(q => q.id !== id);
+                    saveStoredOperations(ops);
+                    renderQuestionsList();
+                }
+            });
+        };
+
+        document.getElementById('btn-reset-default-questions').addEventListener('click', () => {
+            showCustomNotice("¿Restaurar preguntas por defecto?", "Restaurar", "warning", confirmed => {
+                if(confirmed) { saveStoredOperations(defaultOperationsData); renderQuestionsList(); hideQuestionForm(); }
+            });
+        });
+    </script>
+</body>
+</html>
