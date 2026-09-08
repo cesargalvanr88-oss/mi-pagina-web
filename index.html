@@ -1516,52 +1516,6 @@
             });
         });
         initApp();
-        <script>
-        // Ruta al archivo de configuración dentro de la carpeta "examen de certificacion AME" en SharePoint
-    const SHAREPOINT_CONFIG_URL = 'ame_config.json';
-
-    // --- INICIALIZACIÓN ASÍNCRONA (CARGA DESDE SHAREPOINT) ---
-    async function initApp() {
-        try {
-            // Intenta leer el archivo de configuración externo en SharePoint
-            const response = await fetch(SHAREPOINT_CONFIG_URL + '?t=' + new Date().getTime());
-            if (!response.ok) throw new Error("No se pudo cargar la configuración desde SharePoint");
-            operationsData = await response.json();
-        } catch (error) {
-            console.warn("Cargando datos de respaldo local por falta de conexión a SharePoint.", error);
-            operationsData = JSON.parse(localStorage.getItem('ame_operations_data')) || {
-                "PVA Gap Filler": [
-                    {
-                        id: 1,
-                        text: "¿Cuál es la herramienta correcta para realizar la medición inicial en el Gap Filler?",
-                        images: ["https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80"],
-                        options: { a: "Calibrador Vernier digital calibrado", b: "Cinta métrica estándar de acero", c: "Regla metálica convencional" },
-                        correct: "a"
-                    }
-                ]
-            };
-        }
-
-        currentOperation = Object.keys(operationsData)[0] || "";
-        populateOperationSelects();
-        checkUrlParams();
-    }
-
-    // --- FUNCIÓN DE GUARDADO Y SINCRONIZACIÓN ---
-    function saveAndSyncSharePoint() {
-        localStorage.setItem('ame_operations_data', JSON.stringify(operationsData));
-
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(operationsData, null, 4));
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", "ame_config.json");
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
-        
-        alert("¡Cambios guardados! Se ha descargado el archivo 'ame_config.json'. Súbelo a la carpeta 'examen de certificacion AME' en SharePoint para actualizar a todos los técnicos.");
-    }
-        initApp();
     </script>
 </body>
 </html>
