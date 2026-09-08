@@ -538,7 +538,23 @@
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-ame-app';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "demo", projectId: "demo" };
+      const firebaseConfig = {
+2
+apiKey: "AIzaSyCD4qtf7NtIw-ii7RQ1YU824KrKrLebQ0E",
+3
+authDomain: "sistema-certificacion-ame.firebaseapp.com",
+4
+projectId: "sistema-certificacion-ame",
+5
+storageBucket: "sistema-certificacion-ame.firebasestorage.app",
+6
+messagingSenderId: "792089528111",
+7
+appId: "1:792089528111:web:1fa39a16d2710e0904c3da",
+8
+measurementId: "G-Y3PX3GM085"
+9
+};
 
         let app, db, auth;
         let isFirebaseInitialized = false;
