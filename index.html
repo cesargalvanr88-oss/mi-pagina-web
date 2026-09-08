@@ -26,6 +26,10 @@
                 </div>
             </div>
             <div class="flex items-center space-x-2">
+                <div id="sync-status" class="hidden sm:flex items-center space-x-1.5 text-xs bg-blue-800 px-3 py-1.5 rounded-lg border border-blue-500 text-blue-200" title="Estado de sincronización en la nube">
+                    <i class="fa-solid fa-cloud text-amber-300 animate-pulse"></i>
+                    <span id="sync-text">Conectando nube...</span>
+                </div>
                 <button id="btn-admin-questions" class="bg-blue-800 hover:bg-blue-900 text-xs px-3 py-1.5 rounded-lg border border-blue-500 font-semibold transition flex items-center space-x-1.5" title="Gestionar Preguntas e Imágenes Fijas">
                     <i class="fa-solid fa-pen-to-square text-amber-300"></i>
                     <span class="hidden sm:inline">Gestionar Preguntas</span>
@@ -65,7 +69,6 @@
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-semibold text-slate-700 mb-1" for="user-operation">Operación / Examen a Evaluar *</label>
                         <select id="user-operation" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition">
-                            <!-- Opciones cargadas dinámicamente -->
                         </select>
                     </div>
                     <div class="sm:col-span-2">
@@ -109,7 +112,7 @@
             <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                 <div>
                     <span id="active-op-badge" class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-md font-bold text-xs uppercase">
-                        Operación: PVA Gap Filler
+                        Operación: -
                     </span>
                 </div>
                 <div class="w-full sm:w-1/2">
@@ -129,7 +132,6 @@
 
                 <!-- Contenedor de Galería de Fotos Fijas -->
                 <div id="question-images-gallery" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <!-- Inyectado dinámicamente -->
                 </div>
 
                 <!-- Opciones -->
@@ -421,7 +423,6 @@
                             </button>
                         </div>
                         <div id="photos-inputs-container" class="space-y-2">
-                            <!-- Inputs de URLs de fotos fijas generados dinámicamente -->
                         </div>
                         <p class="text-[11px] text-slate-500">Añada las URLs web de las fotos fijas que el técnico visualizará durante el examen.</p>
                     </div>
@@ -465,747 +466,891 @@
                         </div>
                     </div>
 
-                    <p id="q-form-validation-msg" class="hidden text-rose-600 text-xs font-semibold flex items-center space-x-1">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <span>Por favor complete el enunciado de la pregunta y las 3 opciones.</span>
-                    </p>
-
                     <div class="flex justify-end space-x-2 pt-2">
-                        <button id="btn-save-q-form" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow transition flex items-center space-x-1.5">
-                            <i class="fa-solid fa-floppy-disk"></i>
-                            <span>Guardar Pregunta</span>
-                        </button>
+                        <button id="btn-save-question" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow transition">Guardar Pregunta</button>
                     </div>
                 </div>
 
-                <div id="questions-list" class="space-y-3"></div>
+                <!-- Lista de Preguntas en Admin -->
+                <div class="space-y-3" id="admin-questions-list"></div>
             </div>
 
             <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end">
-                <button id="btn-close-q-modal-footer" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-lg transition">Cerrar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para Enlace Compartible -->
-    <div id="share-link-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[85] flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 text-left space-y-4 border border-slate-200">
-            <div class="flex justify-between items-center border-b pb-3">
-                <div class="flex items-center space-x-2 text-indigo-700 font-bold text-base">
-                    <i class="fa-solid fa-share-nodes text-xl"></i>
-                    <span>Generar Enlace de Examen</span>
-                </div>
-                <button id="btn-close-share-modal" class="text-slate-400 hover:text-slate-700 text-lg">
-                    <i class="fa-solid fa-xmark"></i>
+                <button id="btn-close-q-modal-footer" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg text-xs transition">
+                    Cerrar
                 </button>
             </div>
-            <p class="text-xs text-slate-600 leading-relaxed">
-                Comparta este enlace con el técnico. Al abrirlo, el sistema configurará automáticamente la operación y las fotos fijas asociadas.
-            </p>
-            <div class="space-y-2">
-                <label class="block text-xs font-bold text-slate-700">Operación a Evaluar:</label>
-                <input id="share-op-name" type="text" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-lg text-xs font-bold text-blue-900">
-            </div>
-            <div class="space-y-2">
-                <label class="block text-xs font-bold text-slate-700">Enlace Directo:</label>
-                <div class="flex gap-2">
-                    <input id="share-url-input" type="text" readonly class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono text-slate-800 select-all">
-                    <button id="btn-copy-url" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg transition shrink-0 flex items-center space-x-1.5 shadow">
-                        <i class="fa-solid fa-copy"></i>
-                        <span>Copiar</span>
-                    </button>
-                </div>
-                <p id="copy-success-tip" class="hidden text-emerald-600 text-xs font-semibold flex items-center space-x-1">
-                    <i class="fa-solid fa-check-circle"></i>
-                    <span>¡Enlace copiado al portapapeles!</span>
-                </p>
-            </div>
-            <div class="flex justify-end pt-2">
-                <button id="btn-close-share-footer" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-lg transition">Cerrar</button>
-            </div>
         </div>
     </div>
 
-    <footer class="bg-slate-800 text-slate-400 py-4 text-center text-xs">
-        <p>Sistema Multi-Operación de Evaluación con Fotos Fijas — Operaciones Pilot Factory</p>
-    </footer>
-
-    <!-- Modales de Seguridad, Alerta y Auth Admin -->
-    <div id="security-warning-overlay" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 transition-all">
-        <div class="bg-slate-900 border-2 border-rose-600 rounded-2xl shadow-2xl max-w-md w-full p-6 text-center space-y-5 text-white">
-            <div class="w-16 h-16 bg-rose-500/20 text-rose-500 rounded-full flex items-center justify-center mx-auto text-3xl border border-rose-500/40">
-                <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <div class="space-y-2">
-                <h3 class="text-xl font-black text-rose-400 tracking-wide uppercase">Acceso Restringido</h3>
-                <p id="security-warning-msg" class="text-slate-300 text-sm leading-relaxed">Protección activa de código y datos fuente.</p>
-            </div>
-            <button id="btn-close-security-warning" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 font-bold rounded-xl text-sm transition shadow-lg">Entendido</button>
-        </div>
-    </div>
-
-    <div id="custom-dialog-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-center space-y-4 border border-slate-200">
-            <div id="custom-dialog-icon-bg" class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto text-xl">
-                <i id="custom-dialog-icon" class="fa-solid fa-circle-info"></i>
-            </div>
-            <h4 id="custom-dialog-title" class="text-lg font-bold text-slate-800">Mensaje del Sistema</h4>
-            <p id="custom-dialog-msg" class="text-slate-600 text-sm leading-relaxed"></p>
-            <div id="custom-dialog-buttons" class="flex justify-center gap-3 pt-2">
-                <button id="btn-dialog-ok" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition">Aceptar</button>
-                <button id="btn-dialog-cancel" class="hidden px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-lg transition">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="admin-auth-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[80] flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-slate-200">
-            <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-2xl">
-                <i class="fa-solid fa-user-shield"></i>
+    <!-- Modal para PIN de Administrador -->
+    <div id="pin-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4 text-center">
+            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">
+                <i class="fa-solid fa-lock"></i>
             </div>
             <div>
-                <h4 class="text-lg font-bold text-slate-800">Acceso Administrador</h4>
-                <p class="text-slate-500 text-xs mt-1">Ingrese la clave para gestionar preguntas y fotos fijas.</p>
+                <h3 id="pin-modal-title" class="font-bold text-base text-slate-900">Acceso de Administrador</h3>
+                <p id="pin-modal-desc" class="text-xs text-slate-500 mt-1">Ingrese el PIN de seguridad para continuar.</p>
             </div>
-            <div class="text-left space-y-1">
-                <label class="block text-xs font-semibold text-slate-700" for="admin-pin-input">Contraseña / PIN Admin</label>
-                <div class="relative">
-                    <input id="admin-pin-input" type="password" placeholder="Contraseña" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                    <button id="btn-toggle-pin-visibility" type="button" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 text-sm">
-                        <i class="fa-solid fa-eye" id="pin-eye-icon"></i>
-                    </button>
-                </div>
-                <p id="admin-auth-error" class="hidden text-rose-600 text-xs font-semibold mt-1 flex items-center space-x-1">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                    <span>Contraseña incorrecta.</span>
-                </p>
+            <input type="password" id="admin-pin-input" placeholder="••••" class="w-full text-center tracking-widest text-lg py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <p id="pin-error-msg" class="hidden text-rose-600 text-xs font-semibold">PIN incorrecto. Intente nuevamente.</p>
+            <div class="flex space-x-2 pt-2">
+                <button id="btn-cancel-pin" class="w-1/2 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg transition">Cancelar</button>
+                <button id="btn-submit-pin" class="w-1/2 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition">Confirmar</button>
             </div>
-            <div class="flex justify-end space-x-2 pt-2">
-                <button id="btn-cancel-admin-auth" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-lg transition">Cancelar</button>
-                <button id="btn-confirm-admin-auth" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-lg shadow transition">Ingresar</button>
-            </div>
-            <p class="text-[11px] text-slate-400 italic">Por defecto: <strong class="text-slate-600 font-mono">admin123</strong></p>
         </div>
     </div>
 
-    <script>
-        (function initAntiCloningProtection() {
-            const securityOverlay = document.getElementById('security-warning-overlay');
-            const securityMsgElem = document.getElementById('security-warning-msg');
-            const btnCloseSecurity = document.getElementById('btn-close-security-warning');
+    <!-- Modal Generador de Enlace Temporal para Técnico -->
+    <div id="link-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-900 text-base flex items-center space-x-2">
+                    <i class="fa-solid fa-link text-indigo-600"></i>
+                    <span>Enlace Único para Técnico</span>
+                </h3>
+                <button id="btn-close-link-modal" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-slate-600">Copie este enlace y compártalo con el técnico. Al abrirlo, el sistema precargará automáticamente la operación seleccionada y bloqueará los ajustes administrativos.</p>
+            <div class="flex gap-2">
+                <input type="text" id="generated-link-input" readonly class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono text-slate-700 focus:outline-none">
+                <button id="btn-copy-link" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg transition shrink-0 flex items-center space-x-1.5">
+                    <i class="fa-solid fa-copy"></i>
+                    <span>Copiar</span>
+                </button>
+            </div>
+            <div class="bg-indigo-50 p-3 rounded-lg text-[11px] text-indigo-900 flex items-center space-x-2">
+                <i class="fa-solid fa-circle-info text-indigo-600 text-base"></i>
+                <span id="copy-feedback" class="font-semibold">Enlace listo para enviar por WhatsApp o correo corporativo.</span>
+            </div>
+        </div>
+    </div>
 
-            function triggerSecurityWarning(msg) {
-                if (securityMsgElem && msg) securityMsgElem.textContent = msg;
-                if (securityOverlay) securityOverlay.classList.remove('hidden');
-            }
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500">
+        <p>Sistema de Certificación Operativa AME &copy; 2026 &bull; Control de Calidad y Procesos Industriales</p>
+    </footer>
 
-            if (btnCloseSecurity) {
-                btnCloseSecurity.addEventListener('click', () => securityOverlay.classList.add('hidden'));
-            }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-            document.addEventListener('contextmenu', e => { e.preventDefault(); triggerSecurityWarning('Menú contextual bloqueado por seguridad.'); });
-            document.addEventListener('keydown', e => {
-                if (e.keyCode === 123 || e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c','K','k'].includes(e.key))) {
-                    e.preventDefault();
-                    triggerSecurityWarning('Inspección de código deshabilitada.');
-                    return false;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-ame-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "demo", projectId: "demo" };
+
+        let app, db, auth;
+        let isFirebaseInitialized = false;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            const initAuth = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    isFirebaseInitialized = true;
+                    document.getElementById('sync-text').textContent = "Nube sincronizada";
+                    document.getElementById('sync-status').classList.remove('text-blue-200');
+                    document.getElementById('sync-status').classList.add('text-emerald-300');
+                    
+                    // Iniciar escuchas en tiempo real con manejo de permisos
+                    initFirestoreListeners();
+                } catch (authErr) {
+                    console.error("Auth error:", authErr);
+                    document.getElementById('sync-text').textContent = "Modo Local (Offline)";
                 }
-            });
-        })();
+            };
+            initAuth();
+        } catch (e) {
+            console.error("Firebase init failed, falling back to local storage:", e);
+            document.getElementById('sync-text').textContent = "Modo Local";
+        }
 
-        // Banco de Preguntas por Defecto con array de fotos fijas (images: [])
-        const defaultOperationsData = {
+        // --- DATOS Y ESTRUCTURA POR DEFECTO ---
+        const DEFAULT_OPERATIONS = {
             "PVA Gap Filler": [
                 {
                     id: 1,
-                    question: "¿Cuál es la función principal del material Gap Filler en el proceso ilustrado?",
-                    images: [
-                        "https://placehold.co/600x300/3b82f6/ffffff?text=Foto+Fija+1:+Esquema+Aplicacion",
-                        "https://placehold.co/600x300/1e40af/ffffff?text=Foto+Fija+2:+Detalle+Componente"
-                    ],
-                    options: [
-                        { id: "a", text: "Transferencia térmica y disipación de calor entre componentes" },
-                        { id: "b", text: "Lubricante de alta velocidad para motores" },
-                        { id: "c", text: "Aislante eléctrico de recubrimiento exterior" }
-                    ],
-                    correct: "a"
+                    text: "¿Cuál es la herramienta de precisión correcta para la aplicación de PVA Gap Filler en los bordes críticos?",
+                    images: ["https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80"],
+                    options: { a: "Dosificador calibrado de alta presión", b: "Espátula manual de plástico flexible", c: "Pistola neumática con boquilla de 0.5mm" },
+                    correct: "c"
                 },
                 {
                     id: 2,
-                    question: "¿Qué verificación previa de seguridad se debe realizar antes de operar el equipo PVA?",
-                    images: [],
-                    options: [
-                        { id: "a", text: "Comprobar presiones neumáticas, paros de emergencia y EPP" },
-                        { id: "b", text: "Aumentar la velocidad del dispensado sin revisar" },
-                        { id: "c", text: "Desactivar los sensores de presencia de piezas" }
-                    ],
+                    text: "Verifique la siguiente toma de ensamble. ¿Qué defecto visual identifica en el cordón de sellado?",
+                    images: ["https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80", "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80"],
+                    options: { a: "Exceso de material con riesgo de rebaba", b: "Aplicación uniforme y libre de burbujas", c: "Falta de adherencia en el extremo derecho" },
                     correct: "a"
                 },
                 {
                     id: 3,
-                    question: "¿Qué parámetro de calidad debe inspeccionarse visualmente en el cordón?",
-                    images: [
-                        "https://placehold.co/600x300/10b981/ffffff?text=Foto+Fija:+Inspeccion+Visual+Cordon"
-                    ],
-                    options: [
-                        { id: "a", text: "Continuidad del cordón, ancho y ausencia de burbujas" },
-                        { id: "b", text: "El color de la etiqueta del proveedor" },
-                        { id: "c", text: "La temperatura ambiente del almacén general" }
-                    ],
-                    correct: "a"
+                    text: "¿Cuál debe ser el tiempo mínimo de curado inicial antes de proceder con la prueba de estanqueidad?",
+                    images: [],
+                    options: { a: "5 minutos", b: "15 minutos", c: "30 minutos" },
+                    correct: "b"
                 },
                 {
                     id: 4,
-                    question: "¿Qué acción se realiza si se detecta una desviación o burbuja en el dispensado?",
-                    images: [],
-                    options: [
-                        { id: "a", text: "Detener la línea, purgar el dispensador y notificar a Calidad/Calibración" },
-                        { id: "b", text: "Ignorar la burbuja y continuar con el empaque" },
-                        { id: "c", text: "Limpiar manualmente sin consultar la hoja de datos" }
-                    ],
+                    text: "¿Qué equipo de protección personal (EPP) es obligatorio para la manipulación de resinas de sellado?",
+                    images: ["https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80"],
+                    options: { a: "Guantes de nitrilo y gafas de seguridad panorámicas", b: "Únicamente bata de algodón industrial", c: "Guantes de carnaza y mascarilla para polvo" },
                     correct: "a"
                 },
                 {
                     id: 5,
-                    question: "¿Cuál es el procedimiento correcto para la purga de la boquilla dispensadora?",
+                    text: "En caso de detectar una obstrucción en la boquilla dosificadora, ¿cuál es el procedimiento correcto?",
                     images: [],
-                    options: [
-                        { id: "a", text: "Realizar ciclos de prueba en recipiente de desperdicio según la WI vigente" },
-                        { id: "b", text: "Desmontar la boquilla y golpearla contra la mesa" },
-                        { id: "c", text: "Aplicar solvente directamente sobre el cabezal energizado" }
-                    ],
+                    options: { a: "Purgar con solvente autorizado y aguja de bronce", b: "Golpear la boquilla con un martillo de goma", c: "Incrementar la presión del equipo al máximo" },
                     correct: "a"
                 },
                 {
                     id: 6,
-                    question: "¿Qué tipo de Equipo de Protección Personal (EPP) es obligatorio?",
-                    images: [
-                        "https://placehold.co/600x300/6366f1/ffffff?text=Foto+Fija:+EPP+Requerido"
-                    ],
-                    options: [
-                        { id: "a", text: "Lentes de seguridad, guantes de nitrito y bata/overol antiestática" },
-                        { id: "b", text: "Casco de obra y botas con casquillo únicamente" },
-                        { id: "c", text: "Tapones auditivos y faja sacrolumbar exclusivamente" }
-                    ],
+                    text: "¿Cuál es la temperatura ideal de almacenamiento para el cartucho de material sellador antes de su uso?",
+                    images: [],
+                    options: { a: "Entre 15°C y 25°C en área seca", b: "Congelación a -5°C", c: "Exposición directa al sol para fluidez" },
                     correct: "a"
                 },
                 {
                     id: 7,
-                    question: "¿Qué se debe verificar en el sistema de control de temperatura antes de iniciar?",
-                    images: [],
-                    options: [
-                        { id: "a", text: "Que los valores de temperatura de cartuchos y mangueras estén en rango" },
-                        { id: "b", text: "Que el calentador esté desconectado" },
-                        { id: "c", text: "Que la temperatura supere el límite máximo" }
-                    ],
+                    text: "Observe la pieza en la estación de inspección. ¿El acabado cumple con la norma de calidad AME-902?",
+                    images: ["https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80"],
+                    options: { a: "Sí, cumple con espesor y simetría", b: "No, presenta porosidades inaceptables", c: "Falta verificar el torque de los tornillos" },
                     correct: "a"
                 },
                 {
                     id: 8,
-                    question: "¿Cómo se clasifican y descartan los residuos de cartuchos y material sobrante?",
+                    text: "¿Cuál es el parámetro de presión manométrica recomendado para la línea de alimentación neumática?",
                     images: [],
-                    options: [
-                        { id: "a", text: "En contenedores especiales para residuos peligrosos conforme a norma" },
-                        { id: "b", text: "En el bote de basura municipal general de la planta" },
-                        { id: "c", text: "Se vierten por el drenaje del área" }
-                    ],
-                    correct: "a"
+                    options: { a: "40 a 50 PSI", b: "80 a 90 PSI", c: "120 a 140 PSI" },
+                    correct: "b"
                 },
                 {
                     id: 9,
-                    question: "¿Qué indica una alarma de presión baja en el sistema neumático?",
+                    text: "¿Qué registro debe realizar el operador inmediatamente después de concluir el lote de producción?",
                     images: [],
-                    options: [
-                        { id: "a", text: "Posible obstrucción, falta de suministro o fuga en líneas" },
-                        { id: "b", text: "Que la máquina está lista para operar a máxima velocidad" },
-                        { id: "c", text: "Que el turno ha finalizado automáticamente" }
-                    ],
+                    options: { a: "Bitácora de producción y etiquetas de trazabilidad", b: "Publicar en red social interna", c: "Ningún registro es necesario si no hubo fallas" },
                     correct: "a"
                 },
                 {
                     id: 10,
-                    question: "¿Cuál es la importancia de escanear el código de barras o QR?",
-                    images: [
-                        "https://placehold.co/600x300/f59e0b/ffffff?text=Foto+Fija:+Trazabilidad+QR"
-                    ],
-                    options: [
-                        { id: "a", text: "Asegurar la trazabilidad completa del proceso y control FIFO" },
-                        { id: "b", text: "Registrar asistencia del operador en el sistema" },
-                        { id: "c", text: "Verificar el inventario de herramientas de mano" }
-                    ],
+                    text: "¿Cuál es la acción inmediata ante una fuga imprevista en el sistema de dosificación?",
+                    images: [],
+                    options: { a: "Accionar paro de emergencia y notificar a mantenimiento", b: "Continuar operando hasta terminar el turno", c: "Limpiar con un trapo sin detener la línea" },
                     correct: "a"
                 },
                 {
                     id: 11,
-                    question: "¿Qué debe hacerse inmediatamente si ocurre una parada de emergencia?",
-                    images: [],
-                    options: [
-                        { id: "a", text: "No reiniciar hasta identificar la causa raíz con el supervisor" },
-                        { id: "b", text: "Liberar el botón de emergencia y presionar Start inmediatamente" },
-                        { id: "c", text: "Desconectar el cable principal sin avisar" }
-                    ],
+                    text: "Verifique la alineación del componente en el fixture. ¿La tolerancia es correcta?",
+                    images: ["https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80"],
+                    options: { a: "Dentro de rango ($\pm 0.2\text{ mm}$)", b: "Fuera de tolerancia por exceso de juego", c: "No requiere fixture de alineación" },
                     correct: "a"
                 },
                 {
                     id: 12,
-                    question: "¿Quién es el responsable de firmar el formato de liberación de primera pieza?",
+                    text: "¿Con qué frecuencia se debe realizar la limpieza de los sensores ópticos de presencia de pieza?",
                     images: [],
-                    options: [
-                        { id: "a", text: "El operador certificado y el inspector de calidad asignado" },
-                        { id: "b", text: "Cualquier persona visitante de otra área" },
-                        { id: "c", text: "El departamento de recursos humanos" }
-                    ],
+                    options: { a: "Al inicio de cada turno de trabajo", b: "Una vez al mes", c: "Únicamente cuando falle el equipo" },
                     correct: "a"
                 },
                 {
                     id: 13,
-                    question: "¿Cuál es el impacto de una mala dosificación de Gap Filler?",
+                    text: "¿Qué indicador visual en el panel de control confirma que el equipo está listo para operar?",
                     images: [],
-                    options: [
-                        { id: "a", text: "Sobrecalentamiento crítico de componentes electrónicos" },
-                        { id: "b", text: "Cambio estético menor sin repercusión funcional" },
-                        { id: "c", text: "Aumento en la velocidad del microcontrolador" }
-                    ],
+                    options: { a: "Luz LED verde fija en tablero principal", b: "Alarma sonora intermitente", c: "Luz LED roja parpadeante" },
                     correct: "a"
                 },
                 {
                     id: 14,
-                    question: "¿Dónde se deben consultar los diagramas de ruta y tolerancias?",
+                    text: "Al finalizar la operación de certificación, ¿cuál es el estándar de orden y limpieza (5S) requerido en el puesto?",
                     images: [],
-                    options: [
-                        { id: "a", text: "En la Hoja de Instrucción de Trabajo (WI) y planos oficiales" },
-                        { id: "b", text: "En apuntes personales o fotografías en el celular" },
-                        { id: "c", text: "De memoria según experiencia previa" }
-                    ],
+                    options: { a: "Estación limpia, herramientas en charola y residuos clasificados", b: "Dejar herramienta sobre la mesa para el siguiente turno", c: "Arrojar residuos al bote general" },
+                    correct: "a"
+                }
+            ],
+            "Ensamble de Arneses Eléctricos": [
+                {
+                    id: 1,
+                    text: "¿Qué norma internacional rige el crimpado y control de calidad en terminales eléctricas industriales?",
+                    images: ["https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80"],
+                    options: { a: "IPC/WHMA-A-620", b: "ISO 9001 exclusivamente", c: "NOM-001-SEDE" },
+                    correct: "a"
+                },
+                {
+                    id: 2,
+                    text: "Observe el conector de la imagen. ¿Qué defecto de crimpado se observa en el aislante?",
+                    images: ["https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80"],
+                    options: { a: "Mordadura excesiva del aislante sin corte de hilos", b: "Crimpado correcto con prueba de tracción pasada", c: "Terminal con aislamiento desprendido" },
+                    correct: "a"
+                },
+                {
+                    id: 3,
+                    text: "¿Cuál es la herramienta adecuada para medir la fuerza de retención de una terminal crimpada?",
+                    images: [],
+                    options: { a: "Dinamómetro de banco calibrado", b: "Pinzas de presión estándar", c: "Multímetro digital" },
+                    correct: "a"
+                },
+                {
+                    id: 4,
+                    text: "¿Qué precaución se debe tomar al usar la pistola de calor para termofit en los empalmes?",
+                    images: [],
+                    options: { a: "Evitar sobrecalentamiento que queme el aislamiento del cable", b: "Mantener la boquilla pegada al cable", c: "Trabajar sin guantes térmicos" },
+                    correct: "a"
+                },
+                {
+                    id: 5,
+                    text: "¿Cuál es el código de colores estándar para la línea de tierra (Ground) en arneses industriales?",
+                    images: [],
+                    options: { a: "Verde o Verde con franja amarilla", b: "Rojo brillante", c: "Azul marino" },
+                    correct: "a"
+                },
+                {
+                    id: 6,
+                    text: "Verifique el diagrama de ruteo. ¿Qué tipo de cincho (zip tie) se requiere en zonas con vibración severa?",
+                    images: [],
+                    options: { a: "Cincho de nylon con cabezal metálico de seguridad", b: "Cincho de plástico reciclado delgado", c: "Cinta de aislar común" },
+                    correct: "a"
+                },
+                {
+                    id: 7,
+                    text: "¿Cómo se debe verificar la continuidad eléctrica en un arnés recién ensamblado?",
+                    images: [],
+                    options: { a: "Usando banco de pruebas automatizado o multímetro con buzzer", b: "Verificando solo visualmente los cables", c: "Aplicando voltaje directo de 220V" },
+                    correct: "a"
+                },
+                {
+                    id: 8,
+                    text: "¿Cuál es el torque correcto para los tornillos de fijación en conectores de potencia?",
+                    images: [],
+                    options: { a: "El especificado en la hoja de proceso (ej. 2.5 Nm)", b: "Apretar hasta que cruja el plástico", c: "Ajuste manual leve sin herramienta" },
+                    correct: "a"
+                },
+                {
+                    id: 9,
+                    text: "¿Qué acción se realiza si un cable presenta un hilo roto durante el pelado?",
+                    images: [],
+                    options: { a: "Rechazar el tramo y re-cortar conforme a norma", b: "Soldar el hilo roto por fuera", c: "Dejarlo así si funciona" },
+                    correct: "a"
+                },
+                {
+                    id: 10,
+                    text: "¿Cuál es el propósito principal del enfundado con malla mallada (sleeving)?",
+                    images: [],
+                    options: { a: "Protección contra abrasión mecánica y térmica", b: "Dar estética únicamente", c: "Incrementar el peso del arnés" },
+                    correct: "a"
+                },
+                {
+                    id: 11,
+                    text: "Observe la siguiente conexión de pines. ¿Los pines están correctamente insertados en la carcasa?",
+                    images: ["https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80"],
+                    options: { a: "Sí, se escucha el 'clic' de retención del lock secundario", b: "No, están desalineados", c: "Falta aplicar soldadura" },
+                    correct: "a"
+                },
+                {
+                    id: 12,
+                    text: "¿Cómo debe almacenarse el rollo de cable sobrante en la estación?",
+                    images: [],
+                    options: { a: "Etiquetado, amarrado y en su rack correspondiente", b: "En el suelo debajo de la mesa", c: "Dentro de cajas sin identificar" },
+                    correct: "a"
+                },
+                {
+                    id: 13,
+                    text: "¿Qué indica una etiqueta de inspección con sello de 'REPROCESO'?",
+                    images: [],
+                    options: { a: "El producto requiere corrección antes de liberarse a línea", b: "El producto está certificado como excelente", c: "El producto debe desecharse" },
+                    correct: "a"
+                },
+                {
+                    id: 14,
+                    text: "Al concluir la jornada en arneses, ¿cuál es la condición requerida del cautín o máquina de crimpado?",
+                    images: [],
+                    options: { a: "Apagados, limpios y desconectados de la energía", b: "Encendidos para el turno siguiente", c: "Con residuos de flux en la punta" },
                     correct: "a"
                 }
             ]
         };
 
-        function getStoredOperations() {
-            try {
-                const data = localStorage.getItem('multi_ops_questions_bank_v3_photos');
-                return data ? JSON.parse(data) : defaultOperationsData;
-            } catch (e) {
-                return defaultOperationsData;
-            }
+        const DEFAULT_ADMIN_PIN = "1234";
+
+        // --- ESTADO DE LA APLICACIÓN ---
+        let dbOperations = JSON.parse(localStorage.getItem('ame_operations')) || DEFAULT_OPERATIONS;
+        let adminPin = localStorage.getItem('ame_admin_pin') || DEFAULT_ADMIN_PIN;
+        let testHistory = JSON.parse(localStorage.getItem('ame_test_history')) || [];
+
+        // Funciones de sincronización con Firestore seguras (con manejo de errores de permisos)
+        function saveOperationsToCloud() {
+            localStorage.setItem('ame_operations', JSON.stringify(dbOperations));
+            if (!isFirebaseInitialized || !db) return;
+            setDoc(doc(db, 'artifacts', appId, 'configs', 'operations_config'), { data: dbOperations })
+                .catch(err => {
+                    console.warn("Cloud write restricted (using local mode):", err.message);
+                });
         }
 
-        function saveStoredOperations(opsData) {
-            try {
-                localStorage.setItem('multi_ops_questions_bank_v3_photos', JSON.stringify(opsData));
-            } catch (e) {}
-            populateOperationDropdowns();
-            updateQuestionCountBadges();
+        function saveHistoryToCloud() {
+            localStorage.setItem('ame_test_history', JSON.stringify(testHistory));
+            if (!isFirebaseInitialized || !db) return;
+            setDoc(doc(db, 'artifacts', appId, 'configs', 'history_records'), { data: testHistory })
+                .catch(err => {
+                    console.warn("Cloud write restricted (using local mode):", err.message);
+                });
         }
 
-        function showCustomNotice(message, title = "Aviso", type = "info", onConfirm = null) {
-            const modal = document.getElementById('custom-dialog-modal');
-            document.getElementById('custom-dialog-title').textContent = title;
-            document.getElementById('custom-dialog-msg').textContent = message;
-            const btnCancel = document.getElementById('btn-dialog-cancel');
+        function initFirestoreListeners() {
+            if (!db) return;
             
-            if (onConfirm) btnCancel.classList.remove('hidden');
-            else btnCancel.classList.add('hidden');
-
-            modal.classList.remove('hidden');
-            document.getElementById('btn-dialog-ok').onclick = () => { modal.classList.add('hidden'); if(onConfirm) onConfirm(true); };
-            btnCancel.onclick = () => { modal.classList.add('hidden'); if(onConfirm) onConfirm(false); };
-        }
-
-        const userOperationSelect = document.getElementById('user-operation');
-        const adminOpSelector = document.getElementById('admin-op-selector');
-
-        function populateOperationDropdowns() {
-            const ops = getStoredOperations();
-            const keys = Object.keys(ops);
-            const curUser = userOperationSelect ? userOperationSelect.value : '';
-            const curAdmin = adminOpSelector ? adminOpSelector.value : '';
-
-            if (userOperationSelect) userOperationSelect.innerHTML = '';
-            if (adminOpSelector) adminOpSelector.innerHTML = '';
-
-            keys.forEach(opName => {
-                const count = ops[opName].length;
-                if (userOperationSelect) {
-                    const optU = document.createElement('option');
-                    optU.value = opName;
-                    optU.textContent = `${opName} (${count} preguntas)`;
-                    userOperationSelect.appendChild(optU);
+            // Escuchar cambios en operaciones en tiempo real
+            onSnapshot(doc(db, 'artifacts', appId, 'configs', 'operations_config'), (docSnap) => {
+                if (docSnap.exists() && docSnap.data().data) {
+                    dbOperations = docSnap.data().data;
+                    localStorage.setItem('ame_operations', JSON.stringify(dbOperations));
+                    populateOperationSelects();
+                    if (!questionsModal.classList.contains('hidden')) {
+                        loadAdminQuestions();
+                    }
+                } else {
+                    saveOperationsToCloud();
                 }
-                if (adminOpSelector) {
-                    const optA = document.createElement('option');
-                    optA.value = opName;
-                    optA.textContent = `${opName} (${count} preguntas)`;
-                    adminOpSelector.appendChild(optA);
-                }
+            }, (err) => {
+                console.warn("Ops listener permission restricted. Operating in robust local mode.");
+                document.getElementById('sync-text').textContent = "Modo Local";
+                document.getElementById('sync-status').classList.remove('text-emerald-300');
+                document.getElementById('sync-status').classList.add('text-amber-300');
             });
 
-            if (userOperationSelect && keys.includes(curUser)) userOperationSelect.value = curUser;
-            if (adminOpSelector && keys.includes(curAdmin)) adminOpSelector.value = curAdmin;
-            updateQuestionCountBadges();
+            // Escuchar cambios en historial en tiempo real
+            onSnapshot(doc(db, 'artifacts', appId, 'configs', 'history_records'), (docSnap) => {
+                if (docSnap.exists() && docSnap.data().data) {
+                    testHistory = docSnap.data().data;
+                    localStorage.setItem('ame_test_history', JSON.stringify(testHistory));
+                    if (!historyModal.classList.contains('hidden')) {
+                        renderHistoryTable();
+                    }
+                } else {
+                    saveHistoryToCloud();
+                }
+            }, (err) => {
+                console.warn("History listener permission restricted. Operating in robust local mode.");
+            });
         }
 
-        if (userOperationSelect) {
-            userOperationSelect.addEventListener('change', updateQuestionCountBadges);
-        }
-        if (adminOpSelector) {
-            adminOpSelector.addEventListener('change', renderQuestionsList);
-        }
-
-        function updateQuestionCountBadges() {
-            const ops = getStoredOperations();
-            const selectedOp = (userOperationSelect && userOperationSelect.value) ? userOperationSelect.value : Object.keys(ops)[0];
-            const qList = ops[selectedOp] || [];
-            
-            const startTotalQuestions = document.getElementById('start-total-questions');
-            if (startTotalQuestions) startTotalQuestions.textContent = qList.length;
-
-            const totalQBadge = document.getElementById('total-q-badge');
-            if (totalQBadge) totalQBadge.textContent = qList.length;
-        }
-
-        let questions = [];
+        let currentOperationName = "";
+        let currentQuestions = [];
         let currentIndex = 0;
         let userAnswers = {};
-        let currentEvaluatedUser = { operation: '', name: '', id: '', shift: '' };
-        let lastExamResult = null;
-        let isAdminAuthenticated = false;
+        let currentTechnician = { name: "", id: "", shift: "Turno 1", operation: "" };
+        let isReadOnlyMode = false;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            populateOperationDropdowns();
-            const urlParams = new URLSearchParams(window.location.search);
-            const opParam = urlParams.get('op');
-            if (opParam) {
-                const decodedOp = decodeURIComponent(opParam);
-                const ops = getStoredOperations();
-                if (ops[decodedOp]) {
-                    userOperationSelect.value = decodedOp;
-                    document.getElementById('welcome-title').textContent = `Evaluación: ${decodedOp}`;
-                    document.getElementById('welcome-subtitle').textContent = `Ingrese sus datos para iniciar la evaluación en línea.`;
-                    document.getElementById('btn-generate-link').classList.add('hidden');
-                }
-            }
-        });
+        // Detectar si se abrió mediante enlace único (ej. ?op=Pva%20Gap%20Filler)
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramOp = urlParams.get('op');
+        if (paramOp && dbOperations[paramOp]) {
+            isReadOnlyMode = true;
+        }
 
-        // Enlace compartible
-        const shareLinkModal = document.getElementById('share-link-modal');
-        document.getElementById('btn-generate-link').addEventListener('click', () => {
-            const selectedOp = userOperationSelect.value;
-            document.getElementById('share-op-name').value = selectedOp;
-            const shareableUrl = `${window.location.href.split('?')[0]}?op=${encodeURIComponent(selectedOp)}`;
-            document.getElementById('share-url-input').value = shareableUrl;
-            document.getElementById('copy-success-tip').classList.add('hidden');
-            shareLinkModal.classList.remove('hidden');
-        });
-        document.getElementById('btn-close-share-modal').addEventListener('click', () => shareLinkModal.classList.add('hidden'));
-        document.getElementById('btn-close-share-footer').addEventListener('click', () => shareLinkModal.classList.add('hidden'));
-        document.getElementById('btn-copy-url').addEventListener('click', () => {
-            const input = document.getElementById('share-url-input');
-            input.select();
-            document.execCommand('copy');
-            document.getElementById('copy-success-tip').classList.remove('hidden');
-        });
+        // --- ELEMENTOS DOM ---
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const quizBadge = document.getElementById('quiz-badge');
+        
+        const userOperationSelect = document.getElementById('user-operation');
+        const userNameInput = document.getElementById('user-name');
+        const userIdInput = document.getElementById('user-id');
+        const userShiftSelect = document.getElementById('user-shift');
+        const startValidationMsg = document.getElementById('start-validation-msg');
 
-        // Auth Admin
-        const adminAuthModal = document.getElementById('admin-auth-modal');
+        const btnStart = document.getElementById('btn-start');
+        const btnGenerateLink = document.getElementById('btn-generate-link');
+        const btnAdminQuestions = document.getElementById('btn-admin-questions');
+        const btnAdminHistory = document.getElementById('btn-admin-history');
+
+        const activeOpBadge = document.getElementById('active-op-badge');
+        const currentQNum = document.getElementById('current-q-num');
+        const totalQBadge = document.getElementById('total-q-badge');
+        const progressPercent = document.getElementById('progress-percent');
+        const progressBar = document.getElementById('progress-bar');
+        const questionText = document.getElementById('question-text');
+        const questionImagesGallery = document.getElementById('question-images-gallery');
+        const optionsContainer = document.getElementById('options-container');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnNextText = document.getElementById('btn-next-text');
+
+        // Resultados
+        const resultIconBg = document.getElementById('result-icon-bg');
+        const resultIcon = document.getElementById('result-icon');
+        const resultTitle = document.getElementById('result-title');
+        const resultMessage = document.getElementById('result-message');
+        const resEvalOp = document.getElementById('res-eval-op');
+        const resEvalName = document.getElementById('res-eval-name');
+        const resEvalId = document.getElementById('res-eval-id');
+        const resEvalShift = document.getElementById('res-eval-shift');
+        const scoreText = document.getElementById('score-text');
+        const percentText = document.getElementById('percent-text');
+        const correctCount = document.getElementById('correct-count');
+        const incorrectCount = document.getElementById('incorrect-count');
+        const totalSavedBadge = document.getElementById('total-saved-badge');
+        const btnExportSingle = document.getElementById('btn-export-single');
+        const btnExportIndividual = document.getElementById('btn-export-individual');
+        const btnRestart = document.getElementById('btn-restart');
+        const btnReview = document.getElementById('btn-review');
+        const reviewContainer = document.getElementById('review-container');
+        const reviewList = document.getElementById('review-list');
+
+        // Modales
+        const historyModal = document.getElementById('history-modal');
+        const btnCloseModal = document.getElementById('btn-close-modal');
+        const btnCloseModalFooter = document.getElementById('btn-close-modal-footer');
+        const historyTableBody = document.getElementById('history-table-body');
+        const historyCount = document.getElementById('history-count');
+        const filterSearch = document.getElementById('filter-search');
+        const filterOperation = document.getElementById('filter-operation');
+        const filterStatus = document.getElementById('filter-status');
+        const filteredRecordsCounter = document.getElementById('filtered-records-counter');
+        const btnExportAll = document.getElementById('btn-export-all');
+        const btnClearHistory = document.getElementById('btn-clear-history');
+        const inputImportExcel = document.getElementById('input-import-excel');
+
+        const questionsModal = document.getElementById('questions-modal');
+        const btnCloseQModal = document.getElementById('btn-close-q-modal');
+        const btnCloseQModalFooter = document.getElementById('btn-close-q-modal-footer');
+        const adminOpSelector = document.getElementById('admin-op-selector');
+        const btnAddNewOp = document.getElementById('btn-add-new-op');
+        const btnDeleteCurrentOp = document.getElementById('btn-delete-current-op');
+        const newOpFormContainer = document.getElementById('new-op-form-container');
+        const inputNewOpName = document.getElementById('input-new-op-name');
+        const btnConfirmAddOp = document.getElementById('btn-confirm-add-op');
+        const btnCancelAddOp = document.getElementById('btn-cancel-add-op');
+        const qModalCount = document.getElementById('q-modal-count');
+        const btnNewQuestion = document.getElementById('btn-new-question');
+        const btnResetDefaultQuestions = document.getElementById('btn-reset-default-questions');
+        const btnChangeAdminPin = document.getElementById('btn-change-admin-pin');
+        const questionFormContainer = document.getElementById('question-form-container');
+        const formTitle = document.getElementById('form-title');
+        const btnCancelQForm = document.getElementById('btn-cancel-q-form');
+        const editQId = document.getElementById('edit-q-id');
+        const inputQText = document.getElementById('input-q-text');
+        const photosInputsContainer = document.getElementById('photos-inputs-container');
+        const btnAddPhotoInput = document.getElementById('btn-add-photo-input');
+        const optAText = document.getElementById('opt-a-text');
+        const optBText = document.getElementById('opt-b-text');
+        const optCText = document.getElementById('opt-c-text');
+        const btnSaveQuestion = document.getElementById('btn-save-question');
+        const adminQuestionsList = document.getElementById('admin-questions-list');
+
+        const pinModal = document.getElementById('pin-modal');
+        const pinModalTitle = document.getElementById('pin-modal-title');
+        const pinModalDesc = document.getElementById('pin-modal-desc');
         const adminPinInput = document.getElementById('admin-pin-input');
-        function getAdminPin() { return localStorage.getItem('pva_admin_pin') || 'admin123'; }
+        const pinErrorMsg = document.getElementById('pin-error-msg');
+        const btnCancelPin = document.getElementById('btn-cancel-pin');
+        const btnSubmitPin = document.getElementById('btn-submit-pin');
 
-        document.getElementById('btn-admin-questions').addEventListener('click', () => {
-            if (!isAdminAuthenticated) {
-                document.getElementById('admin-auth-error').classList.add('hidden');
-                adminPinInput.value = '';
-                adminAuthModal.classList.remove('hidden');
-                setTimeout(() => adminPinInput.focus(), 100);
-            } else {
-                openQuestionsModalActual();
-            }
-        });
+        const linkModal = document.getElementById('link-modal');
+        const btnCloseLinkModal = document.getElementById('btn-close-link-modal');
+        const generatedLinkInput = document.getElementById('generated-link-input');
+        const btnCopyLink = document.getElementById('btn-copy-link');
+        const copyFeedback = document.getElementById('copy-feedback');
 
-        document.getElementById('btn-confirm-admin-auth').addEventListener('click', verifyAdminPin);
-        adminPinInput.addEventListener('keyup', e => { if(e.key === 'Enter') verifyAdminPin(); });
-        document.getElementById('btn-cancel-admin-auth').addEventListener('click', () => adminAuthModal.classList.add('hidden'));
+        let pendingAdminAction = null;
 
-        function verifyAdminPin() {
-            if (adminPinInput.value.trim() === getAdminPin()) {
-                isAdminAuthenticated = true;
-                adminAuthModal.classList.add('hidden');
-                openQuestionsModalActual();
-            } else {
-                document.getElementById('admin-auth-error').classList.remove('hidden');
+        // --- INICIALIZACIÓN ---
+        function initApp() {
+            populateOperationSelects();
+            if (isReadOnlyMode && paramOp && dbOperations[paramOp]) {
+                userOperationSelect.value = paramOp;
+                userOperationSelect.disabled = true;
+                btnAdminQuestions.classList.add('hidden');
             }
         }
 
-        document.getElementById('btn-change-admin-pin').addEventListener('click', () => {
-            const newPin = prompt("Ingrese la nueva contraseña de administrador:", getAdminPin());
-            if (newPin && newPin.trim()) {
-                localStorage.setItem('pva_admin_pin', newPin.trim());
-                showCustomNotice("Contraseña actualizada con éxito.", "Éxito", "success");
-            }
-        });
+        function populateOperationSelects() {
+            const ops = Object.keys(dbOperations);
+            
+            // Selector de inicio
+            userOperationSelect.innerHTML = '';
+            ops.forEach(op => {
+                const opt = document.createElement('option');
+                opt.value = op;
+                opt.textContent = op;
+                userOperationSelect.appendChild(opt);
+            });
 
-        // Examen Logic
-        document.getElementById('btn-start').addEventListener('click', () => {
-            const operation = userOperationSelect.value;
-            const name = document.getElementById('user-name').value.trim();
-            const id = document.getElementById('user-id').value.trim();
-            const shift = document.getElementById('user-shift').value;
+            // Selector de filtro historial
+            filterOperation.innerHTML = '<option value="">-- Todas las operaciones --</option>';
+            ops.forEach(op => {
+                const opt = document.createElement('option');
+                opt.value = op;
+                opt.textContent = op;
+                filterOperation.appendChild(opt);
+            });
+
+            // Selector de admin
+            if (adminOpSelector) {
+                adminOpSelector.innerHTML = '';
+                ops.forEach(op => {
+                    const opt = document.createElement('option');
+                    opt.value = op;
+                    opt.textContent = op;
+                    adminOpSelector.appendChild(opt);
+                });
+            }
+        }
+
+        // --- FLUJO DE EXAMEN ---
+        btnStart.addEventListener('click', () => {
+            const op = userOperationSelect.value;
+            const name = userNameInput.value.trim();
+            const id = userIdInput.value.trim();
+            const shift = userShiftSelect.value;
 
             if (!name || !id) {
-                document.getElementById('start-validation-msg').classList.remove('hidden');
+                startValidationMsg.classList.remove('hidden');
                 return;
             }
-            document.getElementById('start-validation-msg').classList.add('hidden');
-            currentEvaluatedUser = { operation, name, id, shift };
+            startValidationMsg.classList.add('hidden');
 
-            const ops = getStoredOperations();
-            const activeBank = ops[operation] || [];
-            if (activeBank.length === 0) {
-                showCustomNotice("La operación no tiene preguntas configuradas.", "Atención", "warning");
+            currentOperationName = op;
+            currentQuestions = dbOperations[op] || [];
+            if (currentQuestions.length === 0) {
+                alert("La operación seleccionada no tiene preguntas configuradas.");
                 return;
             }
 
-            questions = [...activeBank].map(q => ({
-                ...q,
-                options: [...q.options].sort(() => Math.random() - 0.5)
-            })).sort(() => Math.random() - 0.5);
-
+            currentTechnician = { name, id, shift, operation: op };
             currentIndex = 0;
             userAnswers = {};
 
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('hidden');
-            document.getElementById('quiz-badge').classList.remove('hidden');
-            document.getElementById('active-op-badge').textContent = `Operación: ${operation}`;
-            renderQuestion();
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            quizBadge.classList.remove('hidden');
+            totalQBadge.textContent = currentQuestions.length;
+
+            loadQuestion();
         });
 
-        function renderQuestion() {
-            const currentQ = questions[currentIndex];
-            document.getElementById('current-q-num').textContent = currentIndex + 1;
-            document.getElementById('total-q-badge').textContent = questions.length;
-            
-            const progress = Math.round((currentIndex / questions.length) * 100);
-            document.getElementById('progress-percent').textContent = `${progress}%`;
-            document.getElementById('progress-bar').style.width = `${progress}%`;
+        function loadQuestion() {
+            const q = currentQuestions[currentIndex];
+            currentQNum.textContent = currentIndex + 1;
+            activeOpBadge.textContent = `Operación: ${currentOperationName}`;
+            questionText.textContent = `${currentIndex + 1}. ${q.text}`;
 
-            document.getElementById('question-text').textContent = `${currentIndex + 1}. ${currentQ.question}`;
-
-            // Manejo de galería de fotos fijas
-            const galleryContainer = document.getElementById('question-images-gallery');
-            galleryContainer.innerHTML = '';
-            
-            let photoList = [];
-            if (Array.isArray(currentQ.images)) {
-                photoList = currentQ.images.filter(img => img && img.trim() !== "");
-            } else if (currentQ.image && currentQ.image.trim() !== "") {
-                photoList = [currentQ.image];
-            }
-
-            if (photoList.length > 0) {
-                galleryContainer.classList.remove('hidden');
-                photoList.forEach((imgUrl, pIdx) => {
-                    const imgWrapper = document.createElement('div');
-                    imgWrapper.className = "bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center";
-                    imgWrapper.innerHTML = `
-                        <span class="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">Foto Fija #${pIdx + 1}</span>
-                        <img src="${imgUrl}" alt="Foto fija de referencia ${pIdx + 1}" class="max-h-56 w-auto mx-auto rounded-lg object-contain" onerror="this.src='https://placehold.co/600x300/cbd5e1/475569?text=Error+Cargando+Imagen'">
-                    `;
-                    galleryContainer.appendChild(imgWrapper);
+            // Renderizar galería de fotos fijas múltiples
+            questionImagesGallery.innerHTML = '';
+            if (q.images && q.images.length > 0) {
+                questionImagesGallery.classList.remove('hidden');
+                q.images.forEach((imgUrl, imgIdx) => {
+                    if (imgUrl.trim() !== '') {
+                        const imgWrapper = document.createElement('div');
+                        imgWrapper.className = "relative rounded-lg overflow-hidden border border-slate-300 bg-black aspect-video flex items-center justify-center";
+                        imgWrapper.innerHTML = `
+                            <img src="${imgUrl}" alt="Foto fija ${imgIdx + 1}" class="w-full h-full object-contain cursor-pointer" onclick="window.open('${imgUrl}', '_blank')" title="Click para ampliar imagen">
+                            <span class="absolute bottom-1.5 left-1.5 bg-slate-900/80 text-white px-2 py-0.5 rounded text-[10px] font-bold">Foto Fija ${imgIdx + 1}</span>
+                        `;
+                        questionImagesGallery.appendChild(imgWrapper);
+                    }
                 });
+                if (questionImagesGallery.children.length === 0) {
+                    questionImagesGallery.classList.add('hidden');
+                }
             } else {
-                galleryContainer.classList.add('hidden');
+                questionImagesGallery.classList.add('hidden');
             }
 
-            const optContainer = document.getElementById('options-container');
-            optContainer.innerHTML = '';
-
-            currentQ.options.forEach(opt => {
-                const isSelected = userAnswers[currentQ.id] === opt.id;
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = `w-full text-left p-4 rounded-xl border-2 transition-all flex items-center justify-between group ${
-                    isSelected ? 'border-blue-600 bg-blue-50/60 text-blue-900 shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700'
-                }`;
-                btn.onclick = () => { userAnswers[currentQ.id] = opt.id; renderQuestion(); };
-
-                btn.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs uppercase ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}">
-                            ${opt.id}
-                        </span>
-                        <span class="text-sm sm:text-base font-medium">${opt.text}</span>
-                    </div>
-                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300'}">
-                        ${isSelected ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
-                    </div>
-                `;
-                optContainer.appendChild(btn);
+            // Opciones
+            optionsContainer.innerHTML = '';
+            const optKeys = ['a', 'b', 'c'];
+            optKeys.forEach(key => {
+                if (q.options[key]) {
+                    const isSelected = userAnswers[currentIndex] === key;
+                    const optDiv = document.createElement('div');
+                    optDiv.className = `p-4 rounded-xl border-2 transition cursor-pointer flex items-center space-x-3 ${isSelected ? 'border-blue-600 bg-blue-50/50 shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-white'}`;
+                    optDiv.innerHTML = `
+                        <div class="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'}">
+                            ${key.toUpperCase()}
+                        </div>
+                        <span class="text-sm font-medium text-slate-800 flex-grow">${q.options[key]}</span>
+                        <input type="radio" name="q-opt" value="${key}" ${isSelected ? 'checked' : ''} class="accent-blue-600 w-4 h-4">
+                    `;
+                    optDiv.addEventListener('click', () => {
+                        userAnswers[currentIndex] = key;
+                        loadQuestion();
+                    });
+                    optionsContainer.appendChild(optDiv);
+                }
             });
 
-            document.getElementById('btn-prev').disabled = currentIndex === 0;
-            if (currentIndex === questions.length - 1) {
-                document.getElementById('btn-next-text').textContent = "Finalizar";
-                document.getElementById('btn-next-icon').className = "fa-solid fa-check";
+            // Progreso
+            const progress = ((currentIndex + 1) / currentQuestions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+
+            // Botones
+            btnPrev.disabled = currentIndex === 0;
+            if (currentIndex === currentQuestions.length - 1) {
+                btnNextText.textContent = "Finalizar Examen";
+                btnNext.className = "px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold shadow-md transition flex items-center space-x-2";
             } else {
-                document.getElementById('btn-next-text').textContent = "Siguiente";
-                document.getElementById('btn-next-icon').className = "fa-solid fa-chevron-right";
+                btnNextText.textContent = "Siguiente";
+                btnNext.className = "px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold shadow-md transition flex items-center space-x-2";
             }
         }
 
-        document.getElementById('btn-next').addEventListener('click', () => {
-            if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); }
-            else { finishQuiz(); }
+        btnPrev.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                loadQuestion();
+            }
         });
-        document.getElementById('btn-prev').addEventListener('click', () => {
-            if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+
+        btnNext.addEventListener('click', () => {
+            if (userAnswers[currentIndex] === undefined) {
+                alert("Por favor seleccione una respuesta antes de continuar.");
+                return;
+            }
+            if (currentIndex < currentQuestions.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            } else {
+                finishExam();
+            }
         });
 
-        function finishQuiz() {
-            document.getElementById('quiz-screen').classList.add('hidden');
-            document.getElementById('quiz-badge').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
+        function finishExam() {
+            let correct = 0;
+            let incorrect = 0;
 
-            let correctCount = 0;
-            questions.forEach(q => { if (userAnswers[q.id] === q.correct) correctCount++; });
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) {
+                    correct++;
+                } else {
+                    incorrect++;
+                }
+            });
 
-            const percentage = Math.round((correctCount / questions.length) * 100);
-            const passed = percentage >= 80;
-            const timestamp = new Date().toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' });
+            const total = currentQuestions.length;
+            const percent = Math.round((correct / total) * 100);
+            const passed = percent >= 80; // Estándar AME 80% aprobatorio
 
-            lastExamResult = {
-                timestamp,
-                operation: currentEvaluatedUser.operation,
-                userName: currentEvaluatedUser.name,
-                userId: currentEvaluatedUser.id,
-                userShift: currentEvaluatedUser.shift,
-                correctCount,
-                total: questions.length,
-                percentage,
-                status: passed ? 'APROBADO' : 'NO APROBADO'
+            const record = {
+                date: new Date().toLocaleString(),
+                timestamp: Date.now(),
+                operation: currentOperationName,
+                id: currentTechnician.id,
+                name: currentTechnician.name,
+                shift: currentTechnician.shift,
+                score: `${correct} / ${total}`,
+                percent: `${percent}%`,
+                status: passed ? "APROBADO" : "NO APROBADO",
+                answers: { ...userAnswers },
+                questionsSnapshot: [...currentQuestions]
             };
 
-            const history = JSON.parse(localStorage.getItem('pva_evaluations_history') || '[]');
-            history.unshift(lastExamResult);
-            localStorage.setItem('pva_evaluations_history', JSON.stringify(history));
+            testHistory.unshift(record);
+            saveHistoryToCloud();
 
-            document.getElementById('total-saved-badge').textContent = `${history.length} registros`;
-            document.getElementById('res-eval-op').textContent = currentEvaluatedUser.operation;
-            document.getElementById('res-eval-name').textContent = currentEvaluatedUser.name;
-            document.getElementById('res-eval-id').textContent = currentEvaluatedUser.id;
-            document.getElementById('res-eval-shift').textContent = `${currentEvaluatedUser.shift} (${timestamp})`;
+            quizScreen.classList.add('hidden');
+            quizBadge.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
 
-            document.getElementById('score-text').textContent = `${correctCount} / ${questions.length}`;
-            document.getElementById('percent-text').textContent = `${percentage}%`;
-            document.getElementById('correct-count').textContent = correctCount;
-            document.getElementById('incorrect-count').textContent = questions.length - correctCount;
-
-            const iconBg = document.getElementById('result-icon-bg');
-            const icon = document.getElementById('result-icon');
-            const title = document.getElementById('result-title');
-            const msg = document.getElementById('result-message');
+            // Renderizar pantalla de resultados
+            resEvalOp.textContent = currentOperationName;
+            resEvalName.textContent = currentTechnician.name;
+            resEvalId.textContent = currentTechnician.id;
+            resEvalShift.textContent = `${currentTechnician.shift} (${record.date})`;
+            scoreText.textContent = `${correct} / ${total}`;
+            percentText.textContent = `${percent}%`;
+            correctCount.textContent = correct;
+            incorrectCount.textContent = incorrect;
+            totalSavedBadge.textContent = `${testHistory.length} registros acumulados`;
 
             if (passed) {
-                iconBg.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner bg-emerald-100 text-emerald-600 border border-emerald-300";
-                icon.className = "fa-solid fa-circle-check";
-                title.textContent = "¡Aprobado con Éxito!";
-                title.className = "text-2xl sm:text-3xl font-bold text-emerald-700";
-                msg.textContent = "Has demostrado el conocimiento requerido.";
+                resultIconBg.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner bg-emerald-100 text-emerald-600 border-2 border-emerald-300";
+                resultIcon.className = "fa-solid fa-circle-check";
+                resultTitle.textContent = "¡Certificación Aprobada!";
+                resultMessage.textContent = "El técnico ha demostrado dominio operativo satisfactorio según los estándares de calidad AME.";
             } else {
-                iconBg.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner bg-rose-100 text-rose-600 border border-rose-300";
-                icon.className = "fa-solid fa-circle-xmark";
-                title.textContent = "No Aprobado";
-                title.className = "text-2xl sm:text-3xl font-bold text-rose-700";
-                msg.textContent = "No alcanzaste el puntaje mínimo (80%).";
+                resultIconBg.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner bg-rose-100 text-rose-600 border-2 border-rose-300";
+                resultIcon.className = "fa-solid fa-circle-xmark";
+                resultTitle.textContent = "Certificación No Aprobada";
+                resultMessage.textContent = "El puntaje obtenido es menor al 80% requerido. Se recomienda retroalimentación y re-evaluación.";
             }
-            buildReviewList();
+
+            reviewContainer.classList.add('hidden');
+            btnReview.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i><span>Revisar Respuestas</span>`;
         }
 
-        document.getElementById('btn-restart').addEventListener('click', () => {
-            document.getElementById('result-screen').classList.add('hidden');
-            document.getElementById('start-screen').classList.remove('hidden');
-            document.getElementById('user-name').value = '';
-            document.getElementById('user-id').value = '';
-            populateOperationDropdowns();
+        // --- REVISIÓN DETALLADA ---
+        btnReview.addEventListener('click', () => {
+            if (reviewContainer.classList.contains('hidden')) {
+                reviewContainer.classList.remove('hidden');
+                btnReview.innerHTML = `<i class="fa-solid fa-eye-slash"></i><span>Ocultar Revisión</span>`;
+                renderReviewList();
+            } else {
+                reviewContainer.classList.add('hidden');
+                btnReview.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i><span>Revisar Respuestas</span>`;
+            }
         });
 
-        document.getElementById('btn-review').addEventListener('click', () => {
-            const rc = document.getElementById('review-container');
-            rc.classList.toggle('hidden');
-        });
-
-        document.getElementById('btn-export-individual').addEventListener('click', () => {
-            if (!lastExamResult) return;
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet([{
-                "Fecha": lastExamResult.timestamp,
-                "Operación": lastExamResult.operation,
-                "Técnico": lastExamResult.userName,
-                "N° Empleado": lastExamResult.userId,
-                "Turno": lastExamResult.userShift,
-                "Calificación": `${lastExamResult.correctCount}/${lastExamResult.total}`,
-                "Porcentaje": `${lastExamResult.percentage}%`,
-                "Resultado": lastExamResult.status
-            }]);
-            XLSX.utils.book_append_sheet(wb, ws, "Ficha");
-            XLSX.writeFile(wb, `Examen_${lastExamResult.userId}.xlsx`);
-        });
-
-        function buildReviewList() {
-            const list = document.getElementById('review-list');
-            list.innerHTML = '';
-            questions.forEach((q, idx) => {
-                const uAns = userAnswers[q.id];
-                const isCorrect = uAns === q.correct;
-                const card = document.createElement('div');
-                card.className = `p-4 rounded-xl border ${isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200'} space-y-2`;
-                
-                const uOpt = q.options.find(o => o.id === uAns);
-                const cOpt = q.options.find(o => o.id === q.correct);
-
-                let photoArr = Array.isArray(q.images) ? q.images : (q.image ? [q.image] : []);
-
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <p class="font-bold text-sm text-slate-800">${idx + 1}. ${q.question}</p>
-                        <span class="px-2 py-0.5 rounded text-xs font-bold ${isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
-                            ${isCorrect ? 'Correcto' : 'Incorrecto'}
+        function renderReviewList() {
+            reviewList.innerHTML = '';
+            currentQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = userAns === q.correct;
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-xl border ${isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200'} space-y-2`;
+                div.innerHTML = `
+                    <div class="flex items-start justify-between gap-2">
+                        <span class="font-bold text-xs text-slate-700">Pregunta ${idx + 1}: ${q.text}</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${isCorrect ? 'bg-emerald-200 text-emerald-900' : 'bg-rose-200 text-rose-900'}">
+                            ${isCorrect ? 'ACIERTO' : 'ERROR'}
                         </span>
                     </div>
-                    ${photoArr.length > 0 ? `<div class="flex flex-wrap gap-2 my-2">${photoArr.map(img => `<img src="${img}" class="h-24 object-contain rounded border bg-white p-1" onerror="this.src='https://placehold.co/100x100/cbd5e1/475569?text=Error'">`).join('')}</div>` : ''}
                     <div class="text-xs space-y-1">
-                        <p class="text-slate-600">Tu respuesta: <span class="font-bold ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${uOpt ? uOpt.text : 'Sin responder'}</span></p>
-                        ${!isCorrect ? `<p class="text-emerald-700 font-semibold">Respuesta correcta: ${cOpt ? cOpt.text : ''}</p>` : ''}
+                        <p class="text-slate-600"><strong class="text-slate-800">Respuesta del técnico:</strong> <span class="${isCorrect ? 'text-emerald-700 font-bold' : 'text-rose-700 font-bold'}">${userAns ? userAns.toUpperCase() + '. ' + q.options[userAns] : 'Sin responder'}</span></p>
+                        ${!isCorrect ? `<p class="text-emerald-800"><strong class="text-slate-800">Respuesta correcta:</strong> ${q.correct.toUpperCase()}. ${q.options[q.correct]}</p>` : ''}
                     </div>
                 `;
-                list.appendChild(card);
+                reviewList.appendChild(div);
             });
         }
 
-        // Exportar e Historial
-        document.getElementById('btn-export-single').addEventListener('click', () => {
-            const history = JSON.parse(localStorage.getItem('pva_evaluations_history') || '[]');
-            if (history.length === 0) { showCustomNotice("No hay registros", "Atención", "warning"); return; }
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(history);
-            XLSX.utils.book_append_sheet(wb, ws, "Historial General");
-            XLSX.writeFile(wb, "Historial_Certificaciones.xlsx");
+        btnRestart.addEventListener('click', () => {
+            resultScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+            userNameInput.value = '';
+            userIdInput.value = '';
         });
 
-        document.getElementById('btn-export-all').addEventListener('click', () => {
-            const history = JSON.parse(localStorage.getItem('pva_evaluations_history') || '[]');
-            if (history.length === 0) { showCustomNotice("No hay registros", "Atención", "warning"); return; }
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(history);
-            XLSX.utils.book_append_sheet(wb, ws, "Historial General");
-            XLSX.writeFile(wb, "Historial_Certificaciones.xlsx");
+        // --- ENLACE ÚNICO PARA TÉCNICO ---
+        btnGenerateLink.addEventListener('click', () => {
+            const op = userOperationSelect.value;
+            const baseUrl = window.location.origin + window.location.pathname;
+            const uniqueLink = `${baseUrl}?op=${encodeURIComponent(op)}`;
+            generatedLinkInput.value = uniqueLink;
+            linkModal.classList.remove('hidden');
         });
 
-        // Importación de Excel histórico
-        document.getElementById('input-import-excel').addEventListener('change', e => {
+        btnCloseLinkModal.addEventListener('click', () => linkModal.classList.add('hidden'));
+
+        btnCopyLink.addEventListener('click', () => {
+            generatedLinkInput.select();
+            navigator.clipboard.writeText(generatedLinkInput.value);
+            copyFeedback.textContent = "¡Enlace copiado al portapapeles con éxito!";
+            setTimeout(() => { copyFeedback.textContent = "Enlace listo para enviar por WhatsApp o correo corporativo."; }, 3000);
+        });
+
+        // --- EXPORTACIÓN A EXCEL (XLSX) ---
+        function exportHistoryToExcel(singleRecord = null) {
+            const dataToExport = singleRecord ? [singleRecord] : testHistory;
+            if (dataToExport.length === 0) {
+                alert("No hay registros para exportar.");
+                return;
+            }
+
+            const excelRows = dataToExport.map(item => ({
+                "Fecha / Hora": item.date,
+                "Operación": item.operation,
+                "Número de Empleado": item.id,
+                "Nombre del Técnico": item.name,
+                "Turno": item.shift,
+                "Calificación": item.score,
+                "Porcentaje": item.percent,
+                "Estatus": item.status
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(excelRows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Certificaciones AME");
+
+            const fileName = singleRecord ? `Certificacion_${singleRecord.id}_${Date.now()}.xlsx` : `Historial_General_Certificaciones_AME.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+        }
+
+        btnExportSingle.addEventListener('click', () => exportHistoryToExcel());
+        btnExportAll.addEventListener('click', () => exportHistoryToExcel());
+        
+        btnExportIndividual.addEventListener('click', () => {
+            if (testHistory.length > 0) {
+                exportHistoryToExcel(testHistory[0]);
+            }
+        });
+
+        // --- HISTORIAL / MODAL GENERAL ---
+        btnAdminHistory.addEventListener('click', () => {
+            renderHistoryTable();
+            historyModal.classList.remove('hidden');
+        });
+
+        btnCloseModal.addEventListener('click', () => historyModal.classList.add('hidden'));
+        btnCloseModalFooter.addEventListener('click', () => historyModal.classList.add('hidden'));
+
+        function renderHistoryTable() {
+            const searchVal = filterSearch.value.toLowerCase();
+            const opVal = filterOperation.value;
+            const statusVal = filterStatus.value;
+
+            const filtered = testHistory.filter(item => {
+                const matchSearch = item.name.toLowerCase().includes(searchVal) || item.id.toLowerCase().includes(searchVal);
+                const matchOp = opVal === "" || item.operation === opVal;
+                const matchStatus = statusVal === "" || item.status === statusVal;
+                return matchSearch && matchOp && matchStatus;
+            });
+
+            historyCount.textContent = testHistory.length;
+            filteredRecordsCounter.textContent = `Mostrando ${filtered.length} de ${testHistory.length} registros`;
+
+            historyTableBody.innerHTML = '';
+            if (filtered.length === 0) {
+                historyTableBody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">No se encontraron registros coincidentes.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+                tr.innerHTML = `
+                    <td class="p-3 font-mono text-slate-600">${item.date}</td>
+                    <td class="p-3 font-bold text-blue-900">${item.operation}</td>
+                    <td class="p-3 font-mono">${item.id}</td>
+                    <td class="p-3 font-bold text-slate-800">${item.name}</td>
+                    <td class="p-3 text-slate-600">${item.shift}</td>
+                    <td class="p-3 text-center font-bold">${item.score}</td>
+                    <td class="p-3 text-center font-black">${item.percent}</td>
+                    <td class="p-3 text-center">
+                        <span class="px-2 py-1 rounded text-[10px] font-extrabold ${item.status === 'APROBADO' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            ${item.status}
+                        </span>
+                    </td>
+                `;
+                historyTableBody.appendChild(tr);
+            });
+        }
+
+        filterSearch.addEventListener('input', renderHistoryTable);
+        filterOperation.addEventListener('change', renderHistoryTable);
+        filterStatus.addEventListener('change', renderHistoryTable);
+
+        btnClearHistory.addEventListener('click', () => {
+            if (confirm("¿Está seguro de borrar todo el historial de evaluaciones? Esta acción no se puede deshacer.")) {
+                testHistory = [];
+                saveHistoryToCloud();
+                renderHistoryTable();
+            }
+        });
+
+        inputImportExcel.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
+
             const reader = new FileReader();
             reader.onload = function(evt) {
                 try {
@@ -1213,308 +1358,305 @@
                     const workbook = XLSX.read(data, { type: 'array' });
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
-                    const importedRows = XLSX.utils.sheet_to_json(worksheet);
+                    const json = XLSX.utils.sheet_to_json(worksheet);
 
-                    if (importedRows && importedRows.length > 0) {
-                        const currentHistory = JSON.parse(localStorage.getItem('pva_evaluations_history') || '[]');
-                        const merged = [...importedRows, ...currentHistory];
-                        localStorage.setItem('pva_evaluations_history', JSON.stringify(merged));
-                        cachedHistoryRecords = merged;
-                        renderFilteredHistoryTable();
-                        showCustomNotice(`Se importaron ${importedRows.length} registros exitosamente.`, "Importación Exitosa", "success");
-                    } else {
-                        showCustomNotice("El archivo Excel no contiene registros válidos.", "Aviso", "warning");
-                    }
-                } catch(err) {
-                    showCustomNotice("Error al procesar el archivo Excel.", "Error", "error");
+                    let importedCount = 0;
+                    json.forEach(row => {
+                        const rec = {
+                            date: row["Fecha / Hora"] || new Date().toLocaleString(),
+                            timestamp: Date.now(),
+                            operation: row["Operación"] || "Operación General",
+                            id: String(row["Número de Empleado"] || row["ID"] || "S/N"),
+                            name: row["Nombre del Técnico"] || row["Nombre"] || "Técnico Externo",
+                            shift: row["Turno"] || "Turno 1",
+                            score: row["Calificación"] || "0 / 14",
+                            percent: row["Porcentaje"] || "0%",
+                            status: row["Estatus"] || "NO APROBADO",
+                            answers: {},
+                            questionsSnapshot: []
+                        };
+                        testHistory.push(rec);
+                        importedCount++;
+                    });
+
+                    saveHistoryToCloud();
+                    renderHistoryTable();
+                    alert(`Se han importado y anexado ${importedCount} registros correctamente.`);
+                } catch (err) {
+                    console.error(err);
+                    alert("Error al procesar el archivo Excel. Verifique el formato.");
                 }
-                e.target.value = '';
+                inputImportExcel.value = '';
             };
             reader.readAsArrayBuffer(file);
         });
 
-        let cachedHistoryRecords = [];
-
-        document.getElementById('btn-admin-history').addEventListener('click', () => {
-            cachedHistoryRecords = JSON.parse(localStorage.getItem('pva_evaluations_history') || '[]');
-            
-            const filterOpSelect = document.getElementById('filter-operation');
-            filterOpSelect.innerHTML = '<option value="">-- Todas las operaciones --</option>';
-            const opsSet = [...new Set(cachedHistoryRecords.map(item => item.operation))];
-            opsSet.forEach(op => {
-                const opt = document.createElement('option');
-                opt.value = op;
-                opt.textContent = op;
-                filterOpSelect.appendChild(opt);
-            });
-
-            document.getElementById('filter-search').value = '';
-            filterOpSelect.value = '';
-            document.getElementById('filter-status').value = '';
-
-            renderFilteredHistoryTable();
-            document.getElementById('history-modal').classList.remove('hidden');
+        // --- GESTIÓN DE PREGUNTAS E IMÁGENES FIJAS (ADMIN) ---
+        btnAdminQuestions.addEventListener('click', () => {
+            pendingAdminAction = () => {
+                questionsModal.classList.remove('hidden');
+                loadAdminQuestions();
+            };
+            openPinModal("Gestión de Preguntas y Fotos Fijas");
         });
 
-        function renderFilteredHistoryTable() {
-            const searchTerm = document.getElementById('filter-search').value.toLowerCase().trim();
-            const selectedOp = document.getElementById('filter-operation').value;
-            const selectedStatus = document.getElementById('filter-status').value;
+        btnCloseQModal.addEventListener('click', () => questionsModal.classList.add('hidden'));
+        btnCloseQModalFooter.addEventListener('click', () => questionsModal.classList.add('hidden'));
 
-            const filtered = cachedHistoryRecords.filter(item => {
-                const matchSearch = !searchTerm || 
-                    (item.userName && item.userName.toLowerCase().includes(searchTerm)) || 
-                    (item.userId && item.userId.toLowerCase().includes(searchTerm));
-                const matchOp = !selectedOp || item.operation === selectedOp;
-                const matchStatus = !selectedStatus || item.status === selectedStatus;
-                return matchSearch && matchOp && matchStatus;
-            });
+        function openPinModal(actionTitle) {
+            pinModalTitle.textContent = actionTitle;
+            adminPinInput.value = '';
+            pinErrorMsg.classList.add('hidden');
+            pinModal.classList.remove('hidden');
+            adminPinInput.focus();
+        }
 
-            document.getElementById('history-count').textContent = cachedHistoryRecords.length;
-            document.getElementById('filtered-records-counter').textContent = `Mostrando ${filtered.length} de ${cachedHistoryRecords.length} registros`;
+        btnCancelPin.addEventListener('click', () => pinModal.classList.add('hidden'));
 
-            const tbody = document.getElementById('history-table-body');
-            tbody.innerHTML = '';
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">No se encontraron registros con los filtros seleccionados.</td></tr>`;
-                return;
+        btnSubmitPin.addEventListener('click', () => {
+            if (adminPinInput.value === adminPin) {
+                pinModal.classList.add('hidden');
+                if (pendingAdminAction) pendingAdminAction();
+            } else {
+                pinErrorMsg.classList.remove('hidden');
+                adminPinInput.focus();
             }
-
-            filtered.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50";
-                tr.innerHTML = `
-                    <td class="p-3">${item.timestamp}</td>
-                    <td class="p-3 font-bold text-blue-900">${item.operation}</td>
-                    <td class="p-3 font-mono">${item.userId}</td>
-                    <td class="p-3">${item.userName}</td>
-                    <td class="p-3">${item.userShift}</td>
-                    <td class="p-3 text-center">${item.correctCount}/${item.total}</td>
-                    <td class="p-3 text-center font-bold">${item.percentage}%</td>
-                    <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.status==='APROBADO'?'bg-emerald-100 text-emerald-800':'bg-rose-100 text-rose-800'}">${item.status}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        document.getElementById('filter-search').addEventListener('input', renderFilteredHistoryTable);
-        document.getElementById('filter-operation').addEventListener('change', renderFilteredHistoryTable);
-        document.getElementById('filter-status').addEventListener('change', renderFilteredHistoryTable);
-
-        document.getElementById('btn-close-modal').addEventListener('click', () => document.getElementById('history-modal').classList.add('hidden'));
-        document.getElementById('btn-close-modal-footer').addEventListener('click', () => document.getElementById('history-modal').classList.add('hidden'));
-
-        document.getElementById('btn-clear-history').addEventListener('click', () => {
-            showCustomNotice("¿Deseas borrar todo el historial?", "Confirmar", "danger", confirmed => {
-                if(confirmed) { 
-                    localStorage.removeItem('pva_evaluations_history'); 
-                    cachedHistoryRecords = [];
-                    renderFilteredHistoryTable(); 
-                }
-            });
         });
 
-        // Gestión de Preguntas modal con múltiples fotos fijas
-        function openQuestionsModalActual() {
-            populateOperationDropdowns();
-            renderQuestionsList();
-            hideQuestionForm();
-            document.getElementById('questions-modal').classList.remove('hidden');
-        }
-        document.getElementById('btn-close-q-modal').addEventListener('click', () => document.getElementById('questions-modal').classList.add('hidden'));
-        document.getElementById('btn-close-q-modal-footer').addEventListener('click', () => document.getElementById('questions-modal').classList.add('hidden'));
-
-        document.getElementById('btn-add-new-op').addEventListener('click', () => document.getElementById('new-op-form-container').classList.remove('hidden'));
-        document.getElementById('btn-cancel-add-op').addEventListener('click', () => document.getElementById('new-op-form-container').classList.add('hidden'));
-        document.getElementById('btn-confirm-add-op').addEventListener('click', () => {
-            const name = document.getElementById('input-new-op-name').value.trim();
-            if (!name) return;
-            const ops = getStoredOperations();
-            if (ops[name]) { showCustomNotice("La operación ya existe.", "Error", "error"); return; }
-            ops[name] = [];
-            saveStoredOperations(ops);
-            document.getElementById('new-op-form-container').classList.add('hidden');
-            adminOpSelector.value = name;
-            renderQuestionsList();
+        adminPinInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') btnSubmitPin.click();
         });
 
-        document.getElementById('btn-delete-current-op').addEventListener('click', () => {
-            const cur = adminOpSelector.value;
-            const ops = getStoredOperations();
-            if (Object.keys(ops).length <= 1) { showCustomNotice("Debe haber al menos una operación.", "Atención", "warning"); return; }
-            showCustomNotice(`¿Eliminar la operación "${cur}"?`, "Confirmar", "danger", confirmed => {
-                if(confirmed) { delete ops[cur]; saveStoredOperations(ops); adminOpSelector.value = Object.keys(ops)[0]; renderQuestionsList(); }
-            });
+        btnChangeAdminPin.addEventListener('click', () => {
+            const newPin = prompt("Ingrese el nuevo PIN de administrador (4 dígitos):", "");
+            if (newPin && newPin.trim().length >= 3) {
+                adminPin = newPin.trim();
+                localStorage.setItem('ame_admin_pin', adminPin);
+                alert("PIN actualizado correctamente.");
+            } else if (newPin !== null) {
+                alert("El PIN debe tener al menos 3 caracteres.");
+            }
         });
 
-        function renderQuestionsList() {
-            const curOp = adminOpSelector.value;
-            const ops = getStoredOperations();
-            const qList = ops[curOp] || [];
-            document.getElementById('q-modal-count').textContent = qList.length;
-            const container = document.getElementById('questions-list');
-            container.innerHTML = '';
+        adminOpSelector.addEventListener('change', loadAdminQuestions);
 
+        function loadAdminQuestions() {
+            const currentOp = adminOpSelector.value;
+            const qList = dbOperations[currentOp] || [];
+            qModalCount.textContent = qList.length;
+
+            adminQuestionsList.innerHTML = '';
             if (qList.length === 0) {
-                container.innerHTML = `<div class="p-8 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed">No hay preguntas registradas.</div>`;
+                adminQuestionsList.innerHTML = `<div class="p-6 text-center text-slate-400 bg-slate-50 rounded-xl border">No hay preguntas configuradas para esta operación.</div>`;
                 return;
             }
 
             qList.forEach((q, idx) => {
-                let photoArr = Array.isArray(q.images) ? q.images : (q.image ? [q.image] : []);
-                photoArr = photoArr.filter(p => p && p.trim() !== "");
-
-                const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3";
-                card.innerHTML = `
-                    <div class="space-y-1 flex-grow">
-                        <div class="flex items-center space-x-2">
-                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold rounded text-xs">#${idx+1}</span>
-                            <h5 class="font-bold text-slate-800 text-sm">${q.question}</h5>
-                        </div>
-                        ${photoArr.length > 0 ? `<div class="text-[11px] text-indigo-600 font-mono flex items-center gap-2"><i class="fa-solid fa-images"></i><span>${photoArr.length} foto(s) fija(s)</span></div>` : ''}
-                        <div class="flex flex-wrap gap-2 text-xs pt-1">
-                            ${q.options.map(opt => `<span class="px-2 py-1 rounded border ${opt.id === q.correct ? 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold' : 'bg-slate-50 border-slate-200 text-slate-600'}">${opt.id.toUpperCase()}) ${opt.text}</span>`).join('')}
-                        </div>
-                    </div>
-                    <div class="flex space-x-2 shrink-0">
-                        <button onclick="editQuestion(${q.id})" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded border"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteQuestion(${q.id})" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded border"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        const qForm = document.getElementById('question-form-container');
-        document.getElementById('btn-new-question').addEventListener('click', () => showQuestionForm(null));
-        document.getElementById('btn-cancel-q-form').addEventListener('click', hideQuestionForm);
-
-        function renderPhotoInputRow(urlVal = '') {
-            const container = document.getElementById('photos-inputs-container');
-            const row = document.createElement('div');
-            row.className = "flex gap-2 items-center photo-input-row";
-            row.innerHTML = `
-                <input type="url" value="${urlVal}" placeholder="https://ejemplo.com/foto-fija.jpg" class="w-full p-2 border border-slate-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none photo-url-field">
-                <button type="button" class="px-3 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold rounded-lg transition shrink-0 btn-remove-photo-row" title="Eliminar foto">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            `;
-            row.querySelector('.btn-remove-photo-row').addEventListener('click', () => row.remove());
-            container.appendChild(row);
-        }
-
-        document.getElementById('btn-add-photo-input').addEventListener('click', () => renderPhotoInputRow(''));
-
-        function showQuestionForm(q) {
-            qForm.classList.remove('hidden');
-            document.getElementById('q-form-validation-msg').classList.add('hidden');
-            document.getElementById('photos-inputs-container').innerHTML = '';
-
-            if (q) {
-                document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square"></i><span>Editar Pregunta</span>`;
-                document.getElementById('edit-q-id').value = q.id;
-                document.getElementById('input-q-text').value = q.question;
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3";
                 
-                let photoArr = Array.isArray(q.images) ? q.images : (q.image ? [q.image] : []);
-                if (photoArr.length === 0) {
-                    renderPhotoInputRow('');
-                } else {
-                    photoArr.forEach(pUrl => renderPhotoInputRow(pUrl));
+                let imgsHtml = '';
+                if (q.images && q.images.length > 0) {
+                    imgsHtml = `<div class="flex gap-2 mt-2 overflow-x-auto py-1">`;
+                    q.images.forEach((img, i) => {
+                        imgsHtml += `<div class="relative w-20 h-14 bg-black rounded overflow-hidden shrink-0 border"><img src="${img}" class="w-full h-full object-cover"></div>`;
+                    });
+                    imgsHtml += `</div>`;
                 }
 
-                const a = q.options.find(o => o.id === 'a');
-                const b = q.options.find(o => o.id === 'b');
-                const c = q.options.find(o => o.id === 'c');
-                document.getElementById('opt-a-text').value = a ? a.text : '';
-                document.getElementById('opt-b-text').value = b ? b.text : '';
-                document.getElementById('opt-c-text').value = c ? c.text : '';
-                document.querySelector(`input[name="correct-opt"][value="${q.correct}"]`).checked = true;
-            } else {
-                document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-circle-plus"></i><span>Nueva Pregunta</span>`;
-                document.getElementById('edit-q-id').value = '';
-                document.getElementById('input-q-text').value = '';
-                renderPhotoInputRow('');
-                document.getElementById('opt-a-text').value = '';
-                document.getElementById('opt-b-text').value = '';
-                document.getElementById('opt-c-text').value = '';
-                document.querySelector('input[name="correct-opt"][value="a"]').checked = true;
-            }
-            qForm.scrollIntoView({ behavior: 'smooth' });
+                div.innerHTML = `
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold px-2 py-0.5 bg-blue-100 text-blue-800 rounded">Pregunta ${idx + 1}</span>
+                            <p class="text-sm font-bold text-slate-900 mt-1">${q.text}</p>
+                            ${imgsHtml}
+                        </div>
+                        <div class="flex space-x-1 shrink-0">
+                            <button onclick="editQuestion(${q.id})" class="p-2 bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 rounded-lg text-xs transition" title="Editar pregunta"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteQuestion(${q.id})" class="p-2 bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-700 rounded-lg text-xs transition" title="Eliminar pregunta"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t text-xs">
+                        <div class="${q.correct === 'a' ? 'font-bold text-emerald-700 bg-emerald-50 p-1.5 rounded' : 'text-slate-600'}"><strong>A:</strong> ${q.options.a || '-'}</div>
+                        <div class="${q.correct === 'b' ? 'font-bold text-emerald-700 bg-emerald-50 p-1.5 rounded' : 'text-slate-600'}"><strong>B:</strong> ${q.options.b || '-'}</div>
+                        <div class="${q.correct === 'c' ? 'font-bold text-emerald-700 bg-emerald-50 p-1.5 rounded' : 'text-slate-600'}"><strong>C:</strong> ${q.options.c || '-'}</div>
+                    </div>
+                `;
+                adminQuestionsList.appendChild(div);
+            });
         }
 
-        function hideQuestionForm() { qForm.classList.add('hidden'); }
+        btnAddNewOp.addEventListener('click', () => {
+            newOpFormContainer.classList.remove('hidden');
+            inputNewOpName.value = '';
+            inputNewOpName.focus();
+        });
 
-        document.getElementById('btn-save-q-form').addEventListener('click', () => {
-            const qText = document.getElementById('input-q-text').value.trim();
-            
-            const photoFields = document.querySelectorAll('.photo-url-field');
-            const imagesArr = [];
-            photoFields.forEach(f => {
-                if (f.value.trim() !== "") imagesArr.push(f.value.trim());
-            });
+        btnCancelAddOp.addEventListener('click', () => newOpFormContainer.classList.add('hidden'));
 
-            const tA = document.getElementById('opt-a-text').value.trim();
-            const tB = document.getElementById('opt-b-text').value.trim();
-            const tC = document.getElementById('opt-c-text').value.trim();
-            const correct = document.querySelector('input[name="correct-opt"]:checked')?.value || 'a';
-            const qId = document.getElementById('edit-q-id').value;
-
-            if (!qText || !tA || !tB || !tC) {
-                document.getElementById('q-form-validation-msg').classList.remove('hidden');
+        btnConfirmAddOp.addEventListener('click', () => {
+            const opName = inputNewOpName.value.trim();
+            if (!opName) {
+                alert("Ingrese un nombre válido para la operación.");
+                return;
+            }
+            if (dbOperations[opName]) {
+                alert("Ya existe una operación con ese nombre.");
                 return;
             }
 
-            const curOp = adminOpSelector.value;
-            const ops = getStoredOperations();
-            let qList = ops[curOp] || [];
-
-            if (qId) {
-                const idNum = parseInt(qId, 10);
-                qList = qList.map(q => q.id === idNum ? {
-                    id: idNum, question: qText, images: imagesArr,
-                    options: [{id:'a', text:tA}, {id:'b', text:tB}, {id:'c', text:tC}],
-                    correct
-                } : q);
-            } else {
-                const maxId = qList.reduce((m, q) => q.id > m ? q.id : m, 0);
-                qList.push({
-                    id: maxId + 1, question: qText, images: imagesArr,
-                    options: [{id:'a', text:tA}, {id:'b', text:tB}, {id:'c', text:tC}],
-                    correct
-                });
-            }
-
-            ops[curOp] = qList;
-            saveStoredOperations(ops);
-            hideQuestionForm();
-            renderQuestionsList();
+            dbOperations[opName] = [];
+            saveOperationsToCloud();
+            populateOperationSelects();
+            adminOpSelector.value = opName;
+            newOpFormContainer.classList.add('hidden');
+            loadAdminQuestions();
+            alert(`Operación "${opName}" creada correctamente.`);
         });
 
+        btnDeleteCurrentOp.addEventListener('click', () => {
+            const opName = adminOpSelector.value;
+            const keys = Object.keys(dbOperations);
+            if (keys.length <= 1) {
+                alert("Debe existir al menos una operación en el sistema.");
+                return;
+            }
+            if (confirm(`¿Está seguro de eliminar la operación "${opName}" y todas sus preguntas asociadas?`)) {
+                delete dbOperations[opName];
+                saveOperationsToCloud();
+                populateOperationSelects();
+                loadAdminQuestions();
+            }
+        });
+
+        btnNewQuestion.addEventListener('click', () => {
+            formTitle.innerHTML = `<i class="fa-solid fa-circle-plus"></i><span>Agregar Nueva Pregunta</span>`;
+            editQId.value = '';
+            inputQText.value = '';
+            optAText.value = '';
+            optBText.value = '';
+            optCText.value = '';
+            document.querySelector('input[name="correct-opt"][value="a"]').checked = true;
+            
+            photosInputsContainer.innerHTML = '';
+            addPhotoInputRow("");
+
+            questionFormContainer.classList.remove('hidden');
+            questionFormContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        btnCancelQForm.addEventListener('click', () => questionFormContainer.classList.add('hidden'));
+
+        function addPhotoInputRow(urlVal = "") {
+            const row = document.createElement('div');
+            row.className = "flex gap-2 items-center";
+            row.innerHTML = `
+                <input type="text" placeholder="https://ejemplo.com/foto_fija.jpg" value="${urlVal}" class="photo-url-input w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+                <button type="button" onclick="this.parentElement.remove()" class="px-2.5 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded text-xs transition" title="Quitar foto"><i class="fa-solid fa-trash"></i></button>
+            `;
+            photosInputsContainer.appendChild(row);
+        }
+
+        btnAddPhotoInput.addEventListener('click', () => addPhotoInputRow(""));
+
         window.editQuestion = function(id) {
-            const ops = getStoredOperations();
-            const q = (ops[adminOpSelector.value] || []).find(item => item.id === id);
-            if (q) showQuestionForm(q);
+            const currentOp = adminOpSelector.value;
+            const q = dbOperations[currentOp].find(item => item.id === id);
+            if (!q) return;
+
+            formTitle.innerHTML = `<i class="fa-solid fa-pen-to-square"></i><span>Editar Pregunta ID: ${id}</span>`;
+            editQId.value = q.id;
+            inputQText.value = q.text;
+            optAText.value = q.options.a || '';
+            optBText.value = q.options.b || '';
+            optCText.value = q.options.c || '';
+
+            const correctRadio = document.querySelector(`input[name="correct-opt"][value="${q.correct}"]`);
+            if (correctRadio) correctRadio.checked = true;
+
+            photosInputsContainer.innerHTML = '';
+            if (q.images && q.images.length > 0) {
+                q.images.forEach(img => addPhotoInputRow(img));
+            } else {
+                addPhotoInputRow("");
+            }
+
+            questionFormContainer.classList.remove('hidden');
+            questionFormContainer.scrollIntoView({ behavior: 'smooth' });
         };
 
         window.deleteQuestion = function(id) {
-            showCustomNotice("¿Deseas eliminar esta pregunta?", "Confirmar", "danger", confirmed => {
-                if(confirmed) {
-                    const curOp = adminOpSelector.value;
-                    const ops = getStoredOperations();
-                    ops[curOp] = (ops[curOp] || []).filter(q => q.id !== id);
-                    saveStoredOperations(ops);
-                    renderQuestionsList();
-                }
-            });
+            const currentOp = adminOpSelector.value;
+            if (confirm("¿Está seguro de eliminar esta pregunta?")) {
+                dbOperations[currentOp] = dbOperations[currentOp].filter(item => item.id !== id);
+                saveOperationsToCloud();
+                loadAdminQuestions();
+            }
         };
 
-        document.getElementById('btn-reset-default-questions').addEventListener('click', () => {
-            showCustomNotice("¿Restaurar preguntas por defecto?", "Restaurar", "warning", confirmed => {
-                if(confirmed) { saveStoredOperations(defaultOperationsData); renderQuestionsList(); hideQuestionForm(); }
+        btnSaveQuestion.addEventListener('click', () => {
+            const currentOp = adminOpSelector.value;
+            const text = inputQText.value.trim();
+            const a = optAText.value.trim();
+            const b = optBText.value.trim();
+            const c = optCText.value.trim();
+            const correct = document.querySelector('input[name="correct-opt"]:checked').value;
+
+            if (!text || !a || !b) {
+                alert("Por favor complete el texto de la pregunta y al menos las opciones A y B.");
+                return;
+            }
+
+            const photoInputs = photosInputsContainer.querySelectorAll('.photo-url-input');
+            const imagesArr = [];
+            photoInputs.forEach(inp => {
+                if (inp.value.trim() !== '') {
+                    imagesArr.push(inp.value.trim());
+                }
             });
+
+            const qIdVal = editQId.value;
+            if (qIdVal === "") {
+                const newId = dbOperations[currentOp].length > 0 ? Math.max(...dbOperations[currentOp].map(i => i.id)) + 1 : 1;
+                const newQ = {
+                    id: newId,
+                    text: text,
+                    images: imagesArr,
+                    options: { a, b, c },
+                    correct: correct
+                };
+                dbOperations[currentOp].push(newQ);
+            } else {
+                const idNum = parseInt(qIdVal);
+                const q = dbOperations[currentOp].find(item => item.id === idNum);
+                if (q) {
+                    q.text = text;
+                    q.images = imagesArr;
+                    q.options = { a, b, c };
+                    q.correct = correct;
+                }
+            }
+
+            saveOperationsToCloud();
+            questionFormContainer.classList.add('hidden');
+            loadAdminQuestions();
+            alert("Pregunta guardada correctamente.");
         });
+
+        btnResetDefaultQuestions.addEventListener('click', () => {
+            if (confirm("¿Desea restaurar las preguntas por defecto para esta operación? Se sobrescribirán los cambios realizados.")) {
+                const currentOp = adminOpSelector.value;
+                if (DEFAULT_OPERATIONS[currentOp]) {
+                    dbOperations[currentOp] = JSON.parse(JSON.stringify(DEFAULT_OPERATIONS[currentOp]));
+                    saveOperationsToCloud();
+                    loadAdminQuestions();
+                    alert("Operación restaurada a valores por defecto.");
+                } else {
+                    alert("No hay plantilla por defecto para esta operación personalizada.");
+                }
+            }
+        });
+
         initApp();
     </script>
 </body>
