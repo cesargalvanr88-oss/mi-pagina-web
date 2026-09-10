@@ -36,7 +36,11 @@
                 </button>
                 <button id="btn-admin-history" class="bg-blue-800 hover:bg-blue-900 text-xs px-3 py-1.5 rounded-lg border border-blue-500 font-semibold transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-file-excel text-emerald-400"></i>
-                    <span class="hidden sm:inline">Historial / Excel General</span>
+                    <span class="hidden sm:inline">Historial / Excel General</span >
+                </button> 
+                <button id="btn-admin-consulta" class="bg-blue-800 hover:bg-blue-900 text-xs px-3 py-1.5 rounded-lg border border-blue-500 font-semibold transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-file-excel text-emerald-400"></i>
+                    <span class="hidden sm:inline">Consulta Certificaciones</span >     
                 </button>
                 <div id="quiz-badge" class="hidden bg-blue-800 px-3 py-1 rounded-full text-xs font-semibold tracking-wide border border-blue-600">
                     Pregunta <span id="current-q-num">1</span>/<span id="total-q-badge">14</span>
@@ -879,6 +883,7 @@ measurementId: "G-Y3PX3GM085"
         const btnGenerateLink = document.getElementById('btn-generate-link');
         const btnAdminQuestions = document.getElementById('btn-admin-questions');
         const btnAdminHistory = document.getElementById('btn-admin-history');
+        const btnAdminConsulta = document.getElementById('btn-admin-consulta');
 
         const activeOpBadge = document.getElementById('active-op-badge');
         const currentQNum = document.getElementById('current-q-num');
@@ -1665,6 +1670,66 @@ measurementId: "G-Y3PX3GM085"
             }
         });
 
+
+
+
+btnAdminConsulta.addEventListener('click', () => {
+const empleado = prompt(
+"Ingrese nombre o número de empleado:"
+);
+ 
+if (!empleado) return;
+ 
+const registros = testHistory.filter(r =>
+r.name.toLowerCase().includes(empleado.toLowerCase()) ||
+r.id.toLowerCase().includes(empleado.toLowerCase())
+);
+if (registros.length === 0) {
+alert(
+"No se encontraron certificaciones para este colaborador."
+);
+return;
+}
+let resultado = "";
+registros.forEach(r => {
+const fechaCertificacion = new Date(r.timestamp);
+const fechaVencimiento = new Date(fechaCertificacion);
+fechaVencimiento.setFullYear(
+fechaVencimiento.getFullYear() + 1
+);
+const hoy = new Date();
+const diasRestantes =
+Math.ceil(
+(fechaVencimiento - hoy)
+/
+(1000 * 60 * 60 * 24)
+);
+let estatus = "🟢 VIGENTE";
+if (diasRestantes <= 30) {
+estatus = "🟡 PRÓXIMA A VENCER";
+}
+if (diasRestantes < 0) {
+estatus = "🔴 VENCIDA";
+}
+resultado += `
+===================================
+OPERACIÓN:
+${r.operation}
+TÉCNICO:
+${r.name}
+NÚMERO DE EMPLEADO:
+${r.id}
+FECHA CERTIFICACIÓN:
+${fechaCertificacion.toLocaleDateString()}
+FECHA VENCIMIENTO:
+${fechaVencimiento.toLocaleDateString()}
+ESTATUS:
+${estatus}
+===================================
+`;
+});
+alert(resultado);
+});
         initApp();
     </script>
 </body>
