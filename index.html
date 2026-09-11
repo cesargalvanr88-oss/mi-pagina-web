@@ -308,6 +308,8 @@
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                                 <th class="p-3">Fecha / Hora</th>
+                                <th class="p-3">Vencimiento</th>
+                                <th class="p-3 text-center">Estatus Vigencia</th>
                                 <th class="p-3">Operación / Examen</th>
                                 <th class="p-3">Número de empleado</th>
                                 <th class="p-3">Nombre del Técnico</th>
@@ -1300,7 +1302,25 @@ measurementId: "G-Y3PX3GM085"
 
         btnCloseModal.addEventListener('click', () => historyModal.classList.add('hidden'));
         btnCloseModalFooter.addEventListener('click', () => historyModal.classList.add('hidden'));
-
+function obtenerFechaVencimiento(fecha) {
+const vencimiento = new Date(fecha);
+vencimiento.setFullYear(vencimiento.getFullYear() + 1);
+return vencimiento;
+}
+function obtenerEstatus(fecha) {
+const hoy = new Date();
+const vencimiento = obtenerFechaVencimiento(fecha);
+const diasRestantes = Math.ceil(
+(vencimiento - hoy) / (1000 * 60 * 60 * 24)
+);
+if (diasRestantes < 0) {
+return "🔴 VENCIDA";
+}
+if (diasRestantes <= 30) {
+return "🟡 PRÓXIMA A VENCER";
+}
+return "🟢 VIGENTE";
+}
         function renderHistoryTable() {
             const searchVal = filterSearch.value.toLowerCase();
             const opVal = filterOperation.value;
@@ -1318,15 +1338,23 @@ measurementId: "G-Y3PX3GM085"
 
             historyTableBody.innerHTML = '';
             if (filtered.length === 0) {
-                historyTableBody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">No se encontraron registros coincidentes.</td></tr>`;
+                historyTableBody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-slate-400">No se encontraron registros coincidentes.</td></tr>`;
                 return;
             }
 
             filtered.forEach(item => {
                 const tr = document.createElement('tr');
+                const fechaVencimiento = obtenerFechaVencimiento(item.date);
+const estatusVigencia = obtenerEstatus(item.date);
                 tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
                 tr.innerHTML = `
                     <td class="p-3 font-mono text-slate-600">${item.date}</td>
+                    <td class="p-3">
+${fechaVencimiento.toLocaleDateString()}
+</td>
+<td class="p-3 text-center font-bold">
+${estatusVigencia}
+</td>
                     <td class="p-3 font-bold text-blue-900">${item.operation}</td>
                     <td class="p-3 font-mono">${item.id}</td>
                     <td class="p-3 font-bold text-slate-800">${item.name}</td>
