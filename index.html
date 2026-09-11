@@ -412,22 +412,34 @@
                         <textarea id="input-q-text" rows="2" placeholder="Ej. ¿Cuál es el componente indicado?" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
                     </div>
 
-                    <!-- Sección de Fotos Fijas Múltiples -->
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
-                        <div class="flex justify-between items-center">
-                            <label class="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
-                                <i class="fa-solid fa-images text-blue-600"></i>
-                                <span>Galería de Fotos Fijas de Referencia</span>
-                            </label>
-                            <button type="button" id="btn-add-photo-input" class="px-2.5 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-[11px] font-bold rounded transition flex items-center space-x-1">
-                                <i class="fa-solid fa-plus"></i>
-                                <span>Agregar Otra Foto Fija</span>
-                            </button>
-                        </div>
-                        <div id="photos-inputs-container" class="space-y-2">
-                        </div>
-                        <p class="text-[11px] text-slate-500">Añada las URLs web de las fotos fijas que el técnico visualizará durante el examen.</p>
-                    </div>
+                   <!-- Sección de Fotos Fijas Múltiples -->
+<div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+<div class="flex justify-between items-center">
+<label class="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
+<i class="fa-solid fa-images text-blue-600"></i>
+<span>Galería de Fotos Fijas de Referencia</span>
+</label>
+<button
+type="button"
+id="btn-add-photo-input"
+class="px-2.5 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-xs font-bold">
+<i class="fa-solid fa-plus"></i>
+<span>Agregar otra foto</span>
+</button>
+</div>
+<div id="photos-inputs-container" class="space-y-3">
+</div>
+<!-- Selector oculto de imágenes -->
+<input
+type="file"
+id="gallery-photo-input"
+accept="image/jpeg,image/png,image/webp"
+class="hidden"
+>
+<p class="text-[11px] text-slate-500">
+Selecciona las fotografías directamente desde la galería del dispositivo.
+</p>
+</div>
 
                     <div class="space-y-3">
                         <label class="block text-xs font-bold text-slate-700">Opciones de Respuesta * (Selecciona cuál es la correcta)</label>
@@ -1586,15 +1598,62 @@ ${estatusVigencia}
 
         btnCancelQForm.addEventListener('click', () => questionFormContainer.classList.add('hidden'));
 
-        function addPhotoInputRow(urlVal = "") {
-            const row = document.createElement('div');
-            row.className = "flex gap-2 items-center";
-            row.innerHTML = `
-                <input type="text" placeholder="https://ejemplo.com/foto_fija.jpg" value="${urlVal}" class="photo-url-input w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
-                <button type="button" onclick="this.parentElement.remove()" class="px-2.5 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded text-xs transition" title="Quitar foto"><i class="fa-solid fa-trash"></i></button>
-            `;
-            photosInputsContainer.appendChild(row);
-        }
+       function addPhotoInputRow(urlVal = "") {
+const row = document.createElement('div');
+row.className =
+"bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-3";
+row.innerHTML = `
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-slate-700">
+<i class="fa-solid fa-image text-blue-600"></i>
+Fotografía
+</span>
+<button
+type="button"
+class="btn-remove-photo px-2.5 py-1 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg text-xs font-bold">
+<i class="fa-solid fa-trash"></i>
+Eliminar
+</button>
+</div>
+<input
+type="file"
+accept="image/jpeg,image/png,image/webp"
+class="photo-file-input block w-full text-xs text-slate-600"
+>
+<input
+type="hidden"
+class="photo-url-input"
+value=""
+>
+<div class="photo-preview-container ${urlVal ? "" : "hidden"}">
+<img
+class="photo-preview w-full max-h-56 object-contain rounded-lg border border-slate-200 bg-white"
+alt="Vista previa de fotografía"
+>
+</div>
+<p class="photo-status text-[11px] text-slate-500">
+Selecciona una imagen JPG, PNG o WEBP.
+</p>
+`;
+const fileInput = row.querySelector('.photo-file-input');
+const hiddenInput = row.querySelector('.photo-url-input');
+const preview = row.querySelector('.photo-preview');
+const previewContainer = row.querySelector('.photo-preview-container');
+const status = row.querySelector('.photo-status');
+const removeButton = row.querySelector('.btn-remove-photo');
+// Si estamos editando una pregunta que ya tiene imagen
+if (urlVal) {
+hiddenInput.value = urlVal;
+preview.src = urlVal;
+previewContainer.classList.remove('hidden');
+status.textContent = "Imagen guardada actualmente.";
+}
+// Cuando se selecciona una nueva imagen
+fileInput.addEventListener('change', function () {
+const file = this.files[0];
+if (!file) return;
+if (!file.type.startsWith('image/')) {
+alert("
 
         btnAddPhotoInput.addEventListener('click', () => addPhotoInputRow(""));
 
