@@ -1304,6 +1304,9 @@ measurementId: "G-Y3PX3GM085"
         btnCloseModalFooter.addEventListener('click', () => historyModal.classList.add('hidden'));
 function obtenerFechaVencimiento(fecha) {
 const vencimiento = new Date(fecha);
+if (isNaN(vencimiento.getTime())) {
+return new Date();
+}
 vencimiento.setFullYear(vencimiento.getFullYear() + 1);
 return vencimiento;
 }
@@ -1344,8 +1347,8 @@ return "🟢 VIGENTE";
 
             filtered.forEach(item => {
                 const tr = document.createElement('tr');
-                const fechaVencimiento = obtenerFechaVencimiento(item.date);
-const estatusVigencia = obtenerEstatus(item.date);
+                const fechaVencimiento = obtenerFechaVencimiento(item.timestamp);
+const estatusVigencia = obtenerEstatus(item.timestamp);
                 tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
                 tr.innerHTML = `
                     <td class="p-3 font-mono text-slate-600">${item.date}</td>
