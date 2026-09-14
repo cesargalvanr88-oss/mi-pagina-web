@@ -1598,7 +1598,7 @@ ${estatusVigencia}
 
         btnCancelQForm.addEventListener('click', () => questionFormContainer.classList.add('hidden'));
 
-       function addPhotoInputRow(urlVal = "") {
+function addPhotoInputRow(urlVal = "") {
 const row = document.createElement('div');
 row.className =
 "bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-3";
@@ -1615,11 +1615,19 @@ class="btn-remove-photo px-2.5 py-1 bg-rose-100 hover:bg-rose-200 text-rose-700 
 Eliminar
 </button>
 </div>
+<label class="block cursor-pointer">
+<div class="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700
+text-white text-xs font-bold rounded-lg
+text-center transition">
+<i class="fa-solid fa-images mr-1"></i>
+Seleccionar imagen de la galería
+</div>
 <input
 type="file"
-accept="image/jpeg,image/png,image/webp"
-class="photo-file-input block w-full text-xs text-slate-600"
+accept="image/*"
+class="photo-file-input hidden"
 >
+</label>
 <input
 type="hidden"
 class="photo-url-input"
@@ -1627,33 +1635,99 @@ value=""
 >
 <div class="photo-preview-container ${urlVal ? "" : "hidden"}">
 <img
-class="photo-preview w-full max-h-56 object-contain rounded-lg border border-slate-200 bg-white"
+class="photo-preview w-full max-h-64 object-contain
+rounded-lg border border-slate-200 bg-white"
 alt="Vista previa de fotografía"
 >
 </div>
 <p class="photo-status text-[11px] text-slate-500">
-Selecciona una imagen JPG, PNG o WEBP.
+Puedes seleccionar una fotografía desde tu celular o computadora.
 </p>
 `;
-const fileInput = row.querySelector('.photo-file-input');
-const hiddenInput = row.querySelector('.photo-url-input');
-const preview = row.querySelector('.photo-preview');
-const previewContainer = row.querySelector('.photo-preview-container');
-const status = row.querySelector('.photo-status');
-const removeButton = row.querySelector('.btn-remove-photo');
-// Si estamos editando una pregunta que ya tiene imagen
+const fileInput =
+row.querySelector('.photo-file-input');
+const hiddenInput =
+row.querySelector('.photo-url-input');
+const preview =
+row.querySelector('.photo-preview');
+const previewContainer =
+row.querySelector('.photo-preview-container');
+const status =
+row.querySelector('.photo-status');
+const removeButton =
+row.querySelector('.btn-remove-photo');
+// ----------------------------------------
+// IMAGEN YA GUARDADA
+// ----------------------------------------
 if (urlVal) {
 hiddenInput.value = urlVal;
 preview.src = urlVal;
 previewContainer.classList.remove('hidden');
-status.textContent = "Imagen guardada actualmente.";
+status.textContent =
+"Imagen guardada actualmente.";
 }
-// Cuando se selecciona una nueva imagen
+// ----------------------------------------
+// SELECCIONAR NUEVA IMAGEN
+// ----------------------------------------
 fileInput.addEventListener('change', function () {
 const file = this.files[0];
 if (!file) return;
+// Comprobar que sea una imagen
 if (!file.type.startsWith('image/')) {
-alert("
+alert(
+"Selecciona un archivo de imagen válido."
+);
+this.value = "";
+return;
+}
+// Máximo 5 MB por fotografía
+if (file.size > 5 * 1024 * 1024) {
+alert(
+"La imagen es demasiado grande. Selecciona una imagen menor de 5 MB."
+);
+this.value = "";
+return;
+}
+status.textContent =
+"Procesando imagen...";
+const reader = new FileReader();
+reader.onload = function (event) {
+const imageData =
+event.target.result;
+// Guardar imagen en el mismo campo
+// que actualmente utiliza tu sistema
+hiddenInput.value =
+imageData;
+// Mostrar vista previa
+preview.src =
+imageData;
+previewContainer.classList.remove(
+'hidden'
+);
+status.textContent =
+"Imagen lista para guardar.";
+};
+reader.onerror = function () {
+alert(
+"No fue posible leer la imagen seleccionada."
+);
+status.textContent =
+"Error al cargar la imagen.";
+};
+reader.readAsDataURL(file);
+});
+// ----------------------------------------
+// ELIMINAR FOTOGRAFÍA
+// ----------------------------------------
+removeButton.addEventListener(
+'click',
+function () {
+row.remove();
+}
+);
+// Agregar la fotografía al formulario
+photosInputsContainer.appendChild(row);
+}
 
         btnAddPhotoInput.addEventListener('click', () => addPhotoInputRow(""));
 
