@@ -1825,11 +1825,34 @@ photosInputsContainer.appendChild(row);
             }
 
             saveOperationsToCloud();
-            questionFormContainer.classList.add('hidden');
-            loadAdminQuestions();
-            alert("Pregunta guardada correctamente.");
-        });
-
+// Actualizar la lista de preguntas sin salir de la operación actual
+loadAdminQuestions();
+// Limpiar el formulario para capturar la siguiente pregunta
+editQId.value = '';
+inputQText.value = '';
+optAText.value = '';
+optBText.value = '';
+optCText.value = '';
+// Marcar nuevamente la opción A como correcta por defecto
+document.querySelector(
+'input[name="correct-opt"][value="a"]'
+).checked = true;
+// Limpiar fotografías de la pregunta anterior
+photosInputsContainer.innerHTML = '';
+addPhotoInputRow("");
+// Preparar formulario para una nueva pregunta
+formTitle.innerHTML = `
+<i class="fa-solid fa-circle-plus"></i>
+<span>Agregar Nueva Pregunta</span>
+`;
+// Mantener abierto el formulario
+questionFormContainer.classList.remove('hidden');
+// Regresar visualmente al formulario
+questionFormContainer.scrollIntoView({
+behavior: 'smooth',
+block: 'start'
+});
+});
         btnResetDefaultQuestions.addEventListener('click', () => {
             if (confirm("¿Desea restaurar las preguntas por defecto para esta operación? Se sobrescribirán los cambios realizados.")) {
                 const currentOp = adminOpSelector.value;
