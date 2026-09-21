@@ -1772,14 +1772,20 @@ photosInputsContainer.appendChild(row);
             questionFormContainer.scrollIntoView({ behavior: 'smooth' });
         };
 
-        window.deleteQuestion = function(id) {
-            const currentOp = adminOpSelector.value;
-            if (confirm("¿Está seguro de eliminar esta pregunta?")) {
-                dbOperations[currentOp] = dbOperations[currentOp].filter(item => item.id !== id);
-                saveOperationsToCloud();
-                loadAdminQuestions();
-            }
-        };
+       window.deleteQuestion = function(id) {
+const currentOp = adminOpSelector.value;
+if (confirm("¿Está seguro de eliminar esta pregunta?")) {
+dbOperations[currentOp] = dbOperations[currentOp].filter(
+item => item.id !== id
+);
+// Guardar cambios
+saveOperationsToCloud();
+// Mantener seleccionada la misma operación
+adminOpSelector.value = currentOp;
+// Actualizar las preguntas de esa misma operación
+loadAdminQuestions();
+}
+};
 
         btnSaveQuestion.addEventListener('click', () => {
             const currentOp = adminOpSelector.value;
