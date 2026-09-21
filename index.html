@@ -996,7 +996,9 @@ measurementId: "G-Y3PX3GM085"
 
         function populateOperationSelects() {
             const ops = Object.keys(dbOperations);
-            
+            const selectedUserOp = userOperationSelect ? userOperationSelect.value : "";
+const selectedAdminOp = adminOpSelector ? adminOpSelector.value : "";
+const selectedFilterOp = filterOperation ? filterOperation.value : "";
             // Selector de inicio
             userOperationSelect.innerHTML = '';
             ops.forEach(op => {
