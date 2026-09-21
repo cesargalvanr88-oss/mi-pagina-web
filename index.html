@@ -1017,16 +1017,20 @@ const selectedFilterOp = filterOperation ? filterOperation.value : "";
                 filterOperation.appendChild(opt);
             });
 
-            // Selector de admin
-            if (adminOpSelector) {
-                adminOpSelector.innerHTML = '';
-                ops.forEach(op => {
-                    const opt = document.createElement('option');
-                    opt.value = op;
-                    opt.textContent = op;
-                    adminOpSelector.appendChild(opt);
-                });
-            }
+           // Selector de admin
+if (adminOpSelector) {
+adminOpSelector.innerHTML = '';
+ops.forEach(op => {
+const opt = document.createElement('option');
+opt.value = op;
+opt.textContent = op;
+adminOpSelector.appendChild(opt);
+});
+// Mantener seleccionada la operación que se estaba administrando
+if (selectedAdminOp && dbOperations[selectedAdminOp]) {
+adminOpSelector.value = selectedAdminOp;
+}
+}
         }
 
         // --- FLUJO DE EXAMEN ---
