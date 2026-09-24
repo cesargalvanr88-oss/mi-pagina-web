@@ -14,26 +14,31 @@ body {
 font-family: 'Inter', sans-serif;
 }
  
-/* LOGO HARMAN */
+/* LOGO HARMAN DE FONDO */
 #start-screen {
 position: relative;
+overflow: hidden;
 }
  
 #start-screen::before {
 content: "";
-display: block;
- 
-width: 300px;
-height: 100px;
- 
-margin: 20px auto 30px auto;
+position: absolute;
+inset: 0;
  
 background-image: url("harman-logo.png.png");
 background-repeat: no-repeat;
 background-position: center;
-background-size: contain;
+background-size: 75% auto;
+ 
+opacity: 0.08;
  
 pointer-events: none;
+z-index: 0;
+}
+ 
+#start-screen >  {
+position: relative;
+z-index: 1;
 }
     </style>
 </head>
