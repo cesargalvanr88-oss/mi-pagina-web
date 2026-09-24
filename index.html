@@ -14,27 +14,26 @@ body {
 font-family: 'Inter', sans-serif;
 }
  
-/* LOGO HARMAN COMO MARCA DE AGUA */
+/* LOGO HARMAN */
 #start-screen {
 position: relative;
-overflow: hidden;
-isolation: isolate;
 }
  
 #start-screen::before {
 content: "";
-position: absolute;
-inset: 0;
+display: block;
+ 
+width: 300px;
+height: 100px;
+ 
+margin: 20px auto 30px auto;
  
 background-image: url("harman-logo.png");
 background-repeat: no-repeat;
 background-position: center;
-background-size: 75% auto;
- 
-opacity: 0.07;
+background-size: contain;
  
 pointer-events: none;
-z-index: -1;
 }
     </style>
 </head>
