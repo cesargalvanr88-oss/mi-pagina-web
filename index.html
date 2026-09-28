@@ -13,13 +13,41 @@
 body {
 font-family: 'Inter', sans-serif;
 }
+/* LOGO HARMAN COMO MARCA DE AGUA */
+#start-screen {
+position: relative;
+overflow: hidden;
+}
  
+/* Logo detrás de toda la información */
+#harman-bg-logo {
+position: absolute;
+z-index: 0;
  
+/* Centrar */
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+ 
+/* Tamaño */
+width: 75%;
+max-width: 700px;
+height: auto;
+ 
+/* Efecto marca de agua */
+opacity: 0.07;
+ 
+/* No interfiere con botones */
+pointer-events: none;
+user-select: none;
+}
+ 
+/* Todo el contenido queda encima del logo */
 #start-screen > *:not(#harman-bg-logo) {
 position: relative;
 z-index: 2;
-}
-
+} 
+ 
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between">
