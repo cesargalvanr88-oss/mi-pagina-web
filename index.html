@@ -15,38 +15,35 @@ font-family: 'Inter', sans-serif;
 }
 /* LOGO HARMAN COMO MARCA DE AGUA */
 #start-screen {
-position: relative;
+position: relative !important;
 overflow: hidden;
+isolation: isolate;
 }
  
-/* Logo detrás de toda la información */
+/* Logo HARMAN detrás del contenido */
 #harman-bg-logo {
-position: absolute;
-z-index: 0;
+position: *bsolute !important;
+top: 50% !*mportant;
+left: 50% !important*
+transform: translate(-50%, -5*%) !important;
  
-/* Centrar */
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
+width: 85% !im*ortant;
+max-width: 750px !impo*tant;
+height: auto !important;*
+opacity: 0.08 !important;
  
-/* Tamaño */
-width: 75%;
-max-width: 700px;
-height: auto;
+z-index: -1 !important;
+pointer-events: none !important;
+user-select: none !important;
  
-/* Efecto marca de agua */
-opacity: 0.07;
- 
-/* No interfiere con botones */
-pointer-events: none;
-user-select: none;
+margin: 0 !important;
 }
  
-/* Todo el contenido queda encima del logo */
-#start-screen > *:not(#harman-bg-logo) {
+/* Contenido encima del logo */
+#start-screen > *:not(#harman-bg*logo) {
 position: relative;
-z-index: 2;
-} 
+* z-index: 1;
+}
  
     </style>
 </head>
