@@ -15,34 +15,11 @@ font-family: 'Inter', sans-serif;
 }
 /* LOGO HARMAN COMO MARCA DE AGUA */
 #start-screen {
-position: relative !important;
-overflow: hidden;
-isolation: isolate;
-}
- 
-/* Logo HARMAN detrás del contenido */
-#harman-bg-logo {
-position: *bsolute !important;
-top: 50% !*mportant;
-left: 50% !important*
-transform: translate(-50%, -5*%) !important;
- 
-width: 85% !im*ortant;
-max-width: 750px !impo*tant;
-height: auto !important;*
-opacity: 0.08 !important;
- 
-z-index: -1 !important;
-pointer-events: none !important;
-user-select: none !important;
- 
-margin: 0 !important;
-}
- 
-/* Contenido encima del logo */
-#start-screen > *:not(#harman-bg*logo) {
-position: relative;
-* z-index: 1;
+background-color: white !important;
+background-image: url("harman-logo.png") !important;
+background-repeat: no-repeat !important;
+background-position: center center !important;
+background-size: 75% auto !important;
 }
  
     </style>
