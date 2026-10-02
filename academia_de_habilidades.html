@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia de Habilidades - Destreza y Memoria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Fredoka', sans-serif; }
+        .bounce-custom { animation: bounce 1.5s infinite; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-5%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+            50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-800 min-h-screen text-slate-800 flex flex-col items-center justify-center p-4">
+
+    <!-- Contenedor Principal -->
+    <div id="app" class="w-full max-w-xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-6 md:p-8 relative overflow-hidden border-4 border-white">
+        
+        <!-- Pantalla de Inicio / Selección de Juegos -->
+        <div id="screen-welcome" class="space-y-4">
+            <div class="text-center space-y-1">
+                <div class="inline-block bg-amber-300 text-amber-900 px-4 py-1.5 rounded-full font-bold text-xs tracking-wide shadow-sm uppercase">
+                    🧠 Gimnasio Mental Infantil
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-indigo-700">Academia de Destreza</h1>
+                <p class="text-gray-600 text-sm">Elige un desafío para entrenar tu mente hoy:</p>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-2.5 my-2 max-h-[380px] overflow-y-auto pr-1">
+                <!-- Juego 1: Memoria de Secuencias -->
+                <button onclick="startMemoryGame()" class="group p-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-2xl shadow-md transform transition hover:-translate-y-0.5 text-left border-b-4 border-indigo-900 cursor-pointer flex items-center space-x-3">
+                    <div class="text-3xl bg-white/20 p-2.5 rounded-xl">🧠</div>
+                    <div>
+                        <div class="text-lg font-bold">Memoria Relámpago</div>
+                        <div class="text-indigo-100 text-xs">Memoriza los números antes de que desaparezcan.</div>
+                    </div>
+                </button>
+
+                <!-- Juego 2: Cívica y Ética -->
+                <button onclick="startCivicsGame()" class="group p-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl shadow-md transform transition hover:-translate-y-0.5 text-left border-b-4 border-teal-900 cursor-pointer flex items-center space-x-3">
+                    <div class="text-3xl bg-white/20 p-2.5 rounded-xl">🤝</div>
+                    <div>
+                        <div class="text-lg font-bold">Valores Cívica y Ética</div>
+                        <div class="text-emerald-100 text-xs">Aprende sobre derechos, convivencia y valores ciudadanos.</div>
+                    </div>
+                </button>
+
+                <!-- Juego 3: Secuencias Lógicas (Patrones Ocultos) -->
+                <button onclick="startLogicGame()" class="group p-3 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white rounded-2xl shadow-md transform transition hover:-translate-y-0.5 text-left border-b-4 border-rose-900 cursor-pointer flex items-center space-x-3">
+                    <div class="text-3xl bg-white/20 p-2.5 rounded-xl">🧩</div>
+                    <div>
+                        <div class="text-lg font-bold">Patrones Ocultos</div>
+                        <div class="text-pink-100 text-xs">Descubre qué elemento continúa en la serie lógica.</div>
+                    </div>
+                </button>
+
+                <!-- Juego 4: Ejercicios Matemáticos -->
+                <button onclick="startMathQuizGame()" class="group p-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-2xl shadow-md transform transition hover:-translate-y-0.5 text-left border-b-4 border-orange-900 cursor-pointer flex items-center space-x-3">
+                    <div class="text-3xl bg-white/20 p-2.5 rounded-xl">🔢</div>
+                    <div>
+                        <div class="text-lg font-bold">Ejercicios Matemáticos</div>
+                        <div class="text-amber-100 text-xs">Pon a prueba tus sumas, restas y multiplicaciones.</div>
+                    </div>
+                </button>
+
+                <!-- Juego 5: Historia de México y Ciencias Naturales -->
+                <button onclick="startTriviaGame()" class="group p-3 bg-gradient-to-r from-cyan-500 to-blue-700 hover:from-cyan-600 hover:to-blue-800 text-white rounded-2xl shadow-md transform transition hover:-translate-y-0.5 text-left border-b-4 border-blue-900 cursor-pointer flex items-center space-x-3">
+                    <div class="text-3xl bg-white/20 p-2.5 rounded-xl">🇲🇽</div>
+                    <div>
+                        <div class="text-lg font-bold">Historia y Ciencias Naturales</div>
+                        <div class="text-cyan-100 text-xs">Aprende sobre México y la naturaleza que te rodea.</div>
+                    </div>
+                </button>
+
+                <!-- Juego 6: Desafíos de Ortografía -->
+                <button onclick="startSpellingGame()" class="group p-3 bg-gradient-to-r from-purple-500 to-fuchsia-600 hover:from-purple-600 hover:to-fuchsia-700 text-white rounded-2xl shadow-md transform transition hover:-translate-y-0.5 text-left border-b-4 border-fuchsia-900 cursor-pointer flex items-center space-x-3">
+                    <div class="text-3xl bg-white/20 p-2.5 rounded-xl">✍️</div>
+                    <div>
+                        <div class="text-lg font-bold">Desafíos de Ortografía</div>
+                        <div class="text-purple-100 text-xs">Completa las palabras correctamente y mejora tu escritura.</div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Historial Global de Destreza -->
+            <div class="border-t border-gray-200 pt-3 text-left">
+                <div class="flex justify-between items-center mb-1.5">
+                    <h3 class="font-bold text-indigo-900 text-xs">📊 Historial de Retos</h3>
+                    <button onclick="clearHistory()" class="text-xs text-rose-500 hover:underline font-semibold cursor-pointer">Borrar historial</button>
+                </div>
+                <div id="history-container" class="max-h-24 overflow-y-auto space-y-1.5 pr-1">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= JUEGO 1: MEMORIA ================= -->
+        <div id="game-memory" class="hidden space-y-6 text-center">
+            <div class="flex justify-between items-center bg-gray-100 p-3 rounded-2xl text-xs font-bold text-indigo-700">
+                <button onclick="returnHome()" class="px-3 py-1 bg-white rounded-lg shadow cursor-pointer">⬅️ Menú</button>
+                <span id="mem-level">Nivel 1</span>
+                <span id="mem-score">Puntos: 0</span>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-indigo-900">¡Memoriza la secuencia!</h2>
+                <p id="mem-instruction" class="text-sm text-gray-500">Observa atentamente los números...</p>
+            </div>
+            
+            <div id="mem-board" class="flex justify-center gap-3 my-6 min-h-[80px] items-center">
+                <!-- Generado dinámicamente -->
+            </div>
+
+            <div id="mem-input-section" class="hidden space-y-4">
+                <p class="text-sm font-semibold text-indigo-800">Escribe los números en orden:</p>
+                <div id="mem-inputs" class="flex justify-center gap-2"></div>
+                <button onclick="checkMemoryAnswer()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow cursor-pointer">Comprobar Respuesta</button>
+            </div>
+        </div>
+
+        <!-- ================= JUEGO 2: CÍVICA Y ÉTICA ================= -->
+        <div id="game-civics" class="hidden space-y-6 text-center">
+            <div class="flex justify-between items-center bg-gray-100 p-3 rounded-2xl text-xs font-bold text-indigo-700">
+                <button onclick="returnHome()" class="px-3 py-1 bg-white rounded-lg shadow cursor-pointer">⬅️ Menú</button>
+                <span id="civics-counter">Pregunta 1 de 5</span>
+                <span id="civics-score">Puntos: 0</span>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-indigo-900">Formación Cívica y Ética</h2>
+                <div id="civics-question" class="text-xl font-bold text-teal-800 bg-teal-50 p-4 rounded-2xl border border-teal-100 min-h-[90px] flex items-center justify-center"></div>
+            </div>
+            <div id="civics-options" class="grid grid-cols-1 gap-2.5"></div>
+        </div>
+
+        <!-- ================= JUEGO 3: PATRONES ================= -->
+        <div id="game-logic" class="hidden space-y-6 text-center">
+            <div class="flex justify-between items-center bg-gray-100 p-3 rounded-2xl text-xs font-bold text-indigo-700">
+                <button onclick="returnHome()" class="px-3 py-1 bg-white rounded-lg shadow cursor-pointer">⬅️ Menú</button>
+                <span id="log-counter">Reto 1 de 5</span>
+                <span id="log-score">Puntos: 0</span>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-indigo-900">¿Qué figura o número sigue?</h2>
+                <div id="log-question" class="text-3xl font-extrabold text-indigo-600 bg-indigo-50 p-4 rounded-2xl border border-indigo-100"></div>
+            </div>
+
+            <div id="log-options" class="grid grid-cols-2 gap-3">
+                <!-- Opciones dinámicas -->
+            </div>
+        </div>
+
+        <!-- ================= JUEGO 4: MATEMÁTICAS ================= -->
+        <div id="game-math" class="hidden space-y-6 text-center">
+            <div class="flex justify-between items-center bg-gray-100 p-3 rounded-2xl text-xs font-bold text-indigo-700">
+                <button onclick="returnHome()" class="px-3 py-1 bg-white rounded-lg shadow cursor-pointer">⬅️ Menú</button>
+                <span id="math-counter">Pregunta 1 de 5</span>
+                <span id="math-score">Puntos: 0</span>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-indigo-900">¡Ejercicio Matemático!</h2>
+                <div id="math-question" class="text-3xl font-extrabold text-orange-600 bg-orange-50 p-4 rounded-2xl border border-orange-100"></div>
+            </div>
+            <div id="math-options" class="grid grid-cols-2 gap-3"></div>
+        </div>
+
+        <!-- ================= JUEGO 5: HISTORIA Y CIENCIAS ================= -->
+        <div id="game-trivia" class="hidden space-y-6 text-center">
+            <div class="flex justify-between items-center bg-gray-100 p-3 rounded-2xl text-xs font-bold text-indigo-700">
+                <button onclick="returnHome()" class="px-3 py-1 bg-white rounded-lg shadow cursor-pointer">⬅️ Menú</button>
+                <span id="trivia-counter">Pregunta 1 de 5</span>
+                <span id="trivia-score">Puntos: 0</span>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-indigo-900" id="trivia-category-title">Historia y Naturaleza</h2>
+                <div id="trivia-question" class="text-xl font-bold text-cyan-800 bg-cyan-50 p-4 rounded-2xl border border-cyan-100 min-h-[90px] flex items-center justify-center"></div>
+            </div>
+            <div id="trivia-options" class="grid grid-cols-1 gap-2.5"></div>
+        </div>
+
+        <!-- ================= JUEGO 6: ORTOGRAFÍA ================= -->
+        <div id="game-spelling" class="hidden space-y-6 text-center">
+            <div class="flex justify-between items-center bg-gray-100 p-3 rounded-2xl text-xs font-bold text-indigo-700">
+                <button onclick="returnHome()" class="px-3 py-1 bg-white rounded-lg shadow cursor-pointer">⬅️ Menú</button>
+                <span id="spell-counter">Reto 1 de 5</span>
+                <span id="spell-score">Puntos: 0</span>
+            </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-indigo-900">¿Cómo se escribe correctamente?</h2>
+                <p class="text-xs text-gray-500">Selecciona la opción con la ortografía correcta.</p>
+                <div id="spell-hint" class="text-lg font-bold text-purple-700 bg-purple-50 p-3 rounded-xl border border-purple-100"></div>
+            </div>
+            <div id="spell-options" class="grid grid-cols-2 gap-3"></div>
+        </div>
+
+        <!-- Pantalla de Resultados General de un Reto -->
+        <div id="screen-results" class="hidden text-center space-y-6 py-4">
+            <div class="text-6xl bounce-custom">🏆</div>
+            <h2 id="res-title" class="text-3xl font-bold text-indigo-900">¡Excelente Destreza!</h2>
+            <div class="bg-indigo-50 p-6 rounded-3xl border-2 border-indigo-100 max-w-sm mx-auto space-y-2">
+                <p class="text-gray-600">Resultado obtenido:</p>
+                <div id="res-score" class="text-4xl font-extrabold text-indigo-600">0 Puntos</div>
+                <p id="res-feedback" class="text-sm font-semibold text-emerald-600 pt-1">¡Tu cerebro se está volviendo más rápido!</p>
+            </div>
+            
+            <button onclick="returnHome()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg transition transform active:scale-95 text-base cursor-pointer">
+                🏠 Volver al Menú Principal
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Modal Tutor de Retroalimentación -->
+    <div id="tutor-modal" class="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl border-4 border-indigo-100">
+            <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner bounce-custom" id="tutor-avatar">🤖</div>
+            <h3 class="text-xl font-bold text-indigo-900" id="tutor-title">¡Consejo de Coki, tu tutor!</h3>
+            <p id="tutor-message" class="text-gray-600 text-sm bg-indigo-50/70 p-3.5 rounded-2xl border border-indigo-100 font-medium leading-relaxed"></p>
+            <button onclick="closeTutorModal()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow cursor-pointer transition transform active:scale-95">¡Entendido, continuar! 💪</button>
+        </div>
+    </div>
+
+    <script>
+        // Cargar historial al iniciar
+        window.onload = function() {
+            renderHistory();
+        };
+
+        function returnHome() {
+            document.getElementById('game-memory').classList.add('hidden');
+            document.getElementById('game-civics').classList.add('hidden');
+            document.getElementById('game-logic').classList.add('hidden');
+            document.getElementById('game-math').classList.add('hidden');
+            document.getElementById('game-trivia').classList.add('hidden');
+            document.getElementById('game-spelling').classList.add('hidden');
+            document.getElementById('screen-results').classList.add('hidden');
+            document.getElementById('screen-welcome').classList.remove('hidden');
+            renderHistory();
+        }
+
+        // ================= LOGICA JUEGO 1: MEMORIA =================
+        let memSequence = [];
+        let memUserInputs = [];
+        let memCurrentLevel = 1;
+        let memScoreCount = 0;
+
+        function startMemoryGame() {
+            memCurrentLevel = 1;
+            memScoreCount = 0;
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('game-memory').classList.remove('hidden');
+            loadMemoryLevel();
+        }
+
+        function loadMemoryLevel() {
+            document.getElementById('mem-level').innerText = `Nivel ${memCurrentLevel}`;
+            document.getElementById('mem-score').innerText = `Puntos: ${memScoreCount}`;
+            document.getElementById('mem-input-section').classList.add('hidden');
+            
+            const board = document.getElementById('mem-board');
+            board.innerHTML = '';
+            memSequence = [];
+
+            let count = Math.min(2 + memCurrentLevel, 6);
+            for (let i = 0; i < count; i++) {
+                memSequence.push(Math.floor(Math.random() * 9) + 1);
+            }
+
+            memSequence.forEach(num => {
+                let box = document.createElement('div');
+                box.className = "w-12 h-12 bg-indigo-600 text-white font-bold text-2xl rounded-xl flex items-center justify-center shadow";
+                box.innerText = num;
+                board.appendChild(box);
+            });
+
+            document.getElementById('mem-instruction').innerText = "Memoriza los números...";
+
+            setTimeout(() => {
+                board.innerHTML = '';
+                document.getElementById('mem-instruction').innerText = "¡Escribe los números en el orden correcto!";
+                
+                const inputsContainer = document.getElementById('mem-inputs');
+                inputsContainer.innerHTML = '';
+                memUserInputs = [];
+
+                for (let i = 0; i < memSequence.length; i++) {
+                    let input = document.createElement('input');
+                    input.type = 'number';
+                    input.min = '1';
+                    input.max = '9';
+                    input.className = "w-12 h-12 text-center text-xl font-bold border-2 border-indigo-200 rounded-xl focus:border-indigo-600 focus:outline-none";
+                    input.oninput = (e) => { memUserInputs[i] = parseInt(e.target.value) || 0; };
+                    inputsContainer.appendChild(input);
+                }
+
+                document.getElementById('mem-input-section').classList.remove('hidden');
+            }, 2500 + (memCurrentLevel * 500));
+        }
+
+        function checkMemoryAnswer() {
+            let correct = true;
+            for (let i = 0; i < memSequence.length; i++) {
+                if (memUserInputs[i] !== memSequence[i]) {
+                    correct = false;
+                    break;
+                }
+            }
+
+            if (correct) {
+                memScoreCount += 15;
+                memCurrentLevel++;
+                if (memCurrentLevel > 4) {
+                    endGame("Memoria Relámpago", `${memScoreCount} Puntos 🧠`, "¡Excelente memoria de elefante!");
+                } else {
+                    loadMemoryLevel();
+                }
+            } else {
+                endGame("Memoria Relámpago", `${memScoreCount} Puntos 🧠`, "¡Buen intento! Sigue entrenando tu retentiva.");
+            }
+        }
+
+        // ================= LOGICA JUEGO 2: CÍVICA Y ÉTICA =================
+        let civicsList = [];
+        let civicsIdx = 0;
+        let civicsScore = 0;
+
+        function startCivicsGame() {
+            civicsIdx = 0;
+            civicsScore = 0;
+            civicsList = [
+                { q: "¿Qué valor nos enseña a tratar a todos los demás con justicia y respeto por igual?", answer: "La Igualdad", options: ["La Igualdad", "El Egoísmo", "La Envidia", "La Indiferencia"], explanation: "La igualdad significa que todas las personas tenemos los mismos derechos y merecemos el mismo respeto sin importar nuestras diferencias." },
+                { q: "¿Cuál es un derecho fundamental de todas las niñas y niños?", answer: "Derecho a la educación y salud", options: ["Trabajar todo el día", "Derecho a la educación y salud", "No ir a la escuela", "Comer solo dulces"], explanation: "La salud y la educación son derechos esenciales que garantizan que crezcas feliz, protegido y preparado para el futuro." },
+                { q: "¿Qué debemos hacer cuando tenemos un desacuerdo con un compañero?", answer: "Dialogar y escuchar con respeto", options: ["Pelear y gritar", "Dialogar y escuchar con respeto", "Ignorarlo para siempre", "Quejarse sin hablar"], explanation: "El diálogo y la empatía son las mejores herramientas para resolver cualquier diferencia pacíficamente." },
+                { q: "¿Cómo se le llama al conjunto de reglas que permiten una convivencia armónica en la sociedad?", answer: "Leyes y Normas de Convivencia", options: ["Leyes y Normas de Convivencia", "Caprichos", "Secretos", "Juegos de azar"], explanation: "Las normas y leyes existen para protegernos, mantener el orden y asegurar que todos vivamos con respeto mutuo." },
+                { q: "¿Qué valor demostramos cuando ayudamos a alguien que lo necesita sin esperar nada a cambio?", answer: "La Solidaridad", options: ["La Solidaridad", "La Vanidad", "La Competencia", "El Orgullo"], explanation: "La solidaridad nos une como comunidad al apoyar a quienes más lo necesitan en momentos difíciles." }
+            ];
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('game-civics').classList.remove('hidden');
+            loadCivicsQuestion();
+        }
+
+        function loadCivicsQuestion() {
+            if (civicsIdx >= civicsList.length) {
+                endGame("Valores Cívica y Ética", `${civicsScore} Puntos 🤝`, "¡Excelente comprensión de la convivencia y los valores!");
+                return;
+            }
+            let item = civicsList[civicsIdx];
+            document.getElementById('civics-counter').innerText = `Pregunta ${civicsIdx + 1} de ${civicsList.length}`;
+            document.getElementById('civics-score').innerText = `Puntos: ${civicsScore}`;
+            document.getElementById('civics-question').innerText = item.q;
+
+            let container = document.getElementById('civics-options');
+            container.innerHTML = '';
+
+            let shuffled = [...item.options].sort(() => Math.random() - 0.5);
+            shuffled.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = "py-3 px-4 bg-white border-2 border-teal-100 hover:border-teal-500 hover:bg-teal-50 text-teal-900 text-base font-bold rounded-2xl shadow-sm transition transform active:scale-95 cursor-pointer text-center";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (opt === item.answer) {
+                        civicsScore += 20;
+                        civicsIdx++;
+                        loadCivicsQuestion();
+                    } else {
+                        showTutorFeedback("🤖 Coki el Tutor", item.explanation, () => {
+                            civicsIdx++;
+                            loadCivicsQuestion();
+                        });
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // ================= LOGICA JUEGO 3: PATRONES =================
+        let logQuestionsList = [];
+        let logCurrentIdx = 0;
+        let logScoreCount = 0;
+
+        function startLogicGame() {
+            logCurrentIdx = 0;
+            logScoreCount = 0;
+            logQuestionsList = [
+                { q: "🔴 🔵 🔴 🔵 🔴 ?", options: ["🔵", "🔴", "🟢", "🟡"], answer: "🔵", explanation: "Observa el patrón que se repite alternando entre rojo y azul. Después del rojo siempre sigue el azul." },
+                { q: "2, 4, 6, 8, ?", options: ["9", "10", "12", "11"], answer: "10", explanation: "Esta secuencia va sumando de 2 en 2. Después del 8 sigue el 10." },
+                { q: "⭐ ⭐ 🌙 ⭐ ⭐ 🌙 ?", options: ["⭐", "🌙", "☀️", "☁️"], answer: "⭐", explanation: "El patrón muestra dos estrellas y una luna repetidas cíclicamente. Después de la luna reinician las estrellas." },
+                { q: "5, 10, 15, 20, ?", options: ["22", "25", "30", "21"], answer: "25", explanation: "Los números van aumentando de 5 en 5. Después del 20 sigue el 25." },
+                { q: "🟩 🟦 🟨 🟩 🟦 ?", options: ["🟩", "🟦", "🟨", "🟥"], answer: "🟨", explanation: "La secuencia repite la serie de tres colores: verde, azul y amarillo. Tras el azul continúa el amarillo." }
+            ];
+
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('game-logic').classList.remove('hidden');
+            loadLogicQuestion();
+        }
+
+        function loadLogicQuestion() {
+            if (logCurrentIdx >= logQuestionsList.length) {
+                endGame("Patrones Ocultos", `${logScoreCount} Puntos 🧩`, "¡Excelente razonamiento lógico!");
+                return;
+            }
+
+            let item = logQuestionsList[logCurrentIdx];
+            document.getElementById('log-counter').innerText = `Reto ${logCurrentIdx + 1} de ${logQuestionsList.length}`;
+            document.getElementById('log-score').innerText = `Puntos: ${logScoreCount}`;
+            document.getElementById('log-question').innerText = item.q;
+
+            let optContainer = document.getElementById('log-options');
+            optContainer.innerHTML = '';
+
+            item.options.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = "py-4 bg-white border-2 border-indigo-100 hover:border-indigo-500 hover:bg-indigo-50 text-indigo-900 text-2xl font-bold rounded-2xl shadow-sm transition transform active:scale-95 cursor-pointer";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (opt === item.answer) {
+                        logScoreCount += 20;
+                        logCurrentIdx++;
+                        loadLogicQuestion();
+                    } else {
+                        showTutorFeedback("🤖 Coki el Tutor", item.explanation, () => {
+                            logCurrentIdx++;
+                            loadLogicQuestion();
+                        });
+                    }
+                };
+                optContainer.appendChild(btn);
+            });
+        }
+
+        // ================= LOGICA JUEGO 4: MATEMÁTICAS =================
+        let mathList = [];
+        let mathIdx = 0;
+        let mathScore = 0;
+
+        function startMathQuizGame() {
+            mathIdx = 0;
+            mathScore = 0;
+            mathList = [
+                { q: "¿Cuánto es 14 + 18?", answer: 32, options: [28, 32, 30, 34], explanation: "Suma primero las unidades (4 + 8 = 12, pones el 2 y llevas 1) y luego las decenas (1 + 1 + 1 = 3), total 32." },
+                { q: "¿Cuánto es 9 × 7?", answer: 63, options: [56, 63, 72, 49], explanation: "Multiplicar 9 por 7 es sumar nueve veces el número 7, lo que da exactamente 63." },
+                { q: "¿Cuánto es 45 - 19?", answer: 26, options: [24, 26, 25, 27], explanation: "A 45 le restas 20 y te quedan 25, como restaste uno de más, sumas 1 y obtienes 26." },
+                { q: "¿Cuánto es 8 × 8?", answer: 64, options: [56, 64, 72, 48], explanation: "Ocho por ocho es una de las tablas clave: 8 filas de 8 elementos suman 64 en total." },
+                { q: "¿Cuánto es 50 ÷ 5?", answer: 10, options: [5, 8, 10, 12], explanation: "Dividir entre 5 significa repartir 50 en 5 partes iguales, dando 10 en cada parte porque 10 × 5 = 50." }
+            ];
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('game-math').classList.remove('hidden');
+            loadMathQuestion();
+        }
+
+        function loadMathQuestion() {
+            if (mathIdx >= mathList.length) {
+                endGame("Ejercicios Matemáticos", `${mathScore} Puntos 🔢`, mathScore >= 80 ? "¡Genio de las matemáticas!" : "¡Buen entrenamiento numérico!");
+                return;
+            }
+            let item = mathList[mathIdx];
+            document.getElementById('math-counter').innerText = `Pregunta ${mathIdx + 1} de ${mathList.length}`;
+            document.getElementById('math-score').innerText = `Puntos: ${mathScore}`;
+            document.getElementById('math-question').innerText = item.q;
+
+            let container = document.getElementById('math-options');
+            container.innerHTML = '';
+            
+            let shuffled = [...item.options].sort(() => Math.random() - 0.5);
+            shuffled.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = "py-4 bg-white border-2 border-orange-100 hover:border-orange-500 hover:bg-orange-50 text-orange-900 text-xl font-bold rounded-2xl shadow-sm transition transform active:scale-95 cursor-pointer";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (opt === item.answer) {
+                        mathScore += 20;
+                        mathIdx++;
+                        loadMathQuestion();
+                    } else {
+                        showTutorFeedback("🤖 Coki el Tutor", item.explanation, () => {
+                            mathIdx++;
+                            loadMathQuestion();
+                        });
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // ================= LOGICA JUEGO 5: HISTORIA Y CIENCIAS =================
+        let triviaList = [];
+        let triviaIdx = 0;
+        let triviaScore = 0;
+
+        function startTriviaGame() {
+            triviaIdx = 0;
+            triviaScore = 0;
+            triviaList = [
+                { q: "¿En qué año se celebró la Independencia de México?", answer: "1810", options: ["1810", "1910", "1821", "18-12"], explanation: "El Grito de Independencia dado por Miguel Hidalgo ocurrió en la madrugada del 16 de septiembre de 1810." },
+                { q: "¿Cuál es el órgano principal del sistema circulatorio humano?", answer: "El Corazón", options: ["Los Pulmones", "El Cerebro", "El Corazón", "El Estómago"], explanation: "El corazón actúa como una potente bomba que impulsa la sangre con oxígeno a todo el cuerpo." },
+                { q: "¿Quién fue el primer presidente de México?", answer: "Guadalupe Victoria", options: ["Benito Juárez", "Guadalupe Victoria", "Miguel Hidalgo", "Porfirio Díaz"], explanation: "Guadalupe Victoria asumió el cargo de primer presidente de los Estados Unidos Mexicanos en 1824." },
+                { q: "¿Qué proceso realizan las plantas para fabricar su alimento con luz solar?", answer: "Fotosíntesis", options: ["Respiración", "Fotosíntesis", "Germinación", "Transpiración"], explanation: "Mediante la fotosíntesis, las plantas usan la luz del sol, el agua y el dióxido de carbono para producir su propio alimento." },
+                { q: "¿En qué estado se encuentra la zona arqueológica de Chichén Itzá?", answer: "Yucatán", options: ["Chiapas", "Oaxaca", "Yucatán", "Quintana Roo"], explanation: "Chichén Itzá se ubica en la hermosa península de Yucatán y es una de las maravillas del mundo moderno." }
+            ];
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('game-trivia').classList.remove('hidden');
+            loadTriviaQuestion();
+        }
+
+        function loadTriviaQuestion() {
+            if (triviaIdx >= triviaList.length) {
+                endGame("Historia y Ciencias", `${triviaScore} Puntos 🇲🇽`, "¡Excelente conocimiento del mundo e historia!");
+                return;
+            }
+            let item = triviaList[triviaIdx];
+            document.getElementById('trivia-counter').innerText = `Pregunta ${triviaIdx + 1} de ${triviaList.length}`;
+            document.getElementById('trivia-score').innerText = `Puntos: ${triviaScore}`;
+            document.getElementById('trivia-question').innerText = item.q;
+
+            let container = document.getElementById('trivia-options');
+            container.innerHTML = '';
+
+            let shuffled = [...item.options].sort(() => Math.random() - 0.5);
+            shuffled.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = "py-3 px-4 bg-white border-2 border-cyan-100 hover:border-cyan-500 hover:bg-cyan-50 text-cyan-900 text-base font-bold rounded-2xl shadow-sm transition transform active:scale-95 cursor-pointer text-center";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (opt === item.answer) {
+                        triviaScore += 20;
+                        triviaIdx++;
+                        loadTriviaQuestion();
+                    } else {
+                        showTutorFeedback("🤖 Coki el Tutor", item.explanation, () => {
+                            triviaIdx++;
+                            loadTriviaQuestion();
+                        });
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // ================= LOGICA JUEGO 6: ORTOGRAFÍA =================
+        let spellingList = [];
+        let spellingIdx = 0;
+        let spellingScore = 0;
+
+        function startSpellingGame() {
+            spellingIdx = 0;
+            spellingScore = 0;
+            spellingList = [
+                { hint: "Animal que vuela de noche (con 'b' o 'v')", answer: "Murciélago", options: ["Murciélago", "Murciélavo", "Mulciélago", "Murcielago"], explanation: "Se escribe 'murciélago' con 'c' y 'g'. Es una palabra esdrújula, por lo que lleva tilde en la 'é'." },
+                { hint: "Aparato para mirar las estrellas (empieza con 't')", answer: "Telescopio", options: ["Telescopio", "Telescopío", "Telecopio", "Telescovio"], explanation: "Se escribe 'telescopio' con 'sc'. No lleva tilde porque es una palabra llana terminada en vocal." },
+                { hint: "Acción de andar por la calle (con 'h')", answer: "Zanahoria", options: ["Zanahoria", "Zanaoria", "Sanahoria", "Zanahora"], explanation: "La palabra 'zanahoria' se escribe con 'z' inicial y lleva 'h' intercalada." },
+                { hint: "Medio de transporte con alas (con 'v')", answer: "Avión", options: ["Abión", "Avión", "Ahvión", "Avíon"], explanation: "Se escribe 'avión' con 'v' y lleva tilde en la 'o' por ser una palabra aguda terminada en 'n'." },
+                { hint: "Prenda de abrigo para la cabeza (con 'g')", answer: "Gorro", options: ["Gorro", "Goro", "Jorro", "Gorrho"], explanation: "Se escribe 'gorro' con doble 'r' para hacer el sonido fuerte entre vocales." }
+            ];
+
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('game-spelling').classList.remove('hidden');
+            loadSpellingQuestion();
+        }
+
+        function loadSpellingQuestion() {
+            if (spellingIdx >= spellingList.length) {
+                endGame("Desafíos de Ortografía", `${spellingScore} Puntos ✍️`, "¡Excelente manejo de las palabras y reglas ortográficas!");
+                return;
+            }
+            let item = spellingList[spellingIdx];
+            document.getElementById('spell-counter').innerText = `Reto ${spellingIdx + 1} de ${spellingList.length}`;
+            document.getElementById('spell-score').innerText = `Puntos: ${spellingScore}`;
+            document.getElementById('spell-hint').innerText = item.hint;
+
+            let container = document.getElementById('spell-options');
+            container.innerHTML = '';
+
+            let shuffled = [...item.options].sort(() => Math.random() - 0.5);
+            shuffled.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = "py-4 bg-white border-2 border-purple-100 hover:border-purple-500 hover:bg-purple-50 text-purple-900 text-lg font-bold rounded-2xl shadow-sm transition transform active:scale-95 cursor-pointer";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (opt === item.answer) {
+                        spellingScore += 20;
+                        spellingIdx++;
+                        loadSpellingQuestion();
+                    } else {
+                        showTutorFeedback("🤖 Coki el Tutor", item.explanation, () => {
+                            spellingIdx++;
+                            loadSpellingQuestion();
+                        });
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // ================= TUTOR DE RETROALIMENTACIÓN =================
+        let currentTutorCallback = null;
+
+        function showTutorFeedback(title, message, callback) {
+            document.getElementById('tutor-title').innerText = title;
+            document.getElementById('tutor-message').innerText = `💡 ¡Casi! La respuesta correcta tiene su porqué: ${message}`;
+            currentTutorCallback = callback;
+            document.getElementById('tutor-modal').classList.remove('hidden');
+        }
+
+        function closeTutorModal() {
+            document.getElementById('tutor-modal').classList.add('hidden');
+            if (typeof currentTutorCallback === 'function') {
+                let cb = currentTutorCallback;
+                currentTutorCallback = null;
+                cb();
+            }
+        }
+
+        // ================= GESTIÓN DE RESULTADOS E HISTORIAL =================
+        function endGame(gameName, scoreText, feedbackText) {
+            document.getElementById('game-memory').classList.add('hidden');
+            document.getElementById('game-civics').classList.add('hidden');
+            document.getElementById('game-logic').classList.add('hidden');
+            document.getElementById('game-math').classList.add('hidden');
+            document.getElementById('game-trivia').classList.add('hidden');
+            document.getElementById('game-spelling').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+
+            document.getElementById('res-title').innerText = `¡Completado: ${gameName}!`;
+            document.getElementById('res-score').innerText = scoreText;
+            document.getElementById('res-feedback').innerText = feedbackText;
+
+            try {
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
+                }
+            } catch(e) {}
+
+            saveToHistory(gameName, scoreText);
+        }
+
+        function saveToHistory(game, detail) {
+            let history = JSON.parse(localStorage.getItem('academy_history')) || [];
+            let dateStr = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+            
+            history.unshift({ game, detail, date: dateStr });
+            if (history.length > 15) history.pop();
+
+            localStorage.setItem('academy_history', JSON.stringify(history));
+        }
+
+        function renderHistory() {
+            let history = JSON.parse(localStorage.getItem('academy_history')) || [];
+            let container = document.getElementById('history-container');
+            container.innerHTML = '';
+
+            if (history.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 italic text-center py-2">Aún no hay registros de destreza guardados.</p>`;
+                return;
+            }
+
+            history.forEach(item => {
+                let div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-gray-50 px-3 py-1.5 rounded-xl text-xs border border-gray-100";
+                div.innerHTML = `
+                    <div>
+                        <span class="font-bold text-indigo-700">${item.game}</span>: 
+                        <span class="font-semibold text-gray-700">${item.detail}</span>
+                    </div>
+                    <span class="text-gray-400">${item.date}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function clearHistory() {
+            localStorage.removeItem('academy_history');
+            renderHistory();
+        }
+    </script>
+</body>
+</html>
