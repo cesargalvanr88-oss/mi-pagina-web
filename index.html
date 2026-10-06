@@ -827,14 +827,61 @@ measurementId: "G-Y3PX3GM085"
                 });
         }
 
-        function saveHistoryToCloud() {
-            localStorage.setItem('ame_test_history', JSON.stringify(testHistory));
-            if (!isFirebaseInitialized || !db) return;
-            setDoc(doc(db, 'artifacts', appId, 'configs', 'history_records'), { data: testHistory })
-                .catch(err => {
-                    console.warn("Cloud write restricted (using local mode):", err.message);
-                });
-        }
+       function eliminarRegistrosDuplicados(registros) {
+const vistos = new Set();
+ 
+return registros.filter(item => {
+ 
+const clave = [
+item.timestamp || item.date,
+item.operation,
+item.id,
+item.name,
+item.score,
+item.percent,
+item.status
+].join('|');
+ 
+if (vistos.has(clave)) {
+return false;
+}
+ 
+vistos.add(clave);
+return true;
+});
+}
+ 
+function saveHistoryToCloud() {
+ 
+// Eliminar posibles registros duplicados
+testHistory = eliminarRegistrosDuplicados(testHistory);
+ 
+// Guardar historial limpio localmente
+localStorage.setItem(
+'ame_test_history',
+JSON.stringify(testHistory)
+);
+ 
+if (!isFirebaseInitialized || !db) return;
+ 
+// Guardar historial limpio en Firebase
+setDoc(
+doc(
+db,
+'artifacts',
+appId,
+'configs',
+'history_records'
+),
+{ data: testHistory }
+)
+.catch(err => {
+console.warn(
+"Cloud write restricted (using local mode):",
+err.message
+);
+});
+}
 
         function initFirestoreListeners() {
             if (!db) return;
@@ -861,7 +908,7 @@ measurementId: "G-Y3PX3GM085"
             // Escuchar cambios en historial en tiempo real
             onSnapshot(doc(db, 'artifacts', appId, 'configs', 'history_records'), (docSnap) => {
                 if (docSnap.exists() && docSnap.data().data) {
-                    testHistory = docSnap.data().data;
+                    testHistory = eliminarRegistrosDuplicados(docSnap.data().data);
                     localStorage.setItem('ame_test_history', JSON.stringify(testHistory));
                     if (!historyModal.classList.contains('hidden')) {
                         renderHistoryTable();
