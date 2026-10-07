@@ -223,14 +223,7 @@ style="width: 180px; height: auto; display: block;"
             </div>
 
             <div class="flex flex-col sm:flex-row justify-center gap-3">
-                <button id="btn-export-single" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-file-excel text-lg"></i>
-                    <span>Descargar Excel Unificado Todos los Exámenes</span>
-                </button>
-                <button id="btn-export-individual" class="px-4 py-3 bg-slate-700 hover:bg-slate-800 text-white font-semibold rounded-xl shadow-md transition flex items-center justify-center space-x-2 text-xs">
-                    <i class="fa-solid fa-file-invoice"></i>
-                    <span>Solo Ficha Individual</span>
-                </button>
+           
                 <button id="btn-restart" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
                     <i class="fa-solid fa-rotate-right"></i>
                     <span>Nuevo Examen</span>
@@ -1062,8 +1055,6 @@ console.warn(
         const correctCount = document.getElementById('correct-count');
         const incorrectCount = document.getElementById('incorrect-count');
         const totalSavedBadge = document.getElementById('total-saved-badge');
-        const btnExportSingle = document.getElementById('btn-export-single');
-        const btnExportIndividual = document.getElementById('btn-export-individual');
         const btnRestart = document.getElementById('btn-restart');
         const btnReview = document.getElementById('btn-review');
         const reviewContainer = document.getElementById('review-container');
@@ -1444,15 +1435,8 @@ adminOpSelector.value = selectedAdminOp;
             XLSX.writeFile(workbook, fileName);
         }
 
-        btnExportSingle.addEventListener('click', () => exportHistoryToExcel());
         btnExportAll.addEventListener('click', () => exportHistoryToExcel());
         
-        btnExportIndividual.addEventListener('click', () => {
-            if (testHistory.length > 0) {
-                exportHistoryToExcel(testHistory[0]);
-            }
-        });
-
         // --- HISTORIAL / MODAL GENERAL ---
         btnAdminHistory.addEventListener('click', () => {
             renderHistoryTable();
