@@ -923,19 +923,86 @@ err.message
             });
 
             // Escuchar cambios en historial en tiempo real
-            onSnapshot(doc(db, 'artifacts', appId, 'configs', 'history_records'), (docSnap) => {
-                if (docSnap.exists() && docSnap.data().data) {
-                    testHistory = eliminarRegistrosDuplicados(docSnap.data().data);
-                    localStorage.setItem('ame_test_history', JSON.stringify(testHistory));
-                    if (!historyModal.classList.contains('hidden')) {
-                        renderHistoryTable();
-                    }
-                } else {
-                    saveHistoryToCloud();
-                }
-            }, (err) => {
-                console.warn("History listener permission restricted. Operating in robust local mode.");
-            });
+onSnapshot(
+doc(db, 'artifacts', appId, 'configs', 'history_records'),
+(docSnap) => {
+ 
+if (docSnap.exists() && docSnap.data().data) {
+ 
+// Historial que actualmente existe en Firebase
+const historialFirebase = docSnap.data().data;
+ 
+// Eliminar registros duplicados
+const historialLimpio =
+eliminarRegistrosDuplicados(historialFirebase);
+ 
+// Actualizar historial utilizado por la aplicación
+testHistory = historialLimpio;
+ 
+// Guardar también la versión limpia localmente
+localStorage.setItem(
+'ame_test_history',
+JSON.stringify(testHistory)
+);
+ 
+// Si Firebase tenía duplicados,
+// guardar nuevamente el historial ya limpio
+if (
+historialLimpio.length <
+historialFirebase.length
+) {
+ 
+const eliminados =
+historialFirebase.length -
+historialLimpio.length;
+ 
+console.log(
+`Se eliminaron ${eliminados} registros duplicados.`
+);
+ 
+setDoc(
+doc(
+db,
+'artifacts',
+appId,
+'configs',
+'history_records'
+),
+{
+data: historialLimpio
+}
+)
+.catch(err => {
+ 
+console.warn(
+"No fue posible limpiar los duplicados en Firebase:",
+err.message
+);
+ 
+});
+}
+ 
+// Actualizar tabla si el historial está abierto
+if (
+!historyModal.classList.contains('hidden')
+) {
+renderHistoryTable();
+}
+ 
+} else {
+ 
+saveHistoryToCloud();
+ 
+}
+},
+(err) => {
+ 
+console.warn(
+"History listener permission restricted. Operating in robust local mode."
+);
+ 
+}
+);
         }
 
         let currentOperationName = "";
