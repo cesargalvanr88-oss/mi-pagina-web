@@ -1546,8 +1546,51 @@ ${estatusVigencia}
                             ${item.status}
                         </span>
                     </td>
-                `;
+                <td class="p-3 text-center">
+<button
+class="btn-delete-record px-2.5 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg transition"
+title="Eliminar certificación">
+<i class="fa-solid fa-trash-can"></i>
+</button>
+</td>
+              `;
                 historyTableBody.appendChild(tr);
+                const btnDeleteRecord = tr.querySelector('.btn-delete-record');
+ 
+btnDeleteRecord.addEventListener('click', () => {
+ 
+pendingAdminAction = () => {
+ 
+const confirmar = confirm(
+`¿Está seguro de eliminar esta certificación?\n\n` +
+`Técnico: ${item.name}\n` +
+`Número de empleado: ${item.id}\n` +
+`Operación: ${item.operation}\n` +
+`Fecha: ${item.date}\n\n` +
+`Esta acción no se puede deshacer.`
+);
+ 
+if (!confirmar) {
+pendingAdminAction = null;
+return;
+}
+ 
+const claveEliminar = crearClaveRegistro(item);
+ 
+testHistory = testHistory.filter(
+registro => crearClaveRegistro(registro) !== claveEliminar
+);
+ 
+saveHistoryToCloud();
+renderHistoryTable();
+ 
+pendingAdminAction = null;
+ 
+alert("Certificación eliminada correctamente.");
+};
+ 
+openPinModal("Eliminar Certificación");
+});
             });
         }
 
