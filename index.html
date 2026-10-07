@@ -1547,16 +1547,20 @@ ${estatusVigencia}
                             ${item.status}
                         </span>
                     </td>
-                <td class="p-3 text-center">
+               ${isAdminMode ? `
+<td class="p-3 text-center">
 <button
 class="btn-delete-record px-2.5 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg transition"
 title="Eliminar certificación">
 <i class="fa-solid fa-trash-can"></i>
 </button>
 </td>
+` : ''}
               `;
                 historyTableBody.appendChild(tr);
-                const btnDeleteRecord = tr.querySelector('.btn-delete-record');
+const btnDeleteRecord = tr.querySelector('.btn-delete-record');
+ 
+if (btnDeleteRecord) {
  
 btnDeleteRecord.addEventListener('click', () => {
  
@@ -1764,6 +1768,7 @@ reader.readAsArrayBuffer(file);
 
         btnSubmitPin.addEventListener('click', () => {
             if (adminPinInput.value === adminPin) {
+                isAdminMode = true;
                 pinModal.classList.add('hidden');
                 if (pendingAdminAction) pendingAdminAction();
             } else {
