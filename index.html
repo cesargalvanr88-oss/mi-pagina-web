@@ -827,28 +827,45 @@ measurementId: "G-Y3PX3GM085"
                 });
         }
 
-       function eliminarRegistrosDuplicados(registros) {
-const vistos = new Set();
- 
-return registros.filter(item => {
- 
-const clave = [
-item.timestamp || item.date,
-item.operation,
-item.id,
-item.name,
-item.score,
-item.percent,
-item.status
-].join('|');
- 
-if (vistos.has(clave)) {
-return false;
+      function normalizarTexto(valor) {
+return String(valor ?? '')
+.trim()
+.toLowerCase()
+.replace(/\s+/g, ' ');
 }
  
-vistos.add(clave);
-return true;
+function crearClaveRegistro(item) {
+return [
+normalizarTexto(item.date),
+normalizarTexto(item.operation),
+normalizarTexto(item.id)
+].join('|');
+}
+ 
+function eliminarRegistrosDuplicados(registros) {
+const mapa = new Map();
+ 
+registros.forEach(item => {
+ 
+const clave = crearClaveRegistro(item);
+ 
+if (!mapa.has(clave)) {
+mapa.set(clave, item);
+} else {
+ 
+const existente = mapa.get(clave);
+ 
+if (
+(!existente.timestamp || isNaN(Number(existente.timestamp))) &&
+item.timestamp &&
+!isNaN(Number(item.timestamp))
+) {
+mapa.set(clave, item);
+}
+}
 });
+ 
+return Array.from(mapa.values());
 }
  
 function saveHistoryToCloud() {
