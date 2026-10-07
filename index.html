@@ -1005,6 +1005,7 @@ console.warn(
         let userAnswers = {};
         let currentTechnician = { name: "", id: "", shift: "Turno 1", operation: "" };
         let isReadOnlyMode = false;
+        let isAdminMode = false;
 
         // Detectar si se abrió mediante enlace único (ej. ?op=Pva%20Gap%20Filler)
         const urlParams = new URLSearchParams(window.location.search);
