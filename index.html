@@ -1167,6 +1167,25 @@ adminOpSelector.value = selectedAdminOp;
         }
 
         // --- FLUJO DE EXAMEN ---
+        function mezclarPreguntas(preguntas) {
+ 
+// Crear una copia para NO modificar
+// el orden original guardado
+const mezcladas = [...preguntas];
+ 
+// Algoritmo Fisher-Yates
+for (let i = mezcladas.length - 1; i > 0; i--) {
+ 
+const j = Math.floor(
+Math.random() * (i + 1)
+);
+ 
+[mezcladas[i], mezcladas[j]] =
+[mezcladas[j], mezcladas[i]];
+}
+ 
+return mezcladas;
+}
         btnStart.addEventListener('click', () => {
             const op = userOperationSelect.value;
             const name = userNameInput.value.trim();
@@ -1180,7 +1199,7 @@ adminOpSelector.value = selectedAdminOp;
             startValidationMsg.classList.add('hidden');
 
             currentOperationName = op;
-            currentQuestions = dbOperations[op] || [];
+          currentQuestions = mezclarPreguntas(dbOperations[op] || []);
             if (currentQuestions.length === 0) {
                 alert("La operación seleccionada no tiene preguntas configuradas.");
                 return;
