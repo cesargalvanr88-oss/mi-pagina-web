@@ -1564,8 +1564,6 @@ if (btnDeleteRecord) {
  
 btnDeleteRecord.addEventListener('click', () => {
  
-pendingAdminAction = () => {
- 
 const confirmar = confirm(
 `¿Está seguro de eliminar esta certificación?\n\n` +
 `Técnico: ${item.name}\n` +
@@ -1576,7 +1574,6 @@ const confirmar = confirm(
 );
  
 if (!confirmar) {
-pendingAdminAction = null;
 return;
 }
  
@@ -1589,15 +1586,14 @@ registro => crearClaveRegistro(registro) !== claveEliminar
 saveHistoryToCloud();
 renderHistoryTable();
  
-pendingAdminAction = null;
- 
 alert("Certificación eliminada correctamente.");
-};
  
-openPinModal("Eliminar Certificación");
 });
-            });
-        }
+ 
+}
+ 
+});
+}
 
         filterSearch.addEventListener('input', renderHistoryTable);
         filterOperation.addEventListener('change', renderHistoryTable);
