@@ -1492,49 +1492,138 @@ ${estatusVigencia}
             }
         });
 
-        inputImportExcel.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                try {
-                    const data = new Uint8Array(evt.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    const json = XLSX.utils.sheet_to_json(worksheet);
-
-                    let importedCount = 0;
-                    json.forEach(row => {
-                        const rec = {
-                            date: row["Fecha / Hora"] || new Date().toLocaleString(),
-                            timestamp: Date.now(),
-                            operation: row["Operación"] || "Operación General",
-                            id: String(row["Número de Empleado"] || row["ID"] || "S/N"),
-                            name: row["Nombre del Técnico"] || row["Nombre"] || "Técnico Externo",
-                            shift: row["Turno"] || "Turno 1",
-                            score: row["Calificación"] || "0 / 14",
-                            percent: row["Porcentaje"] || "0%",
-                            status: row["Estatus"] || "NO APROBADO",
-                            answers: {},
-                            questionsSnapshot: []
-                        };
-                        testHistory.push(rec);
-                        importedCount++;
-                    });
-
-                    saveHistoryToCloud();
-                    renderHistoryTable();
-                    alert(`Se han importado y anexado ${importedCount} registros correctamente.`);
-                } catch (err) {
-                    console.error(err);
-                    alert("Error al procesar el archivo Excel. Verifique el formato.");
-                }
-                inputImportExcel.value = '';
-            };
-            reader.readAsArrayBuffer(file);
-        });
+       inputImportExcel.addEventListener('change', (e) => {
+ 
+const file = e.target.files[0];
+if (!file) return;
+ 
+const reader = new FileReader();
+ 
+reader.onload = function(evt) {
+ 
+try {
+ 
+const data = new Uint8Array(evt.target.result);
+ 
+const workbook = XLSX.read(data, {
+type: 'array'
+});
+ 
+const firstSheetName = workbook.SheetNames[0];
+const worksheet = workbook.Sheets[firstSheetName];
+ 
+const json = XLSX.utils.sheet_to_json(worksheet);
+ 
+// Primero eliminar duplicados que ya existan
+testHistory = eliminarRegistrosDuplicados(testHistory);
+ 
+// Crear lista de registros que ya existen
+const clavesExistentes = new Set(
+testHistory.map(item => crearClaveRegistro(item))
+);
+ 
+let importedCount = 0;
+let duplicatedCount = 0;
+ 
+json.forEach(row => {
+ 
+const fechaOriginal =
+row["Fecha / Hora"] ||
+new Date().toLocaleString();
+ 
+const fechaConvertida = new Date(fechaOriginal);
+ 
+const rec = {
+ 
+date: fechaOriginal,
+ 
+// Mantener la fecha original del examen
+timestamp:
+!isNaN(fechaConvertida.getTime())
+? fechaConvertida.getTime()
+: Date.now(),
+ 
+operation:
+row["Operación"] ||
+"Operación General",
+ 
+id: String(
+row["Número de Empleado"] ||
+row["ID"] ||
+"S/N"
+),
+ 
+name:
+row["Nombre del Técnico"] ||
+row["Nombre"] ||
+"Técnico Externo",
+ 
+shift:
+row["Turno"] ||
+"Turno 1",
+ 
+score:
+row["Calificación"] ||
+"0 / 14",
+ 
+percent:
+row["Porcentaje"] ||
+"0%",
+ 
+status:
+row["Estatus"] ||
+"NO APROBADO",
+ 
+answers: {},
+questionsSnapshot: []
+};
+ 
+const clave = crearClaveRegistro(rec);
+ 
+// Verificar si este examen ya existe
+if (clavesExistentes.has(clave)) {
+ 
+duplicatedCount++;
+ 
+} else {
+ 
+testHistory.push(rec);
+ 
+clavesExistentes.add(clave);
+ 
+importedCount++;
+}
+});
+ 
+// Protección adicional contra duplicados
+testHistory =
+eliminarRegistrosDuplicados(testHistory);
+ 
+saveHistoryToCloud();
+ 
+renderHistoryTable();
+ 
+alert(
+`Importación terminada.\n\n` +
+`Registros nuevos: ${importedCount}\n` +
+`Duplicados ignorados: ${duplicatedCount}\n` +
+`Total almacenado: ${testHistory.length}`
+);
+ 
+} catch (err) {
+ 
+console.error(err);
+ 
+alert(
+"Error al procesar el archivo Excel. Verifique el formato."
+);
+}
+ 
+inputImportExcel.value = '';
+};
+ 
+reader.readAsArrayBuffer(file);
+});
 
         // --- GESTIÓN DE PREGUNTAS E IMÁGENES FIJAS (ADMIN) ---
         btnAdminQuestions.addEventListener('click', () => {
