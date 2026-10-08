@@ -2564,6 +2564,26 @@ console.log(textoQR);
         unit: 'mm',
         format: 'letter'
     });
+    // =========================
+// GENERAR CODIGO QR
+// =========================
+
+const qrContainer = document.createElement('div');
+
+qrContainer.style.position = 'fixed';
+qrContainer.style.left = '-9999px';
+qrContainer.style.top = '-9999px';
+
+document.body.appendChild(qrContainer);
+
+new QRCode(qrContainer, {
+    text: textoQR,
+    width: 300,
+    height: 300,
+    colorDark: '#000000',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+});
 
     const anchoPagina = doc.internal.pageSize.getWidth();
 
@@ -2792,6 +2812,62 @@ console.log(textoQR);
         }
 
     });
+    // =========================
+// AGREGAR QR AL CERTIFICADO
+// =========================
+
+const qrCanvas = qrContainer.querySelector('canvas');
+
+if (qrCanvas) {
+
+    const qrImagen =
+        qrCanvas.toDataURL('image/png');
+
+    const altoPagina =
+        doc.internal.pageSize.getHeight();
+
+    const tamanoQR = 32;
+
+    const posicionX =
+        anchoPagina - tamanoQR - 15;
+
+    const posicionY =
+        altoPagina - tamanoQR - 25;
+
+    doc.addImage(
+        qrImagen,
+        'PNG',
+        posicionX,
+        posicionY,
+        tamanoQR,
+        tamanoQR
+    );
+
+    doc.setFont(
+        'helvetica',
+        'bold'
+    );
+
+    doc.setFontSize(7);
+
+    doc.setTextColor(
+        71,
+        85,
+        105
+    );
+
+    doc.text(
+        'VALIDACION DE COMPETENCIAS',
+        posicionX + (tamanoQR / 2),
+        posicionY + tamanoQR + 4,
+        {
+            align: 'center'
+        }
+    );
+}
+
+// Eliminar contenedor temporal del QR
+qrContainer.remove();
 
     // =========================
     // PIE DEL CERTIFICADO
