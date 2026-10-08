@@ -2765,6 +2765,33 @@ new QRCode(qrContainer, {
                 halign: 'center',
                 fontStyle: 'bold'
             }
+            didDrawCell: function(data) {
+
+    if (data.section === 'body' && data.column.index === 3) {
+
+        const estado = String(data.cell.raw || '').toUpperCase();
+
+        if (estado.includes('NO VIGENTE')) {
+            doc.setFillColor(220, 38, 38);
+        }
+        else if (
+            estado.includes('PROXIMO') ||
+            estado.includes('PRÓXIMO')
+        ) {
+            doc.setFillColor(217, 119, 6);
+        }
+        else {
+            doc.setFillColor(22, 163, 74);
+        }
+
+        doc.circle(
+            data.cell.x + 4,
+            data.cell.y + data.cell.height / 2,
+            1.2,
+            'F'
+        );
+    }
+}
         },
 
         didParseCell: function(data) {
