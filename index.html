@@ -1551,6 +1551,162 @@ return "🟢 VIGENTE";
                 const matchStatus = statusVal === "" || item.status === statusVal;
                 return matchSearch && matchOp && matchStatus;
             });
+            // ========================================
+// CERTIFICADO DE COMPETENCIA DEL TÉCNICO
+// ========================================
+ 
+// Ocultar certificado si no hay búsqueda
+if (searchVal.trim() === '') {
+ 
+technicianCertificate.classList.add('hidden');
+certificateCertificationsList.innerHTML = '';
+ 
+} else {
+ 
+// Buscar registros que coincidan con nombre o número de empleado
+const tecnicosEncontrados = testHistory.filter(item => {
+ 
+const nombre = String(item.name || '').toLowerCase();
+const numero = String(item.id || '').toLowerCase();
+ 
+return (
+nombre.includes(searchVal) ||
+numero.includes(searchVal)
+);
+});
+ 
+// Obtener empleados únicos encontrados
+const empleadosUnicos = [
+...new Set(
+tecnicosEncontrados.map(item => String(item.id))
+)
+];
+ 
+// Mostrar certificado solamente cuando la búsqueda
+// identifique a un solo técnico
+if (
+tecnicosEncontrados.length > 0 &&
+empleadosUnicos.length === 1
+) {
+ 
+const tecnicoBase = tecnicosEncontrados[0];
+const empleadoId = String(tecnicoBase.id);
+ 
+// Obtener TODAS las evaluaciones aprobadas
+// correspondientes a este técnico
+let certificaciones = testHistory.filter(item =>
+String(item.id) === empleadoId &&
+item.status === "APROBADO"
+);
+ 
+// Si existen varias evaluaciones de la misma operación,
+// conservar únicamente la más reciente
+const certificacionesPorOperacion = new Map();
+ 
+certificaciones.forEach(item => {
+ 
+const operacion = String(item.operation || '');
+ 
+const existente =
+certificacionesPorOperacion.get(operacion);
+ 
+if (
+!existente ||
+Number(item.timestamp || 0) >
+Number(existente.timestamp || 0)
+) {
+certificacionesPorOperacion.set(
+operacion,
+item
+);
+}
+});
+ 
+certificaciones =
+Array.from(certificacionesPorOperacion.values());
+ 
+// Ordenar certificaciones por fecha,
+// de la más reciente a la más antigua
+certificaciones.sort(
+(a, b) =>
+Number(b.timestamp || 0) -
+Number(a.timestamp || 0)
+);
+ 
+// Mostrar datos del técnico
+certificateTechnicianName.textContent =
+tecnicoBase.name;
+ 
+certificateTechnicianId.textContent =
+tecnicoBase.id;
+ 
+certificateCertificationsList.innerHTML = '';
+ 
+let certificacionesVigentes = 0;
+ 
+certificaciones.forEach(item => {
+ 
+const vencimiento =
+obtenerFechaVencimiento(item.timestamp);
+ 
+const estatus =
+obtenerEstatus(
+item.timestamp,
+item.status
+);
+ 
+if (
+estatus.includes("VIGENTE") &&
+!estatus.includes("NO VIGENTE")
+) {
+certificacionesVigentes++;
+}
+ 
+const fila =
+document.createElement('tr');
+ 
+fila.className =
+"hover:bg-blue-50 transition";
+ 
+fila.innerHTML = `
+<td class="p-3 font-bold text-slate-800">
+${item.operation}
+</td>
+ 
+<td class="p-3 text-center text-slate-600">
+${item.date}
+</td>
+ 
+<td class="p-3 text-center font-semibold text-slate-700">
+${
+vencimiento
+? vencimiento.toLocaleDateString()
+: "—"
+}
+</td>
+ 
+<td class="p-3 text-center font-bold">
+${estatus}
+</td>
+`;
+ 
+certificateCertificationsList.appendChild(fila);
+});
+ 
+certificateActiveCount.textContent =
+certificacionesVigentes;
+ 
+technicianCertificate.classList.remove('hidden');
+ 
+} else {
+ 
+// Si la búsqueda coincide con varios técnicos,
+// no mostrar todavía un certificado individual.
+technicianCertificate.classList.add('hidden');
+ 
+certificateCertificationsList.innerHTML = '';
+}
+}
 
             historyCount.textContent = testHistory.length;
             filteredRecordsCounter.textContent = `Mostrando ${filtered.length} de ${testHistory.length} registros`;
