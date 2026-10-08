@@ -2450,6 +2450,372 @@ block: 'start'
 
 
         initApp();
+        
+        // ========================================
+// DESCARGAR CERTIFICADO DE COMPETENCIA PDF
+// ========================================
+
+btnDownloadCertificate.addEventListener('click', () => {
+
+    // Verificar que jsPDF esté disponible
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert('No se pudo cargar el generador de PDF. Actualiza la página e inténtalo nuevamente.');
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+
+    // Obtener técnico actualmente mostrado
+    const empleadoId = String(
+        certificateTechnicianId.textContent || ''
+    ).trim();
+
+    const nombreTecnico = String(
+        certificateTechnicianName.textContent || ''
+    ).trim();
+
+    if (!empleadoId || empleadoId === '-') {
+        alert('Primero busca y selecciona un técnico.');
+        return;
+    }
+
+    // Obtener todas las evaluaciones APROBADAS del técnico
+    let certificacionesPDF = testHistory.filter(item =>
+        String(item.id) === empleadoId &&
+        item.status === 'APROBADO'
+    );
+
+    // Conservar solamente la certificación aprobada
+    // más reciente de cada operación
+    const certificacionesPorOperacionPDF = new Map();
+
+    certificacionesPDF.forEach(item => {
+
+        const operacion = String(item.operation || '');
+
+        const existente =
+            certificacionesPorOperacionPDF.get(operacion);
+
+        if (
+            !existente ||
+            Number(item.timestamp || 0) >
+            Number(existente.timestamp || 0)
+        ) {
+            certificacionesPorOperacionPDF.set(
+                operacion,
+                item
+            );
+        }
+    });
+
+    certificacionesPDF =
+        Array.from(certificacionesPorOperacionPDF.values());
+
+    // Ordenar de la certificación más reciente
+    // a la más antigua
+    certificacionesPDF.sort(
+        (a, b) =>
+            Number(b.timestamp || 0) -
+            Number(a.timestamp || 0)
+    );
+
+    if (certificacionesPDF.length === 0) {
+        alert('Este técnico no tiene certificaciones registradas.');
+        return;
+    }
+
+    // Crear documento
+    const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'letter'
+    });
+
+    const anchoPagina = doc.internal.pageSize.getWidth();
+
+    // =========================
+    // ENCABEZADO
+    // =========================
+
+    doc.setFillColor(29, 78, 216);
+    doc.rect(0, 0, anchoPagina, 32, 'F');
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+
+    doc.text(
+        'CERTIFICADO DE COMPETENCIA',
+        anchoPagina / 2,
+        14,
+        { align: 'center' }
+    );
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+
+    doc.text(
+        'Sistema de Certificacion Operativa AME',
+        anchoPagina / 2,
+        22,
+        { align: 'center' }
+    );
+
+    // =========================
+    // DATOS DEL TÉCNICO
+    // =========================
+
+    doc.setTextColor(30, 41, 59);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text('NOMBRE DEL TECNICO', 15, 45);
+
+    doc.setFontSize(16);
+    doc.text(nombreTecnico, 15, 53);
+
+    doc.setFontSize(10);
+    doc.text('NUMERO DE EMPLEADO', 15, 65);
+
+    doc.setTextColor(29, 78, 216);
+    doc.setFontSize(14);
+    doc.text(empleadoId, 15, 72);
+
+    // =========================
+    // CONTADORES
+    // =========================
+
+    let vigentes = 0;
+    let proximasVencer = 0;
+    let noVigentes = 0;
+
+    const filasPDF = certificacionesPDF.map(item => {
+
+        const vencimiento =
+            obtenerFechaVencimiento(item.timestamp);
+
+        const estatus =
+            obtenerEstatus(
+                item.timestamp,
+                item.status
+            );
+
+        const estatusTexto =
+            String(estatus || '').toUpperCase();
+
+        if (estatusTexto.includes('NO VIGENTE')) {
+
+            noVigentes++;
+
+        } else if (
+            estatusTexto.includes('PROXIMO') ||
+            estatusTexto.includes('PRÓXIMO')
+        ) {
+
+            proximasVencer++;
+
+        } else if (estatusTexto.includes('VIGENTE')) {
+
+            vigentes++;
+        }
+
+        return [
+            String(item.operation || ''),
+            String(item.date || ''),
+            vencimiento
+                ? vencimiento.toLocaleDateString()
+                : '-',
+            estatusTexto
+        ];
+    });
+
+    // =========================
+    // RESUMEN
+    // =========================
+
+    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+
+    doc.text(
+        `Total de certificaciones: ${certificacionesPDF.length}`,
+        120,
+        47
+    );
+
+    doc.setTextColor(22, 163, 74);
+    doc.text(
+        `Vigentes: ${vigentes}`,
+        120,
+        55
+    );
+
+    doc.setTextColor(217, 119, 6);
+    doc.text(
+        `Proximas a vencer: ${proximasVencer}`,
+        120,
+        63
+    );
+
+    doc.setTextColor(220, 38, 38);
+    doc.text(
+        `No vigentes: ${noVigentes}`,
+        120,
+        71
+    );
+
+    // =========================
+    // TABLA
+    // =========================
+
+    doc.autoTable({
+
+        startY: 82,
+
+        head: [[
+            'Certificacion / Operacion',
+            'Fecha',
+            'Vencimiento',
+            'Vigencia'
+        ]],
+
+        body: filasPDF,
+
+        theme: 'grid',
+
+        headStyles: {
+            fillColor: [30, 64, 175],
+            textColor: [255, 255, 255],
+            fontStyle: 'bold',
+            halign: 'center'
+        },
+
+        styles: {
+            font: 'helvetica',
+            fontSize: 9,
+            cellPadding: 3,
+            valign: 'middle'
+        },
+
+        columnStyles: {
+            0: {
+                cellWidth: 80,
+                fontStyle: 'bold'
+            },
+            1: {
+                cellWidth: 45,
+                halign: 'center'
+            },
+            2: {
+                cellWidth: 45,
+                halign: 'center'
+            },
+            3: {
+                cellWidth: 55,
+                halign: 'center',
+                fontStyle: 'bold'
+            }
+        },
+
+        didParseCell: function(data) {
+
+            if (
+                data.section === 'body' &&
+                data.column.index === 3
+            ) {
+
+                const estado =
+                    String(data.cell.raw || '').toUpperCase();
+
+                if (estado.includes('NO VIGENTE')) {
+
+                    data.cell.styles.textColor =
+                        [185, 28, 28];
+
+                    data.cell.styles.fillColor =
+                        [254, 226, 226];
+
+                } else if (
+                    estado.includes('PROXIMO') ||
+                    estado.includes('PRÓXIMO')
+                ) {
+
+                    data.cell.styles.textColor =
+                        [180, 83, 9];
+
+                    data.cell.styles.fillColor =
+                        [254, 243, 199];
+
+                } else if (estado.includes('VIGENTE')) {
+
+                    data.cell.styles.textColor =
+                        [21, 128, 61];
+
+                    data.cell.styles.fillColor =
+                        [220, 252, 231];
+                }
+            }
+        }
+
+    });
+
+    // =========================
+    // PIE DEL CERTIFICADO
+    // =========================
+
+    const totalPaginas =
+        doc.internal.getNumberOfPages();
+
+    for (
+        let pagina = 1;
+        pagina <= totalPaginas;
+        pagina++
+    ) {
+
+        doc.setPage(pagina);
+
+        const altoPagina =
+            doc.internal.pageSize.getHeight();
+
+        doc.setDrawColor(203, 213, 225);
+
+        doc.line(
+            15,
+            altoPagina - 15,
+            anchoPagina - 15,
+            altoPagina - 15
+        );
+
+        doc.setFontSize(8);
+        doc.setTextColor(100, 116, 139);
+        doc.setFont('helvetica', 'normal');
+
+        doc.text(
+            'Sistema de Certificacion Operativa AME',
+            15,
+            altoPagina - 9
+        );
+
+        doc.text(
+            `Pagina ${pagina} de ${totalPaginas}`,
+            anchoPagina - 15,
+            altoPagina - 9,
+            { align: 'right' }
+        );
+    }
+
+    // =========================
+    // NOMBRE DEL ARCHIVO
+    // =========================
+
+    const idSeguro =
+        empleadoId.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+    doc.save(
+        `Certificado_Competencias_${idSeguro}.pdf`
+    );
+
+});
     </script>
 </body>
 </html>
