@@ -2538,16 +2538,15 @@ certificacionesPDF.forEach(item => {
             item.status
         );
 
-    let indicador = "🟢";
+   let indicador = "[V]";
 
-    if (String(estatus).toUpperCase().includes("PROX")) {
-        indicador = "🟡";
-    }
+if (String(estatus).toUpperCase().includes("PROX")) {
+    indicador = "[P]";
+}
 
-    if (String(estatus).toUpperCase().includes("VENC")) {
-        indicador = "🔴";
-    }
-
+if (String(estatus).toUpperCase().includes("VENC")) {
+    indicador = "[X]";
+}
     textoQR += `${indicador} ${item.operation}\n`;
 
 });
