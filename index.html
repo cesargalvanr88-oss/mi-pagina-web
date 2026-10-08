@@ -2760,13 +2760,13 @@ new QRCode(qrContainer, {
                 cellWidth: 45,
                 halign: 'center'
             },
-            3: {
-                cellWidth: 55,
-                halign: 'center',
-                fontStyle: 'bold'
-            }
-            didDrawCell: function(data) {
+           3: {
+    cellWidth: 55,
+    halign: 'center',
+    fontStyle: 'bold'
+},
 
+didDrawCell: function(data) {
     if (data.section === 'body' && data.column.index === 3) {
 
         const estado = String(data.cell.raw || '').toUpperCase();
