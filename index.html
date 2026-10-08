@@ -2528,16 +2528,9 @@ btnDownloadCertificate.addEventListener('click', () => {
 // INFORMACION PARA EL QR
 // =========================
 
-let textoQR =
-    `CERTIFICACION OPERATIVA AME\n\n` +
-    `Tecnico: ${nombreTecnico}\n` +
-    `Numero de empleado: ${empleadoId}\n\n` +
-    `OPERACIONES CERTIFICADAS:\n`;
+let textoQR = `${nombreTecnico.toUpperCase()}\n\n`;
 
 certificacionesPDF.forEach(item => {
-
-    const vencimiento =
-        obtenerFechaVencimiento(item.timestamp);
 
     const estatus =
         obtenerEstatus(
@@ -2545,16 +2538,20 @@ certificacionesPDF.forEach(item => {
             item.status
         );
 
-    textoQR +=
-        `\n${String(item.operation || '')}\n` +
-        `Estado: ${String(estatus || '').toUpperCase()}\n` +
-        `Vence: ${
-            vencimiento
-                ? vencimiento.toLocaleDateString()
-                : '-'
-        }\n`;
-});
+    let indicador = "🟢";
 
+    if (String(estatus).toUpperCase().includes("PROX")) {
+        indicador = "🟡";
+    }
+
+    if (String(estatus).toUpperCase().includes("VENC")) {
+        indicador = "🔴";
+    }
+
+    textoQR += `${indicador} ${item.operation}\n`;
+
+});
+console.log("Longitud QR:", textoQR.length);
 console.log('Contenido QR:');
 console.log(textoQR);
 
