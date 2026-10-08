@@ -2524,6 +2524,39 @@ btnDownloadCertificate.addEventListener('click', () => {
         alert('Este técnico no tiene certificaciones registradas.');
         return;
     }
+    // =========================
+// INFORMACION PARA EL QR
+// =========================
+
+let textoQR =
+    `CERTIFICACION OPERATIVA AME\n\n` +
+    `Tecnico: ${nombreTecnico}\n` +
+    `Numero de empleado: ${empleadoId}\n\n` +
+    `OPERACIONES CERTIFICADAS:\n`;
+
+certificacionesPDF.forEach(item => {
+
+    const vencimiento =
+        obtenerFechaVencimiento(item.timestamp);
+
+    const estatus =
+        obtenerEstatus(
+            item.timestamp,
+            item.status
+        );
+
+    textoQR +=
+        `\n${String(item.operation || '')}\n` +
+        `Estado: ${String(estatus || '').toUpperCase()}\n` +
+        `Vence: ${
+            vencimiento
+                ? vencimiento.toLocaleDateString()
+                : '-'
+        }\n`;
+});
+
+console.log('Contenido QR:');
+console.log(textoQR);
 
     // Crear documento
     const doc = new jsPDF({
