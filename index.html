@@ -956,35 +956,43 @@ return String(valor ?? '')
 }
  
 function crearClaveRegistro(item) {
-return [
-normalizarTexto(item.date),
-normalizarTexto(item.operation),
-normalizarTexto(item.id)
-].join('|');
+    return [
+        normalizarTexto(item.operation),
+        normalizarTexto(item.id)
+    ].join('|');
 }
  
 function eliminarRegistrosDuplicados(registros) {
-const mapa = new Map();
- 
-registros.forEach(item => {
- 
-const clave = crearClaveRegistro(item);
- 
-if (!mapa.has(clave)) {
-mapa.set(clave, item);
-} else {
- 
-const existente = mapa.get(clave);
- 
-if (
-(!existente.timestamp || isNaN(Number(existente.timestamp))) &&
-item.timestamp &&
-!isNaN(Number(item.timestamp))
-) {
-mapa.set(clave, item);
+    const mapa = new Map();
+
+    registros.forEach(item => {
+
+        const clave = crearClaveRegistro(item);
+
+        if (!mapa.has(clave)) {
+
+            mapa.set(clave, item);
+
+        } else {
+
+            const existente = mapa.get(clave);
+
+            const timestampExistente =
+                Number(existente.timestamp || 0);
+
+            const timestampNuevo =
+                Number(item.timestamp || 0);
+
+            if (timestampNuevo > timestampExistente) {
+
+                mapa.set(clave, item);
+
+            }
+        }
+    });
+
+    return Array.from(mapa.values());
 }
-}
-});
  
 return Array.from(mapa.values());
 }
