@@ -2416,19 +2416,19 @@ for (const input of fileInputs) {
 
             imagesArr.push(imageUrl);
 
-        } catch (err) {
+       } catch (err) {
 
-            console.error(
-                "Error al subir imagen:",
-                err
-            );
+    console.error(
+        "Error al subir imagen:",
+        err
+    );
 
-        }
-
-    }
+    alert(
+        "Error al subir imagen:\n\n" +
+        err.message
+    );
 
 }
-
             const qIdVal = editQId.value;
             if (qIdVal === "") {
                 const newId = dbOperations[currentOp].length > 0 ? Math.max(...dbOperations[currentOp].map(i => i.id)) + 1 : 1;
