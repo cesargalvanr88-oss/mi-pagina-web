@@ -2372,8 +2372,20 @@ adminOpSelector.value = currentOp;
 loadAdminQuestions();
 }
 };
+        async function uploadQuestionImage(file) {
 
-        btnSaveQuestion.addEventListener('click', () => {
+    const fileName =
+        `questions/${Date.now()}_${file.name}`;
+
+    const storageRef =
+        ref(storage, fileName);
+
+    await uploadBytes(storageRef, file);
+
+    return await getDownloadURL(storageRef);
+}
+
+       btnSaveQuestion.addEventListener('click', async () => {
             const currentOp = adminOpSelector.value;
             const text = inputQText.value.trim();
             const a = optAText.value.trim();
@@ -2386,13 +2398,36 @@ loadAdminQuestions();
                 return;
             }
 
-            const photoInputs = photosInputsContainer.querySelectorAll('.photo-url-input');
-            const imagesArr = [];
-            photoInputs.forEach(inp => {
-                if (inp.value.trim() !== '') {
-                    imagesArr.push(inp.value.trim());
-                }
-            });
+           const fileInputs =
+    photosInputsContainer.querySelectorAll('.photo-file-input');
+
+const imagesArr = [];
+
+for (const input of fileInputs) {
+
+    const file = input.files[0];
+
+    if (file) {
+
+        try {
+
+            const imageUrl =
+                await uploadQuestionImage(file);
+
+            imagesArr.push(imageUrl);
+
+        } catch (err) {
+
+            console.error(
+                "Error al subir imagen:",
+                err
+            );
+
+        }
+
+    }
+
+}
 
             const qIdVal = editQId.value;
             if (qIdVal === "") {
