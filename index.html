@@ -2366,19 +2366,7 @@ adminOpSelector.value = currentOp;
 loadAdminQuestions();
 }
 };
-        async function uploadQuestionImage(file) {
-
-    const fileName =
-        `questions/${Date.now()}_${file.name}`;
-
-    const storageRef =
-        ref(storage, fileName);
-
-    await uploadBytes(storageRef, file);
-
-    return await getDownloadURL(storageRef);
-}
-
+      
        btnSaveQuestion.addEventListener('click', async () => {
             const currentOp = adminOpSelector.value;
             const text = inputQText.value.trim();
@@ -2392,23 +2380,22 @@ loadAdminQuestions();
                 return;
             }
 
-           const fileInputs =
-    photosInputsContainer.querySelectorAll('.photo-file-input');
+        const imageInputs =
+    photosInputsContainer.querySelectorAll('.photo-url-input');
 
 const imagesArr = [];
 
-for (const input of fileInputs) {
+imageInputs.forEach(input => {
 
-    const file = input.files[0];
+    if (input.value.trim() !== '') {
 
-    if (file) {
+        imagesArr.push(
+            input.value.trim()
+        );
 
-        try {
+    }
 
-            const imageUrl =
-                await uploadQuestionImage(file);
-
-            imagesArr.push(imageUrl);
+});
 
        } catch (err) {
 
