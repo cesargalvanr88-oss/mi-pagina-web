@@ -682,6 +682,13 @@ Selecciona las fotografías directamente desde la galería del dispositivo.
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL
+}
+from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-ame-app';
       const firebaseConfig = {
@@ -694,13 +701,14 @@ appId: "1:792089528111:web:1fa39a16d2710e0904c3da",
 measurementId: "G-Y3PX3GM085"
 };
 
-        let app, db, auth;
+        let app, db, auth, storage;
         let isFirebaseInitialized = false;
 
         try {
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
+            storage = getStorage(app);
             
             const initAuth = async () => {
                 try {
