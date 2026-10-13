@@ -2162,6 +2162,51 @@ reader.readAsArrayBuffer(file);
             loadAdminQuestions();
             alert(`Operación "${opName}" creada correctamente.`);
         });
+        btnRenameOp.addEventListener('click', () => {
+
+    const nombreActual = adminOpSelector.value;
+
+    if (!nombreActual) {
+        alert('Seleccione una operación.');
+        return;
+    }
+
+    const nuevoNombre = prompt(
+        'Ingrese el nuevo nombre de la operación:',
+        nombreActual
+    );
+
+    if (!nuevoNombre || nuevoNombre.trim() === '') {
+        return;
+    }
+
+    const nombreLimpio = nuevoNombre.trim();
+
+    if (nombreLimpio === nombreActual) {
+        return;
+    }
+
+    if (dbOperations[nombreLimpio]) {
+        alert('Ya existe una operación con ese nombre.');
+        return;
+    }
+
+    dbOperations[nombreLimpio] =
+        dbOperations[nombreActual];
+
+    delete dbOperations[nombreActual];
+
+    saveOperationsToCloud();
+
+    populateOperationSelects();
+
+    adminOpSelector.value = nombreLimpio;
+
+    loadAdminQuestions();
+
+    alert('Operación actualizada correctamente');
+
+});
 
         btnDeleteCurrentOp.addEventListener('click', () => {
             const opName = adminOpSelector.value;
