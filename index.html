@@ -2876,45 +2876,50 @@ didDrawCell: function(data) {
 }
         },
 
-        didParseCell: function(data) {
+      didParseCell: function(data) {
 
-            if (
-                data.section === 'body' &&
-                data.column.index === 3
-            ) {
+    if (
+        data.section === 'body' &&
+        data.column.index === 3
+    ) {
 
-                const estado =
-                    String(data.cell.raw || '').toUpperCase();
+        const estado =
+            String(data.cell.raw || '').toUpperCase();
 
-                if (estado.includes('NO VIGENTE')) {
+        if (
+            estado.includes('PRÓXIMA') ||
+            estado.includes('PROXIMA')
+        ) {
 
-                    data.cell.styles.textColor =
-                        [185, 28, 28];
+            data.cell.styles.textColor =
+                [217, 119, 6];
 
-                    data.cell.styles.fillColor =
-                        [254, 226, 226];
+            data.cell.styles.fillColor =
+                [254, 243, 199];
 
-                } else if (
-                    estado.includes('PROXIMO') ||
-                    estado.includes('PRÓXIMO')
-                ) {
-
-                    data.cell.styles.textColor =
-                        [180, 83, 9];
-
-                    data.cell.styles.fillColor =
-                        [254, 243, 199];
-
-                } else if (estado.includes('VIGENTE')) {
-
-                    data.cell.styles.textColor =
-                        [21, 128, 61];
-
-                    data.cell.styles.fillColor =
-                        [220, 252, 231];
-                }
-            }
         }
+        else if (
+            estado.includes('VIGENTE')
+        ) {
+
+            data.cell.styles.textColor =
+                [21, 128, 61];
+
+            data.cell.styles.fillColor =
+                [220, 252, 231];
+
+        }
+        else {
+
+            data.cell.styles.textColor =
+                [185, 28, 28];
+
+            data.cell.styles.fillColor =
+                [254, 226, 226];
+
+        }
+    }
+}
 
     });
     // =========================
