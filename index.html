@@ -1767,24 +1767,40 @@ document.createElement('tr');
 fila.className =
 "hover:bg-blue-50 transition";
  
+if (estatus.includes('VIGENTE') &&
+    !estatus.includes('NO VIGENTE')) {
+
+    claseVigencia =
+    'bg-green-100 text-green-700';
+
+}
+else if (estatus.includes('PRÓXIMA')) {
+
+    claseVigencia =
+    'bg-yellow-100 text-yellow-700';
+
+}
+else {
+
+    claseVigencia =
+    'bg-red-100 text-red-700';
+
+}
+
 fila.innerHTML = `
 <td class="p-3 font-bold text-slate-800">
 ${item.operation}
 </td>
- 
+
 <td class="p-3 text-center text-slate-600">
 ${item.date}
 </td>
- 
+
 <td class="p-3 text-center font-semibold text-slate-700">
-${
-vencimiento
-? vencimiento.toLocaleDateString()
-: "—"
-}
+${vencimiento ? vencimiento.toLocaleDateString() : "—"}
 </td>
- 
-<td class="p-3 text-center font-bold">
+
+<td class="p-3 text-center font-bold ${claseVigencia}">
 ${estatus}
 </td>
 `;
