@@ -1077,50 +1077,25 @@ err.message
             if (!db) return;
             
            // Escuchar cambios en operaciones en tiempo real
-onSnapshot(
-    collection(
-        db,
-        'artifacts',
-        appId,
-        'operations'
-    ),
-    (snapshot) => {
+ onSnapshot(
+    doc(db, 'artifacts', appId, 'configs', 'operations_config'),
+    (docSnap) => {
 
-        dbOperations = [];
+        if (docSnap.exists() && docSnap.data().data) {
 
-        snapshot.forEach((docSnap) => {
-            dbOperations.push(docSnap.data());
-        });
+            dbOperations = docSnap.data().data;
 
-        localStorage.setItem(
-            'ame_operations',
-            JSON.stringify(dbOperations)
-        );
+            localStorage.setItem(
+                'ame_operations',
+                JSON.stringify(dbOperations)
+            );
 
-        populateOperationSelects();
+            populateOperationSelects();
 
-        if (!questionsModal.classList.contains('hidden')) {
-            loadAdminQuestions();
+            if (!questionsModal.classList.contains('hidden')) {
+                loadAdminQuestions();
+            }
         }
-
-    },
-    (err) => {
-
-        console.warn(
-            "Ops listener permission restricted. Operating in robust local mode."
-        );
-
-        document.getElementById('sync-text').textContent =
-            "Modo local";
-
-        document
-            .getElementById('sync-status')
-            .classList.remove('text-emerald-300');
-
-        document
-            .getElementById('sync-status')
-            .classList.add('text-amber-300');
-
     }
 );
 
