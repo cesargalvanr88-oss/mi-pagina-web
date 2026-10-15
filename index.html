@@ -1038,6 +1038,12 @@ console.log("Primera operación:", dbOperations[0]);
     }
 }
         window.migrarOperaciones = migrarOperaciones;
+        console.log("migrarOperaciones registrada");
+
+setTimeout(() => {
+    console.log("Ejecutando migración...");
+    migrarOperaciones();
+}, 5000);
       function normalizarTexto(valor) {
 return String(valor ?? '')
 .trim()
