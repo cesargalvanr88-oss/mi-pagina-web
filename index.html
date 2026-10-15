@@ -995,6 +995,49 @@ console.log("Primera operación:", dbOperations[0]);
 
 }
 
+    async function migrarOperaciones() {
+
+    if (!db || !dbOperations || !dbOperations.length) {
+        console.log("No hay operaciones para migrar");
+        return;
+    }
+
+    try {
+
+        for (const operation of dbOperations) {
+
+            const operationId =
+                operation.name ||
+                operation.operationName ||
+                operation.operation ||
+                `operacion_${Date.now()}`;
+
+            await setDoc(
+                doc(
+                    db,
+                    'artifacts',
+                    appId,
+                    'operations',
+                    operationId
+                ),
+                operation
+            );
+
+            console.log("Migrada:", operationId);
+        }
+
+        console.log("✅ Migración completada");
+
+    } catch (err) {
+
+        console.error(
+            "❌ Error en migración:",
+            err
+        );
+
+    }
+}
+        window.migrarOperaciones = migrarOperaciones;
       function normalizarTexto(valor) {
 return String(valor ?? '')
 .trim()
