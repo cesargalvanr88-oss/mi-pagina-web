@@ -688,7 +688,15 @@ Selecciona las fotografías directamente desde la galería del dispositivo.
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    getDocs,
+    onSnapshot,
+    collection
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
   
 
        const appId = 'default-ame-app';
