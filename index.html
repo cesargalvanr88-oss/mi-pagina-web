@@ -957,6 +957,8 @@ measurementId: "G-Y3PX3GM085"
         'ame_operations',
         JSON.stringify(dbOperations)
     );
+ console.log("Cantidad de operaciones:", dbOperations.length);
+console.log("Primera operación:", dbOperations[0]);
 
     if (!isFirebaseInitialized || !db) return;
 
