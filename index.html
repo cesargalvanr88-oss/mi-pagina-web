@@ -1066,24 +1066,53 @@ err.message
         function initFirestoreListeners() {
             if (!db) return;
             
-            // Escuchar cambios en operaciones en tiempo real
-            onSnapshot(doc(db, 'artifacts', appId, 'configs', 'operations_config'), (docSnap) => {
-                if (docSnap.exists() && docSnap.data().data) {
-                    dbOperations = docSnap.data().data;
-                    localStorage.setItem('ame_operations', JSON.stringify(dbOperations));
-                    populateOperationSelects();
-                    if (!questionsModal.classList.contains('hidden')) {
-                        loadAdminQuestions();
-                    }
-                } else {
-                    saveOperationsToCloud();
-                }
-            }, (err) => {
-                console.warn("Ops listener permission restricted. Operating in robust local mode.");
-                document.getElementById('sync-text').textContent = "Modo Local";
-                document.getElementById('sync-status').classList.remove('text-emerald-300');
-                document.getElementById('sync-status').classList.add('text-amber-300');
-            });
+           // Escuchar cambios en operaciones en tiempo real
+onSnapshot(
+    collection(
+        db,
+        'artifacts',
+        appId,
+        'operations'
+    ),
+    (snapshot) => {
+
+        dbOperations = [];
+
+        snapshot.forEach((docSnap) => {
+            dbOperations.push(docSnap.data());
+        });
+
+        localStorage.setItem(
+            'ame_operations',
+            JSON.stringify(dbOperations)
+        );
+
+        populateOperationSelects();
+
+        if (!questionsModal.classList.contains('hidden')) {
+            loadAdminQuestions();
+        }
+
+    },
+    (err) => {
+
+        console.warn(
+            "Ops listener permission restricted. Operating in robust local mode."
+        );
+
+        document.getElementById('sync-text').textContent =
+            "Modo local";
+
+        document
+            .getElementById('sync-status')
+            .classList.remove('text-emerald-300');
+
+        document
+            .getElementById('sync-status')
+            .classList.add('text-amber-300');
+
+    }
+);
 
             // Escuchar cambios en historial en tiempo real
 onSnapshot(
