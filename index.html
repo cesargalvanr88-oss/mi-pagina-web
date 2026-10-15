@@ -943,14 +943,47 @@ measurementId: "G-Y3PX3GM085"
         let testHistory = JSON.parse(localStorage.getItem('ame_test_history')) || [];
 
         // Funciones de sincronización con Firestore seguras (con manejo de errores de permisos)
-        function saveOperationsToCloud() {
-            localStorage.setItem('ame_operations', JSON.stringify(dbOperations));
-            if (!isFirebaseInitialized || !db) return;
-            setDoc(doc(db, 'artifacts', appId, 'configs', 'operations_config'), { data: dbOperations })
-                .catch(err => {
-                    console.warn("Cloud write restricted (using local mode):", err.message);
-                });
+       async function saveOperationsToCloud() {
+
+    localStorage.setItem(
+        'ame_operations',
+        JSON.stringify(dbOperations)
+    );
+
+    if (!isFirebaseInitialized || !db) return;
+
+    try {
+
+        for (const operation of dbOperations) {
+
+            const operationId =
+                operation.name ||
+                operation.operationName;
+
+            await setDoc(
+                doc(
+                    db,
+                    'artifacts',
+                    appId,
+                    'operations',
+                    operationId
+                ),
+                operation
+            );
         }
+
+        console.log("Operaciones guardadas");
+
+    } catch (err) {
+
+        console.warn(
+            "Error guardando operaciones:",
+            err.message
+        );
+
+    }
+
+}
 
       function normalizarTexto(valor) {
 return String(valor ?? '')
