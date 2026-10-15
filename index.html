@@ -1037,12 +1037,20 @@ console.log("Primera operación:", dbOperations[0]);
 
     }
 }
+        console.log("Llegué aquí");
+console.log("Operaciones:", dbOperations?.length);
         window.migrarOperaciones = migrarOperaciones;
         console.log("migrarOperaciones registrada");
 
-setTimeout(() => {
+setTimeout(async () => {
+
     console.log("Ejecutando migración...");
-    migrarOperaciones();
+    console.log("Operaciones encontradas:", dbOperations?.length);
+
+    await migrarOperaciones();
+
+    console.log("Migración terminada");
+
 }, 5000);
       function normalizarTexto(valor) {
 return String(valor ?? '')
