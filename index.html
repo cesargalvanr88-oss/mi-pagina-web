@@ -964,7 +964,8 @@ console.log("Operaciones:", dbOperations);
 
 try {
 
- const operationId = key;
+ const operationId = key
+    .replace(/[\/\\]/g, '_');
 
 await setDoc(
     doc(
@@ -1005,24 +1006,24 @@ console.log("Migrada:", operationId);
     console.log("DATA:", operation);
     console.log("ES ARRAY:", Array.isArray(operation));
 
-  const operationId = key;
+const operationId = key.replace(/[\/\\]/g, '_');
 
-    await setDoc(
-        doc(
-            db,
-            'artifacts',
-            appId,
-            'operations',
-            operationId
-        ),
-        Array.isArray(operation)
-            ? { questions: operation }
-            : operation
-    );
+await setDoc(
+    doc(
+        db,
+        'artifacts',
+        appId,
+        'operations',
+        operationId
+    ),
+    {
+        operationName: key,
+        questions: operation
+    }
+);
 
-    console.log("Migrada:", operationId);
-}
-``
+console.log("Migrada:", operationId);
+
         console.log("✅ Migración completada");
 
     } catch (err) {
