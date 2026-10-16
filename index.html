@@ -691,11 +691,11 @@ Selecciona las fotografías directamente desde la galería del dispositivo.
         import {
     getFirestore,
     doc,
-    setDoc,
+    collection,        
+    setDoc,        
     getDoc,
     getDocs,
     onSnapshot,
-    collection
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
   
 
@@ -1134,28 +1134,43 @@ err.message
             
            // Escuchar cambios en operaciones en tiempo real
  onSnapshot(
-    doc(db, 'artifacts', appId, 'configs', 'operations_config'),
-    (docSnap) => {
+    collection(
+        db,
+        'artifacts',
+        appId,
+        'operations'
+    ),
+    (snapshot) => {
 
-        if (docSnap.exists() && docSnap.data().data) {
+        dbOperations = {};
 
-            dbOperations = docSnap.data().data;
-         console.log("OPERACIONES CARGADAS");
-console.log(docSnap.data().data);
+        snapshot.forEach((docSnap) => {
 
-window.dbOperations = docSnap.data().data;
+            const data = docSnap.data();
 
-            localStorage.setItem(
-                'ame_operations',
-                JSON.stringify(dbOperations)
-            );
+            dbOperations[data.operationName] =
+                data.questions || [];
 
-            populateOperationSelects();
+        });
 
-            if (!questionsModal.classList.contains('hidden')) {
-                loadAdminQuestions();
-            }
+        console.log("OPERACIONES CARGADAS");
+        console.log(dbOperations);
+
+        window.dbOperations = dbOperations;
+
+        localStorage.setItem(
+            'ame_operations',
+            JSON.stringify(dbOperations)
+        );
+
+        populateOperationSelects();
+
+        if (
+            !questionsModal.classList.contains('hidden')
+        ) {
+            loadAdminQuestions();
         }
+
     }
 );
 
