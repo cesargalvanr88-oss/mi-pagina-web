@@ -996,27 +996,35 @@ try {
 
     try {
 
-      for (const operation of Object.values(dbOperations)) {
-            const operationId =
-                operation.name ||
-                operation.operationName ||
-                operation.operation ||
-                `operacion_${Date.now()}`;
+   for (const [key, operation] of Object.entries(dbOperations)) {
 
-            await setDoc(
-                doc(
-                    db,
-                    'artifacts',
-                    appId,
-                    'operations',
-                    operationId
-                ),
-                operation
-            );
+    console.log("==============");
+    console.log("KEY:", key);
+    console.log("DATA:", operation);
+    console.log("ES ARRAY:", Array.isArray(operation));
 
-            console.log("Migrada:", operationId);
-        }
+    const operationId =
+        operation.name ||
+        operation.operationName ||
+        operation.operation ||
+        key;
 
+    await setDoc(
+        doc(
+            db,
+            'artifacts',
+            appId,
+            'operations',
+            operationId
+        ),
+        Array.isArray(operation)
+            ? { questions: operation }
+            : operation
+    );
+
+    console.log("Migrada:", operationId);
+}
+``
         console.log("✅ Migración completada");
 
     } catch (err) {
