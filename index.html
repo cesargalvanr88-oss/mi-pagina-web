@@ -1035,7 +1035,10 @@ console.log("Migrada:", operationId);
     }
 }
         console.log("Llegué aquí");
-console.log("Operaciones:", dbOperations?.length);
+console.log(
+    "Operaciones encontradas:",
+    Object.keys(dbOperations || {}).length
+);
         window.migrarOperaciones = migrarOperaciones;
         console.log("migrarOperaciones registrada");
 
