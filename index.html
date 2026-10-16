@@ -957,8 +957,8 @@ measurementId: "G-Y3PX3GM085"
         'ame_operations',
         JSON.stringify(dbOperations)
     );
- console.log("Cantidad de operaciones:", dbOperations.length);
-console.log("Primera operación:", dbOperations[0]);
+console.log("Cantidad de operaciones:", Object.keys(dbOperations).length);
+console.log("Operaciones:", dbOperations);
 
     if (!isFirebaseInitialized || !db) return;
 
@@ -985,7 +985,7 @@ try {
         "Error guardando operaciones:",
         err.message
     );
-
+}
 }
     async function migrarOperaciones() {
 
