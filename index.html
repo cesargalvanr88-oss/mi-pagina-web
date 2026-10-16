@@ -962,50 +962,41 @@ console.log("Primera operación:", dbOperations[0]);
 
     if (!isFirebaseInitialized || !db) return;
 
-    try {
+try {
 
-        for (const operation of dbOperations) {
-
-            const operationId =
-                operation.name ||
-                operation.operationName;
-
-            await setDoc(
-                doc(
-                    db,
-                    'artifacts',
-                    appId,
-                    'operations',
-                    operationId
-                ),
-                operation
-            );
+    await setDoc(
+        doc(
+            db,
+            'artifacts',
+            appId,
+            'configs',
+            'operations_config'
+        ),
+        {
+            data: dbOperations
         }
+    );
 
-        console.log("Operaciones guardadas");
+    console.log("Operaciones guardadas correctamente");
 
-    } catch (err) {
+} catch (err) {
 
-        console.warn(
-            "Error guardando operaciones:",
-            err.message
-        );
-
-    }
+    console.warn(
+        "Error guardando operaciones:",
+        err.message
+    );
 
 }
-
     async function migrarOperaciones() {
 
-    if (!db || !dbOperations || !dbOperations.length) {
+   if (!db || !dbOperations || Object.keys(dbOperations).length === 0) {
         console.log("No hay operaciones para migrar");
         return;
     }
 
     try {
 
-        for (const operation of dbOperations) {
-
+      for (const operation of Object.values(dbOperations)) {
             const operationId =
                 operation.name ||
                 operation.operationName ||
