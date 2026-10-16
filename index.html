@@ -2952,42 +2952,51 @@ new QRCode(qrContainer, {
             valign: 'middle'
         },
 
-        columnStyles: {
-            0: {
-                cellWidth: 80,
-                fontStyle: 'bold'
-            },
-            1: {
-                cellWidth: 45,
-                halign: 'center'
-            },
-            2: {
-                cellWidth: 45,
-                halign: 'center'
-            },
-           3: {
-    cellWidth: 55,
-    halign: 'center',
-    fontStyle: 'bold'
-  }              
+      columnStyles: {
+    0: {
+        cellWidth: 80,
+        fontStyle: 'bold'
+    },
+    1: {
+        cellWidth: 45,
+        halign: 'center'
+    },
+    2: {
+        cellWidth: 45,
+        halign: 'center'
+    },
+    3: {
+        cellWidth: 55,
+        halign: 'center',
+        fontStyle: 'bold'
+    }
 },
 
 didDrawCell: function(data) {
-    if (data.section === 'body' && data.column.index === 3) {
 
-        const estado = String(data.cell.raw || '').toUpperCase();
+    if (
+        data.section === 'body' &&
+        data.column.index === 3
+    ) {
+
+        const estado =
+            String(data.cell.raw || '')
+            .toUpperCase();
 
         if (estado.includes('NO VIGENTE')) {
+
             doc.setFillColor(220, 38, 38);
-        }
-        else if (
-            estado.includes('PROXIMO') ||
-            estado.includes('PRÓXIMO')
+
+        } else if (
+            estado.includes('PROXIMO')
         ) {
+
             doc.setFillColor(217, 119, 6);
-        }
-        else {
+
+        } else {
+
             doc.setFillColor(22, 163, 74);
+
         }
 
         doc.circle(
@@ -2997,9 +3006,8 @@ didDrawCell: function(data) {
             'F'
         );
     }
-}
-        },
 
+},
 
 didParseCell: function(data) {
 
@@ -3009,10 +3017,10 @@ didParseCell: function(data) {
     ) {
 
         const estado =
-            String(data.cell.raw || '').toUpperCase();
+            String(data.cell.raw || '')
+            .toUpperCase();
 
         if (
-            estado.includes('PRÓXIMA') ||
             estado.includes('PROXIMA')
         ) {
 
@@ -3039,9 +3047,10 @@ didParseCell: function(data) {
 
             data.cell.styles.fillColor =
                 [254, 226, 226];
+
         }
     }
-});
+}
     // =========================
 // AGREGAR QR AL CERTIFICADO
 // =========================
