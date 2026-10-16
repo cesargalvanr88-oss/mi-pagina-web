@@ -1140,6 +1140,7 @@ err.message
         if (docSnap.exists() && docSnap.data().data) {
 
             dbOperations = docSnap.data().data;
+            window.dbOperations = dbOperations;
 
             localStorage.setItem(
                 'ame_operations',
