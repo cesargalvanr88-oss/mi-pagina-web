@@ -3000,7 +3000,33 @@ didDrawCell: function(data) {
 }
         },
 
-      didParseCell: function(data) {
+  didDrawCell: function(data) {
+
+    if (data.section === 'body' && data.column.index === 3) {
+
+        const estado = String(data.cell.raw || '').toUpperCase();
+
+        if (estado.includes('NO VIGENTE')) {
+            doc.setFillColor(220, 38, 38);
+        } else if (
+            estado.includes('PROXIMO') ||
+            estado.includes('PRÓXIMO')
+        ) {
+            doc.setFillColor(217, 119, 6);
+        } else {
+            doc.setFillColor(22, 163, 74);
+        }
+
+        doc.circle(
+            data.cell.x + 4,
+            data.cell.y + data.cell.height / 2,
+            1.2,
+            'F'
+        );
+    }
+},
+
+didParseCell: function(data) {
 
     if (
         data.section === 'body' &&
@@ -3021,8 +3047,7 @@ didDrawCell: function(data) {
             data.cell.styles.fillColor =
                 [254, 243, 199];
 
-        }
-        else if (
+        } else if (
             estado.includes('VIGENTE')
         ) {
 
@@ -3032,20 +3057,16 @@ didDrawCell: function(data) {
             data.cell.styles.fillColor =
                 [220, 252, 231];
 
-        }
-        else {
+        } else {
 
             data.cell.styles.textColor =
                 [185, 28, 28];
 
             data.cell.styles.fillColor =
                 [254, 226, 226];
-
         }
     }
 }
-
-    });
     // =========================
 // AGREGAR QR AL CERTIFICADO
 // =========================
