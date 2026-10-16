@@ -964,32 +964,30 @@ console.log("Operaciones:", dbOperations);
 
 try {
 
- const operationId = key
-    .replace(/[\/\\]/g, '_');
+    await setDoc(
+        doc(
+            db,
+            'artifacts',
+            appId,
+            'configs',
+            'operations_config'
+        ),
+        {
+            data: dbOperations
+        }
+    );
 
-await setDoc(
-    doc(
-        db,
-        'artifacts',
-        appId,
-        'operations',
-        operationId
-    ),
-    {
-        operationName: key,
-        questions: operation
-    }
-);
+    console.log("Operaciones guardadas correctamente");
 
-console.log("Migrada:", operationId);
 } catch (err) {
 
     console.warn(
         "Error guardando operaciones:",
         err.message
     );
+
 }
-}
+
     async function migrarOperaciones() {
 
    if (!db || !dbOperations || Object.keys(dbOperations).length === 0) {
