@@ -964,21 +964,23 @@ console.log("Operaciones:", dbOperations);
 
 try {
 
-    await setDoc(
-        doc(
-            db,
-            'artifacts',
-            appId,
-            'configs',
-            'operations_config'
-        ),
-        {
-            data: dbOperations
-        }
-    );
+ const operationId = key;
 
-    console.log("Operaciones guardadas correctamente");
+await setDoc(
+    doc(
+        db,
+        'artifacts',
+        appId,
+        'operations',
+        operationId
+    ),
+    {
+        operationName: key,
+        questions: operation
+    }
+);
 
+console.log("Migrada:", operationId);
 } catch (err) {
 
     console.warn(
@@ -1003,11 +1005,7 @@ try {
     console.log("DATA:", operation);
     console.log("ES ARRAY:", Array.isArray(operation));
 
-    const operationId =
-        operation.name ||
-        operation.operationName ||
-        operation.operation ||
-        key;
+  const operationId = key;
 
     await setDoc(
         doc(
