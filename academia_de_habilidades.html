@@ -244,10 +244,35 @@
 
     <script>
         // Cargar historial al iniciar
-        window.onload = function() {
-            renderHistory();
-        };
+      window.onload = function() {
+    renderHistory();
+    updateGradeLabel();
 
+    document
+        .getElementById('school-grade')
+        .addEventListener('change', updateGradeLabel);
+};
+
+let currentGrade = 1;
+
+function getSelectedGrade() {
+
+    currentGrade = parseInt(
+        document.getElementById('school-grade').value
+    );
+
+    return currentGrade;
+}
+
+function updateGradeLabel() {
+
+    const grade =
+        document.getElementById('school-grade').value;
+
+    document.getElementById('current-grade-label')
+        .innerText =
+        `🎒 Nivel seleccionado: ${grade}° Primaria`;
+}
         function returnHome() {
             document.getElementById('game-memory').classList.add('hidden');
             document.getElementById('game-civics').classList.add('hidden');
