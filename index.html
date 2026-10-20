@@ -24,17 +24,27 @@ font-family: 'Inter', sans-serif;
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between">
 
-    <header class="bg-blue-700 text-white shadow-lg">
-        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-white text-blue-700 rounded-xl flex items-center justify-center font-black text-lg shadow-inner shrink-0">
-                    AME
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold leading-tight">Sistema de Certificación Operativa</h1>
-                    <p class="text-xs text-blue-200">Evaluación de Operaciones para Certificación AME</p>
-                </div>
+<header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-xl rounded-2xl mx-4 mt-4 transition-all duration-300 hover:scale-[1.01] hover:shadow-2xl">
+  <div class="w-full px-6 py-5">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 bg-white text-blue-700 rounded-2xl flex items-center justify-center font-black text-2xl shadow-xl shrink-0">
+    AME
+</div>
+
+            <div>
+                <h1 class="text-2xl font-bold leading-tight">
+                    Sistema de Certificación Operativa
+                </h1>
+
+               <p class="text-sm text-blue-100">
+    Evaluación de Operaciones para Certificación AME
+</p>
             </div>
+        </div>
+
+    </div>
+</header>
+
             <div class="flex items-center space-x-2">
                 <div id="sync-status" class="hidden sm:flex items-center space-x-1.5 text-xs bg-blue-800 px-3 py-1.5 rounded-lg border border-blue-500 text-blue-200" title="Estado de sincronización en la nube">
                     <i class="fa-solid fa-cloud text-amber-300 animate-pulse"></i>
