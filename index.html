@@ -162,6 +162,13 @@ filter: drop-shadow(0 0 12px rgba(255,255,255,0.8));
                     <span id="active-op-badge" class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-md font-bold text-xs uppercase">
                         Operación: -
                     </span>
+                    <div class="mt-2 text-sm text-slate-600">
+    Pregunta
+    <span id="current-q-num">1</span>
+    de
+    <span id="total-q-badge">0</span>
+</div>
+
                 </div>
                 <div class="w-full sm:w-1/2">
                     <div class="flex justify-between items-center mb-1 text-xs font-semibold text-slate-500">
@@ -1308,7 +1315,7 @@ console.warn(
         const startScreen = document.getElementById('start-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const resultScreen = document.getElementById('result-screen');
-        const quizBadge = document.getElementById('quiz-badge');
+       const quizBadge = document.getElementById('quiz-badge') || null;
         
         const userOperationSelect = document.getElementById('user-operation');
         const userNameInput = document.getElementById('user-name');
@@ -1639,7 +1646,9 @@ return mezcladas;
             saveHistoryToCloud();
 
             quizScreen.classList.add('hidden');
-            quizBadge.classList.add('hidden');
+           if (quizBadge) {
+    quizBadge.classList.add('hidden');
+}
             resultScreen.classList.remove('hidden');
 
             // Renderizar pantalla de resultados
