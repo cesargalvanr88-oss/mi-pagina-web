@@ -1510,7 +1510,9 @@ return mezcladas;
 
             startScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
-            quizBadge?.classList.remove('hidden');
+           if (quizBadge) {
+    quizBadge.classList.remove('hidden');
+}
             totalQBadge.textContent = currentQuestions.length;
 
             loadQuestion();
