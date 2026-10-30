@@ -1585,6 +1585,7 @@ return mezcladas;
             currentTechnician = { name, id, shift, operation: op };
             currentIndex = 0;
             userAnswers = {};
+            guardarProgresoExamen();
 
             startScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
@@ -1639,10 +1640,15 @@ return mezcladas;
                         <span class="text-sm font-medium text-slate-800 flex-grow">${q.options[key]}</span>
                         <input type="radio" name="q-opt" value="${key}" ${isSelected ? 'checked' : ''} class="accent-blue-600 w-4 h-4">
                     `;
-                    optDiv.addEventListener('click', () => {
-                        userAnswers[currentIndex] = key;
-                        loadQuestion();
-                    });
+                  optDiv.addEventListener('click', () => {
+
+    userAnswers[currentIndex] = key;
+
+    guardarProgresoExamen();
+
+    loadQuestion();
+
+});
                     optionsContainer.appendChild(optDiv);
                 }
             });
@@ -1663,12 +1669,19 @@ return mezcladas;
             }
         }
 
-        btnPrev.addEventListener('click', () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                loadQuestion();
-            }
-        });
+       btnPrev.addEventListener('click', () => {
+
+    if (currentIndex > 0) {
+
+        currentIndex--;
+
+        guardarProgresoExamen();
+
+        loadQuestion();
+
+    }
+
+});
 
         btnNext.addEventListener('click', () => {
             if (userAnswers[currentIndex] === undefined) {
@@ -1677,7 +1690,10 @@ return mezcladas;
             }
             if (currentIndex < currentQuestions.length - 1) {
                 currentIndex++;
-                loadQuestion();
+
+guardarProgresoExamen();
+
+loadQuestion();
             } else {
                 finishExam();
             }
