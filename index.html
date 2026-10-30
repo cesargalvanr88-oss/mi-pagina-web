@@ -1700,6 +1700,7 @@ loadQuestion();
         });
 
         function finishExam() {
+            localStorage.removeItem('ame_exam_progress');
             let correct = 0;
             let incorrect = 0;
 
@@ -1800,6 +1801,7 @@ loadQuestion();
         }
 
         btnRestart.addEventListener('click', () => {
+            localStorage.removeItem('ame_exam_progress');
             resultScreen.classList.add('hidden');
             startScreen.classList.remove('hidden');
             userNameInput.value = '';
