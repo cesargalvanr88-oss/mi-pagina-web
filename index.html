@@ -2902,8 +2902,13 @@ new QRCode(qrContainer, {
                 item.status
             );
 
-        const estatusTexto =
-            String(estatus || '').toUpperCase();
+      const estatusTexto =
+    String(estatus || '')
+    .replace('🟢', '')
+    .replace('🟡', '')
+    .replace('🔴', '')
+    .trim()
+    .toUpperCase();
 
         if (estatusTexto.includes('NO VIGENTE')) {
 
