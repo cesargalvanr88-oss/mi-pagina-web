@@ -1002,21 +1002,32 @@ console.log("Operaciones:", dbOperations);
 
 try {
 
-    await setDoc(
-        doc(
-            db,
-            'artifacts',
-            appId,
-            'configs',
-            'operations_config'
-        ),
-        {
-            data: dbOperations
-        }
+    for (const [key, operation] of Object.entries(dbOperations)) {
+
+        const operationId =
+            key.replace(/[\/\\]/g, '_');
+
+        await setDoc(
+            doc(
+                db,
+                'artifacts',
+                appId,
+                'operations',
+                operationId
+            ),
+            {
+                operationName: key,
+                questions: operation
+            }
+        );
+
+    }
+
+    console.log(
+        "Operaciones guardadas correctamente"
     );
 
-    console.log("Operaciones guardadas correctamente");
-
+}
 } catch (err) {
 
     console.warn(
