@@ -2818,7 +2818,12 @@ qrContainer.style.left = '-9999px';
 qrContainer.style.top = '-9999px';
 
 document.body.appendChild(qrContainer);
-
+    
+textoQR = textoQR
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\n/g, " | ");
+    
 new QRCode(qrContainer, {
     text: textoQR,
     width: 300,
