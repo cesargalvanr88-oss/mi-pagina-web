@@ -1303,6 +1303,77 @@ console.warn(
         let currentTechnician = { name: "", id: "", shift: "Turno 1", operation: "" };
         let isReadOnlyMode = false;
         let isAdminMode = false;
+        function guardarProgresoExamen() {
+
+    const progreso = {
+        currentOperationName,
+        currentQuestions,
+        currentIndex,
+        userAnswers,
+        currentTechnician
+    };
+
+    localStorage.setItem(
+        'ame_exam_progress',
+        JSON.stringify(progreso)
+    );
+}
+
+function restaurarProgresoExamen() {
+
+    const progresoGuardado =
+        localStorage.getItem(
+            'ame_exam_progress'
+        );
+
+    if (!progresoGuardado) {
+        return;
+    }
+
+    try {
+
+        const progreso =
+            JSON.parse(progresoGuardado);
+
+        currentOperationName =
+            progreso.currentOperationName || "";
+
+        currentQuestions =
+            progreso.currentQuestions || [];
+
+        currentIndex =
+            progreso.currentIndex || 0;
+
+        userAnswers =
+            progreso.userAnswers || {};
+
+        currentTechnician =
+            progreso.currentTechnician || {};
+
+        if (currentQuestions.length > 0) {
+
+            startScreen.classList.add('hidden');
+
+            quizScreen.classList.remove('hidden');
+
+            activeOpBadge.textContent =
+                `Operación: ${currentOperationName}`;
+
+            totalQBadge.textContent =
+                currentQuestions.length;
+
+            loadQuestion();
+        }
+
+    } catch (error) {
+
+        console.error(
+            'Error restaurando examen:',
+            error
+        );
+
+    }
+}
 
         // Detectar si se abrió mediante enlace único (ej. ?op=Pva%20Gap%20Filler)
         const urlParams = new URLSearchParams(window.location.search);
