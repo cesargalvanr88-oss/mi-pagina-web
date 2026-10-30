@@ -2718,6 +2718,7 @@ imageInputs.forEach(input => {
 
 
             const qIdVal = editQId.value;
+          console.log("qIdVal antes del IF =", qIdVal);
             if (qIdVal === "") {
                 const newId = dbOperations[currentOp].length > 0 ? Math.max(...dbOperations[currentOp].map(i => i.id)) + 1 : 1;
                 const newQ = {
@@ -2728,6 +2729,11 @@ imageInputs.forEach(input => {
                     correct: correct
                 };
                 dbOperations[currentOp].push(newQ);
+                console.log("qIdVal =", qIdVal);
+console.log("Operación =", currentOp);
+console.log("Total preguntas =", dbOperations[currentOp].length);
+console.log("Pregunta agregada =", newQ);
+
             } else {
                 const idNum = parseInt(qIdVal);
                 const q = dbOperations[currentOp].find(item => item.id === idNum);
