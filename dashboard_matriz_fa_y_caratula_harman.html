@@ -1460,6 +1460,14 @@ let IS_ADMIN = false;
         }
 
    function loginAdmin() {
+        aplicarModoOperador();
+
+    document.getElementById("btnCerrarAdmin")
+        ?.classList.add("hidden");
+
+    alert("Modo administrador cerrado");
+
+}
 
     const pass = prompt("Ingrese contraseña de administrador");
 
@@ -1474,7 +1482,9 @@ if (pass === "HarmanFA2026") {
     document.getElementById("btnNuevoSGF")?.classList.remove("hidden");
 
     document.getElementById("btnResetBD")?.classList.remove("hidden");
-
+    
+document.getElementById("btnCerrarAdmin")
+        ?.classList.remove("hidden");
     alert("Acceso concedido");
 
     } else if (pass !== null) {
