@@ -111,6 +111,11 @@
 
                 <!-- Controls & Navigation -->
                 <div class="flex items-center space-x-2">
+                    <button onclick="loginAdmin()"
+    class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-lg shadow transition flex items-center gap-1.5">
+    <i class="fa-solid fa-lock"></i>
+    <span>Administrador</span>
+</button>
                     <button onclick="resetToDefaultData()" title="Restablecer datos predeterminados" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-rotate text-amber-400"></i>
                         <span class="hidden md:inline">Restablecer BD</span>
@@ -933,7 +938,7 @@ CDA: 4201545 / Programa para plasma cover - Dissible_Cover_15CH / Programa para 
         let db = { matrizFA: [], matrizPVA: [], matrizSGF: [] };
 
 // CONTROL DE ACCESO
-const IS_ADMIN = false;
+let IS_ADMIN = false;
 
         // Initialize App on DOM Load
        document.addEventListener('DOMContentLoaded', () => {
@@ -1389,6 +1394,23 @@ const IS_ADMIN = false;
         }
 
         function aplicarModoOperador() {
+            function loginAdmin() {
+
+    const pass = prompt("Ingrese contraseña de administrador");
+
+    if (pass === "HarmanFA2026") {
+
+        IS_ADMIN = true;
+
+        location.reload();
+
+    } else if(pass !== null) {
+
+        alert("Contraseña incorrecta");
+
+    }
+}
+
 
     document.getElementById("btnTabFA")?.remove();
     document.getElementById("btnTabPVA")?.remove();
