@@ -476,7 +476,7 @@ CDA: 4201545 / Programa para plasma cover - Dissible_Cover_15CH / Programa para 
                     </select>
                 </div>
 
-                <button onclick="openFAEditModal(null)" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg shadow flex items-center gap-2 transition">
+               <button id="btnNuevoFA" onclick="openFAEditModal(null)" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg shadow flex items-center gap-2 transition">
                     <i class="fa-solid fa-plus"></i> Nuevo Registro Matriz FA
                 </button>
             </div>
@@ -521,7 +521,7 @@ CDA: 4201545 / Programa para plasma cover - Dissible_Cover_15CH / Programa para 
                     </h2>
                     <p class="text-xs text-slate-400">Administre las presiones (PSI) y velocidades (RPM) asociadas por Marca y Número de Parte de Pasta.</p>
                 </div>
-                <button onclick="openPVAEditModal(null)" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg shadow transition flex items-center gap-1.5">
+                <button id="btnNuevoPVA" onclick="openPVAEditModal(null)" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg shadow transition flex items-center gap-1.5">
                     <i class="fa-solid fa-plus"></i> Añadir Parámetro PVA
                 </button>
             </div>
@@ -560,7 +560,7 @@ CDA: 4201545 / Programa para plasma cover - Dissible_Cover_15CH / Programa para 
                     </h2>
                     <p class="text-xs text-slate-400">Administre los flujos, volumen, pot-life y parámetros de cartuchos para dispensado SGF.</p>
                 </div>
-                <button onclick="openSGFEditModal(null)" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg shadow transition flex items-center gap-1.5">
+               <button id="btnNuevoSGF" onclick="openSGFEditModal(null)" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg shadow transition flex items-center gap-1.5">
                     <i class="fa-solid fa-plus"></i> Añadir Parámetro SGF
                 </button>
             </div>
@@ -936,12 +936,17 @@ CDA: 4201545 / Programa para plasma cover - Dissible_Cover_15CH / Programa para 
 const IS_ADMIN = false;
 
         // Initialize App on DOM Load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDB();
-            renderAllTables();
-            // Load Default Card
-            quickLoad("4203469", "A");
-        });
+       document.addEventListener('DOMContentLoaded', () => {
+
+    loadDB();
+    renderAllTables();
+
+    if (!IS_ADMIN) {
+        aplicarModoOperador();
+    }
+
+    quickLoad("4203469", "A");
+});
 
         // Load DB from LocalStorage
         function loadDB() {
@@ -1382,6 +1387,18 @@ const IS_ADMIN = false;
                 renderMatrizSGFTable();
             }
         }
+
+        function aplicarModoOperador() {
+
+    document.getElementById("btnTabFA")?.remove();
+    document.getElementById("btnTabPVA")?.remove();
+    document.getElementById("btnTabSGF")?.remove();
+
+    document.getElementById("btnNuevoFA")?.remove();
+    document.getElementById("btnNuevoPVA")?.remove();
+    document.getElementById("btnNuevoSGF")?.remove();
+
+    document.getElementById("btnResetBD")?.remove();
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
