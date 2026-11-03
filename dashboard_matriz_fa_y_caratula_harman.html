@@ -1393,32 +1393,35 @@ let IS_ADMIN = false;
             }
         }
 
-      function loginAdmin() {
+   function loginAdmin() {
 
     const pass = prompt("Ingrese contraseña de administrador");
 
     if (pass === "HarmanFA2026") {
 
+        document.getElementById("btnTabFA")?.classList.remove("hidden");
+        document.getElementById("btnTabPVA")?.classList.remove("hidden");
+        document.getElementById("btnTabSGF")?.classList.remove("hidden");
+
         alert("Acceso concedido");
 
-    } else if(pass !== null) {
+    } else if (pass !== null) {
 
         alert("Contraseña incorrecta");
 
     }
 }
-
+       
 function aplicarModoOperador() {
 
-    document.getElementById("btnTabFA")?.remove();
-    document.getElementById("btnTabPVA")?.remove();
-    document.getElementById("btnTabSGF")?.remove();
+   document.getElementById("btnTabFA")?.classList.add("hidden");
+   document.getElementById("btnTabPVA")?.classList.add("hidden");
+   document.getElementById("btnTabSGF")?.classList.add("hidden");
 
-    document.getElementById("btnNuevoFA")?.remove();
-    document.getElementById("btnNuevoPVA")?.remove();
-    document.getElementById("btnNuevoSGF")?.remove();
-
-    document.getElementById("btnResetBD")?.remove();
+    document.getElementById("btnNuevoFA")?.classList.add("hidden");
+document.getElementById("btnNuevoPVA")?.classList.add("hidden");
+document.getElementById("btnNuevoSGF")?.classList.add("hidden");
+document.getElementById("btnResetBD")?.classList.add("hidden");
     }
 
         function closeModal(id) {
