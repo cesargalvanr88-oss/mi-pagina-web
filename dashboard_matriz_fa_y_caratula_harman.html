@@ -1497,6 +1497,22 @@ function logoutAdmin() {
     alert("Modo administrador cerrado");
 
 }
+        function aplicarModoOperador() {
+
+    document.getElementById("btnTabFA")?.classList.add("hidden");
+    document.getElementById("btnTabPVA")?.classList.add("hidden");
+    document.getElementById("btnTabSGF")?.classList.add("hidden");
+
+    document.getElementById("btnNuevoFA")?.classList.add("hidden");
+    document.getElementById("btnNuevoPVA")?.classList.add("hidden");
+    document.getElementById("btnNuevoSGF")?.classList.add("hidden");
+
+    document.getElementById("btnResetBD")?.classList.add("hidden");
+
+}
+        function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+}
     </script>
 </body>
 </html>
