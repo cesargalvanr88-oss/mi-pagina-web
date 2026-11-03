@@ -1459,33 +1459,26 @@ let IS_ADMIN = false;
             }
         }
 
-   function loginAdmin() {
-        aplicarModoOperador();
-
-    document.getElementById("btnCerrarAdmin")
-        ?.classList.add("hidden");
-
-    alert("Modo administrador cerrado");
-
-}
+ function loginAdmin() {
 
     const pass = prompt("Ingrese contraseña de administrador");
 
-if (pass === "HarmanFA2026") {
+    if (pass === "HarmanFA2026") {
 
-    document.getElementById("btnTabFA")?.classList.remove("hidden");
-    document.getElementById("btnTabPVA")?.classList.remove("hidden");
-    document.getElementById("btnTabSGF")?.classList.remove("hidden");
+        document.getElementById("btnTabFA")?.classList.remove("hidden");
+        document.getElementById("btnTabPVA")?.classList.remove("hidden");
+        document.getElementById("btnTabSGF")?.classList.remove("hidden");
 
-    document.getElementById("btnNuevoFA")?.classList.remove("hidden");
-    document.getElementById("btnNuevoPVA")?.classList.remove("hidden");
-    document.getElementById("btnNuevoSGF")?.classList.remove("hidden");
+        document.getElementById("btnNuevoFA")?.classList.remove("hidden");
+        document.getElementById("btnNuevoPVA")?.classList.remove("hidden");
+        document.getElementById("btnNuevoSGF")?.classList.remove("hidden");
 
-    document.getElementById("btnResetBD")?.classList.remove("hidden");
-    
-document.getElementById("btnCerrarAdmin")
-        ?.classList.remove("hidden");
-    alert("Acceso concedido");
+        document.getElementById("btnResetBD")?.classList.remove("hidden");
+
+        document.getElementById("btnCerrarAdmin")
+            ?.classList.remove("hidden");
+
+        alert("Acceso concedido");
 
     } else if (pass !== null) {
 
@@ -1493,22 +1486,17 @@ document.getElementById("btnCerrarAdmin")
 
     }
 }
-       
-function aplicarModoOperador() {
 
-   document.getElementById("btnTabFA")?.classList.add("hidden");
-   document.getElementById("btnTabPVA")?.classList.add("hidden");
-   document.getElementById("btnTabSGF")?.classList.add("hidden");
+function logoutAdmin() {
 
-    document.getElementById("btnNuevoFA")?.classList.add("hidden");
-document.getElementById("btnNuevoPVA")?.classList.add("hidden");
-document.getElementById("btnNuevoSGF")?.classList.add("hidden");
-document.getElementById("btnResetBD")?.classList.add("hidden");
-    }
+    aplicarModoOperador();
 
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
+    document.getElementById("btnCerrarAdmin")
+        ?.classList.add("hidden");
+
+    alert("Modo administrador cerrado");
+
+}
     </script>
 </body>
 </html>
