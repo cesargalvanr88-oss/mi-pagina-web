@@ -131,13 +131,13 @@
                 <button onclick="switchTab('tab-caratula')" id="btn-tab-caratula" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border transition bg-harman-blue text-white border-harman-blue shadow-lg">
                     <i class="fa-solid fa-file-invoice"></i> Carátula MRT (Principal)
                 </button>
-                <button onclick="switchTab('tab-matriz-fa')" id="btn-tab-matriz-fa" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                <button id="btnTabFA" onclick="switchTab('tab-matriz-fa')" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition">
                     <i class="fa-solid fa-table-list"></i> Matriz FA (Alimentación)
                 </button>
-                <button onclick="switchTab('tab-matriz-pva')" id="btn-tab-matriz-pva" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                <button id="btnTabPVA" onclick="switchTab('tab-matriz-pva')" id="btn-tab-matriz-pva" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition">
                     <i class="fa-solid fa-sliders"></i> Matriz Parámetros PVA
                 </button>
-                <button onclick="switchTab('tab-matriz-sgf')" id="btn-tab-matriz-sgf" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                <button id="btnTabSGF" onclick="switchTab('tab-matriz-sgf')" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition">
                     <i class="fa-solid fa-gears"></i> Matriz Parámetros SGF
                 </button>
             </div>
@@ -931,6 +931,9 @@ CDA: 4201545 / Programa para plasma cover - Dissible_Cover_15CH / Programa para 
 
         // Global State DB
         let db = { matrizFA: [], matrizPVA: [], matrizSGF: [] };
+
+// CONTROL DE ACCESO
+const IS_ADMIN = false;
 
         // Initialize App on DOM Load
         document.addEventListener('DOMContentLoaded', () => {
