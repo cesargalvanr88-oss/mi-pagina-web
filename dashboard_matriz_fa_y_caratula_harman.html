@@ -111,21 +111,7 @@
 
                 <!-- Controls & Navigation -->
                 <div class="flex items-center space-x-2">
-                    <button onclick="loginAdmin()"
-    class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-lg shadow transition flex items-center gap-1.5">
-    <i class="fa-solid fa-lock"></i>
-    <span>Administrador</span>
-</button>
-                    <button
-    id="btnCerrarAdmin"
-    onclick="logoutAdmin()"
-    class="hidden px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg shadow transition flex items-center gap-1.5">
-
-    <i class="fa-solid fa-right-from-bracket"></i>
-    <span>Salir</span>
-
-</button>
-                
+                  
                 </div>
             </div>
         </div>
@@ -147,6 +133,21 @@
                 <button id="btnTabSGF" onclick="switchTab('tab-matriz-sgf')" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 border border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition">
                     <i class="fa-solid fa-gears"></i> Matriz Parámetros SGF
                 </button>
+                 <button onclick="loginAdmin()"
+    class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-lg shadow transition flex items-center gap-1.5">
+    <i class="fa-solid fa-lock"></i>
+    <span>Administrador</span>
+</button>
+                    <button
+    id="btnCerrarAdmin"
+    onclick="logoutAdmin()"
+    class="hidden px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg shadow transition flex items-center gap-1.5">
+
+    <i class="fa-solid fa-right-from-bracket"></i>
+    <span>Salir</span>
+
+</button>
+
             </div>
         </div>
     </nav>
