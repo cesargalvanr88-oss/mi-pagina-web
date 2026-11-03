@@ -468,23 +468,41 @@ CDA: 4201545 / Programa para plasma cover - Dissible_Cover_15CH / Programa para 
             
             <!-- Controls Bar -->
             <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-wrap gap-3 justify-between items-center">
-                <div class="flex flex-wrap items-center gap-3">
-                    <input type="text" id="faSearchFilter" onkeyup="renderMatrizFATable()" placeholder="Buscar por NP, Proyecto, CRF..." class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-harman-blue w-64">
-                    
-                    <select id="faCustomerFilter" onchange="renderMatrizFATable()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-harman-blue">
-                        <option value="ALL">Todos los Clientes</option>
-                        <option value="GM">GM</option>
-                        <option value="Stellantis">Stellantis</option>
-                        <option value="Subaru">Subaru</option>
-                        <option value="John Deere">John Deere</option>
-                        <option value="Harley Davidson">Harley Davidson</option>
-                    </select>
-                </div>
+               <div class="flex flex-wrap items-center gap-3">
 
-               <button id="btnNuevoFA" onclick="openFAEditModal(null)" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg shadow flex items-center gap-2 transition">
-                    <i class="fa-solid fa-plus"></i> Nuevo Registro Matriz FA
-                </button>
-            </div>
+    <input
+        type="text"
+        id="faSearchFilter"
+        onkeyup="renderMatrizFATable()"
+        placeholder="Buscar por NP, Proyecto, CRF..."
+        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-harman-blue w-64">
+
+    <select
+        id="faCustomerFilter"
+        onchange="renderMatrizFATable()"
+        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-harman-blue">
+
+        <option value="ALL">Todos los Clientes</option>
+        <option value="GM">GM</option>
+        <option value="Stellantis">Stellantis</option>
+        <option value="Subaru">Subaru</option>
+        <option value="John Deere">John Deere</option>
+        <option value="Harley Davidson">Harley Davidson</option>
+
+    </select>
+
+    <button
+        id="btnNuevoFA"
+        onclick="openFAEditModal(null)"
+        class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg shadow flex items-center gap-2">
+
+        <i class="fa-solid fa-plus"></i>
+        Agregar Modelo
+
+    </button>
+
+</div>
+
 
             <!-- Table Card -->
             <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden shadow-xl">
