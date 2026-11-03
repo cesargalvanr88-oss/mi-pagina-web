@@ -1002,19 +1002,58 @@ let IS_ADMIN = false;
         }
 
         // Tab Switcher
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-tab').forEach(btn => {
-                btn.classList.remove('bg-harman-blue', 'text-white', 'border-harman-blue', 'shadow-lg');
-                btn.classList.add('border-transparent', 'text-slate-400');
-            });
+       function switchTab(tabId) {
 
-            document.getElementById(tabId).classList.remove('hidden');
-            const activeBtn = document.getElementById(`btn-${tabId}`);
-            activeBtn.classList.add('bg-harman-blue', 'text-white', 'border-harman-blue', 'shadow-lg');
-            activeBtn.classList.remove('border-transparent', 'text-slate-400');
-        }
+    document.querySelectorAll('.tab-content')
+        .forEach(el => el.classList.add('hidden'));
 
+    document.querySelectorAll('.nav-tab')
+        .forEach(btn => {
+            btn.classList.remove(
+                'bg-harman-blue',
+                'text-white',
+                'border-harman-blue',
+                'shadow-lg'
+            );
+
+            btn.classList.add(
+                'border-transparent',
+                'text-slate-400'
+            );
+        });
+
+    document.getElementById(tabId)
+        .classList.remove('hidden');
+
+    let activeBtn = null;
+
+    if (tabId === 'tab-caratula')
+        activeBtn = document.getElementById('btn-tab-caratula');
+
+    if (tabId === 'tab-matriz-fa')
+        activeBtn = document.getElementById('btnTabFA');
+
+    if (tabId === 'tab-matriz-pva')
+        activeBtn = document.getElementById('btnTabPVA');
+
+    if (tabId === 'tab-matriz-sgf')
+        activeBtn = document.getElementById('btnTabSGF');
+
+    if (activeBtn) {
+
+        activeBtn.classList.add(
+            'bg-harman-blue',
+            'text-white',
+            'border-harman-blue',
+            'shadow-lg'
+        );
+
+        activeBtn.classList.remove(
+            'border-transparent',
+            'text-slate-400'
+        );
+    }
+}
         // Suggestions Dropdown on Input
         function onSearchInputChange() {
             const np = document.getElementById('searchNP').value.trim().toLowerCase();
