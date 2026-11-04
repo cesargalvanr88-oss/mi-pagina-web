@@ -1524,13 +1524,27 @@ const certificateCertificationsList = document.getElementById('certificate-certi
 const selectedAdminOp = adminOpSelector ? adminOpSelector.value : "";
 const selectedFilterOp = filterOperation ? filterOperation.value : "";
             // Selector de inicio
-            userOperationSelect.innerHTML = '';
-            ops.forEach(op => {
-                const opt = document.createElement('option');
-                opt.value = op;
-                opt.textContent = op;
-                userOperationSelect.appendChild(opt);
-            });
+           adminOpSelector.innerHTML = '';
+
+const defaultOption = document.createElement('option');
+defaultOption.value = '';
+defaultOption.textContent =
+    '-- Seleccione una operación --';
+
+adminOpSelector.appendChild(defaultOption);
+
+ops.forEach(op => {
+
+    const opt = document.createElement('option');
+
+    opt.value = op;
+
+    opt.textContent = op;
+
+    adminOpSelector.appendChild(opt);
+
+});
+
 
             // Selector de filtro historial
             filterOperation.innerHTML = '<option value="">-- Todas las operaciones --</option>';
@@ -2360,10 +2374,21 @@ reader.readAsArrayBuffer(file);
 
         // --- GESTIÓN DE PREGUNTAS E IMÁGENES FIJAS (ADMIN) ---
         btnAdminQuestions.addEventListener('click', () => {
-            pendingAdminAction = () => {
-                questionsModal.classList.remove('hidden');
-                loadAdminQuestions();
-            };
+           pendingAdminAction = () => {
+
+    questionsModal.classList.remove('hidden');
+
+    // No cargar preguntas automáticamente
+    adminQuestionsList.innerHTML = `
+        <div class="p-8 text-center text-slate-400 bg-slate-50 rounded-xl border">
+            Seleccione una operación para visualizar o administrar sus preguntas.
+        </div>
+    `;
+
+    qModalCount.textContent = "0";
+
+};
+
             openPinModal("Gestión de Preguntas y Fotos Fijas");
         });
 
