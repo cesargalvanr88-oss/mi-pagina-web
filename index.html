@@ -1386,11 +1386,12 @@ function restaurarProgresoExamen() {
 }
 
         // Detectar si se abrió mediante enlace único (ej. ?op=Pva%20Gap%20Filler)
-        const urlParams = new URLSearchParams(window.location.search);
-        const paramOp = urlParams.get('op');
-        if (paramOp && dbOperations[paramOp]) {
-            isReadOnlyMode = true;
-        }
+       const urlParams = new URLSearchParams(window.location.search);
+const paramOp = urlParams.get('op');
+
+if (paramOp) {
+    isReadOnlyMode = true;
+}
 
         // --- ELEMENTOS DOM ---
         const startScreen = document.getElementById('start-screen');
@@ -1810,13 +1811,47 @@ loadQuestion();
             });
         }
 
-        btnRestart.addEventListener('click', () => {
-            localStorage.removeItem('ame_exam_progress');
-            resultScreen.classList.add('hidden');
-            startScreen.classList.remove('hidden');
-            userNameInput.value = '';
-            userIdInput.value = '';
-        });
+      btnRestart.addEventListener('click', () => {
+
+    localStorage.removeItem('ame_exam_progress');
+
+    resultScreen.classList.add('hidden');
+    startScreen.classList.remove('hidden');
+
+    userNameInput.value = '';
+    userIdInput.value = '';
+
+    // Limpiar variables
+    currentOperationName = "";
+    currentQuestions = [];
+    currentIndex = 0;
+    userAnswers = {};
+
+    currentTechnician = {
+        name: "",
+        id: "",
+        shift: "Turno 1",
+        operation: ""
+    };
+
+    // Salir del modo técnico
+    isReadOnlyMode = false;
+
+    // Reactivar selector
+    userOperationSelect.disabled = false;
+
+    // Mostrar nuevamente botón admin
+    btnAdminQuestions.classList.remove('hidden');
+
+    // Eliminar parámetros de URL
+    window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+    );
+
+});
+
 
         // --- ENLACE ÚNICO PARA TÉCNICO ---
         btnGenerateLink.addEventListener('click', () => {
