@@ -2442,6 +2442,19 @@ reader.readAsArrayBuffer(file);
 
         function loadAdminQuestions() {
             const currentOp = adminOpSelector.value;
+            if (!currentOp) {
+
+    qModalCount.textContent = "0";
+
+    adminQuestionsList.innerHTML = `
+        <div class="p-8 text-center text-slate-400 bg-slate-50 rounded-xl border">
+            Seleccione una operación para visualizar o administrar sus preguntas.
+        </div>
+    `;
+
+    return;
+
+}
             const qList = dbOperations[currentOp] || [];
             qModalCount.textContent = qList.length;
 
