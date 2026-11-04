@@ -2377,30 +2377,32 @@ reader.readAsArrayBuffer(file);
 });
 
         // --- GESTIÓN DE PREGUNTAS E IMÁGENES FIJAS (ADMIN) ---
-     pendingAdminAction = () => {
+   btnAdminQuestions.addEventListener('click', () => {
 
-    questionsModal.classList.remove('hidden');
+    pendingAdminAction = () => {
 
-    // Limpiar selección actual
-    adminOpSelector.value = '';
+        questionsModal.classList.remove('hidden');
 
-    // Bloquear botones
-    btnNewQuestion.disabled = true;
-    btnRenameOp.disabled = true;
-    btnDeleteCurrentOp.disabled = true;
-    btnResetDefaultQuestions.disabled = true;
+        adminOpSelector.value = '';
 
-    qModalCount.textContent = '0';
+        btnNewQuestion.disabled = true;
+        btnRenameOp.disabled = true;
+        btnDeleteCurrentOp.disabled = true;
+        btnResetDefaultQuestions.disabled = true;
 
-    adminQuestionsList.innerHTML = `
-        <div class="p-8 text-center text-slate-400 bg-slate-50 rounded-xl border">
-            Seleccione una operación para comenzar.
-        </div>
-    `;
-};
+        qModalCount.textContent = '0';
 
-            openPinModal("Gestión de Preguntas y Fotos Fijas");
-        });
+        adminQuestionsList.innerHTML = `
+            <div class="p-8 text-center text-slate-400 bg-slate-50 rounded-xl border">
+                Seleccione una operación para comenzar.
+            </div>
+        `;
+
+    };
+
+    openPinModal("Gestión de Preguntas y Fotos Fijas");
+
+});
 
         btnCloseQModal.addEventListener('click', () => questionsModal.classList.add('hidden'));
         btnCloseQModalFooter.addEventListener('click', () => questionsModal.classList.add('hidden'));
