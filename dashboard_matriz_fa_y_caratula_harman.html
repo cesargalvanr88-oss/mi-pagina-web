@@ -1182,13 +1182,13 @@ let IS_ADMIN = false;
 
             filtered.forEach(item => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-700/50 transition';
+               tr.className = 'hover:bg-blue-50 transition';
                 tr.innerHTML = `
-                    <td class="py-2.5 px-3 font-mono text-slate-400">${item.crf}</td>
-                    <td class="py-2.5 px-3 font-bold text-white">${item.customer}</td>
-                    <td class="py-2.5 px-3 max-w-xs truncate" title="${item.project}">${item.project}</td>
+                    <td class="py-2.5 px-3 font-mono text-slate-600">${item.crf}</td>
+                    <td class="py-2.5 px-3 font-bold text-slate-800">${item.customer}</td>
+                    <td class="py-2.5 px-3 max-w-xs truncate text-slate-700" title="${item.project}">${item.project}</td>
                     <td class="py-2.5 px-3 font-mono font-bold text-emerald-400">${item.partNumber}</td>
-                    <td class="py-2.5 px-3 text-center font-bold text-slate-400">${item.rev}</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-slate-700">${item.rev}</td>
                     <td class="py-2.5 px-3 font-mono">${item.progPVA || 'NA'}</td>
                     <td class="py-2.5 px-3">${item.marcaPVA || 'NA'} (${item.npPastaPVA || 'NA'})</td>
                     <td class="py-2.5 px-3 font-mono text-cyan-400">${item.progSGF || 'NA'}</td>
