@@ -1565,9 +1565,13 @@ opt.textContent = op;
 adminOpSelector.appendChild(opt);
 });
 // Mantener seleccionada la operación que se estaba administrando
-if (selectedAdminOp && dbOperations[selectedAdminOp]) {
-adminOpSelector.value = selectedAdminOp;
-}
+if (
+    selectedAdminOp &&
+    dbOperations[selectedAdminOp] &&
+    questionsModal.classList.contains('hidden')
+) {
+    adminOpSelector.value = selectedAdminOp;
+
 }
         }
 
@@ -2373,20 +2377,26 @@ reader.readAsArrayBuffer(file);
 });
 
         // --- GESTIÓN DE PREGUNTAS E IMÁGENES FIJAS (ADMIN) ---
-        btnAdminQuestions.addEventListener('click', () => {
-           pendingAdminAction = () => {
+     pendingAdminAction = () => {
 
     questionsModal.classList.remove('hidden');
 
-    // No cargar preguntas automáticamente
+    // Limpiar selección actual
+    adminOpSelector.value = '';
+
+    // Bloquear botones
+    btnNewQuestion.disabled = true;
+    btnRenameOp.disabled = true;
+    btnDeleteCurrentOp.disabled = true;
+    btnResetDefaultQuestions.disabled = true;
+
+    qModalCount.textContent = '0';
+
     adminQuestionsList.innerHTML = `
         <div class="p-8 text-center text-slate-400 bg-slate-50 rounded-xl border">
-            Seleccione una operación para visualizar o administrar sus preguntas.
+            Seleccione una operación para comenzar.
         </div>
     `;
-
-    qModalCount.textContent = "0";
-
 };
 
             openPinModal("Gestión de Preguntas y Fotos Fijas");
@@ -2438,7 +2448,19 @@ reader.readAsArrayBuffer(file);
             }
         });
 
-        adminOpSelector.addEventListener('change', loadAdminQuestions);
+      adminOpSelector.addEventListener('change', () => {
+
+    const tieneOperacion =
+        adminOpSelector.value !== '';
+
+    btnNewQuestion.disabled = !tieneOperacion;
+    btnRenameOp.disabled = !tieneOperacion;
+    btnDeleteCurrentOp.disabled = !tieneOperacion;
+    btnResetDefaultQuestions.disabled = !tieneOperacion;
+
+    loadAdminQuestions();
+
+});
 
         function loadAdminQuestions() {
             const currentOp = adminOpSelector.value;
