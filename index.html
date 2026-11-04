@@ -1530,21 +1530,36 @@ const defaultOption = document.createElement('option');
 defaultOption.value = '';
 defaultOption.textContent =
     '-- Seleccione una operación --';
+          if (userOperationSelect) {
 
-adminOpSelector.appendChild(defaultOption);
+    userOperationSelect.innerHTML = '';
 
-ops.forEach(op => {
+    const defaultUserOption = document.createElement('option');
+    defaultUserOption.value = '';
+    defaultUserOption.textContent =
+        '-- Seleccione una operación --';
 
-    const opt = document.createElement('option');
+    userOperationSelect.appendChild(defaultUserOption);
 
-    opt.value = op;
+    ops.forEach(op => {
 
-    opt.textContent = op;
+        const opt = document.createElement('option');
 
-    adminOpSelector.appendChild(opt);
+        opt.value = op;
 
-});
+        opt.textContent = op;
 
+        userOperationSelect.appendChild(opt);
+
+    });
+
+    if (
+        selectedUserOp &&
+        dbOperations[selectedUserOp]
+    ) {
+        userOperationSelect.value = selectedUserOp;
+    }
+}
 
             // Selector de filtro historial
             filterOperation.innerHTML = '<option value="">-- Todas las operaciones --</option>';
