@@ -389,10 +389,26 @@ Sistema de Certificación Operativa AME
  
 <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6">
  
-<!-- FOTO / ICONO -->
-<div class="w-28 h-28 bg-slate-100 border-2 border-slate-200 rounded-xl flex items-center justify-center shrink-0">
+<!-- FOTO DEL TÉCNICO -->
+<div class="w-28 h-28 border-2 border-slate-200 rounded-xl overflow-hidden shrink-0 bg-slate-100">
+
+<img
+id="employee-photo"
+src=""
+alt="Foto Técnico"
+class="w-full h-full object-cover hidden"
+>
+
+<div
+id="employee-photo-placeholder"
+class="w-full h-full flex items-center justify-center">
+
 <i class="fa-solid fa-user text-5xl text-slate-400"></i>
+
 </div>
+
+</div>
+
  
 <!-- DATOS -->
 <div class="flex-grow text-center sm:text-left">
@@ -1545,6 +1561,8 @@ if (paramOp) {
         const filterSearch = document.getElementById('filter-search');
         const technicianCertificate = document.getElementById('technician-certificate');
 const certificateTechnicianName = document.getElementById('certificate-technician-name');
+        const employeePhoto = document.getElementById('employee-photo');
+const employeePhotoPlaceholder =document.getElementById('employee-photo-placeholder');
 const certificateTechnicianId = document.getElementById('certificate-technician-id');
 const certificateActiveCount = document.getElementById('certificate-active-count');
 const certificateCertificationsList = document.getElementById('certificate-certifications-list');
@@ -2170,6 +2188,65 @@ tecnicoBase.name;
  
 certificateTechnicianId.textContent =
 tecnicoBase.id;
+const primerNombre =
+String(tecnicoBase.name || '')
+.trim()
+.split(' ')[0];
+
+const posiblesExtensiones = [
+'jpg',
+'jpeg',
+'JPG',
+'JPEG',
+'png'
+];
+
+let fotoEncontrada = false;
+
+employeePhoto.onerror = function () {
+
+    const indiceActual =
+        posiblesExtensiones.indexOf(
+            this.dataset.extension
+        );
+
+    const siguiente =
+        posiblesExtensiones[indiceActual + 1];
+
+    if (siguiente) {
+
+        this.dataset.extension =
+            siguiente;
+
+        this.src =
+            `imagenes-certificados/${primerNombre}.${siguiente}`;
+
+    } else {
+
+        employeePhoto.classList.add(
+            'hidden'
+        );
+
+        employeePhotoPlaceholder.classList.remove(
+            'hidden'
+        );
+
+    }
+
+};
+
+employeePhoto.dataset.extension = 'jpg';
+
+employeePhoto.src =
+`imagenes-certificados/${primerNombre}.jpg`;
+
+employeePhoto.classList.remove(
+'hidden'
+);
+
+employeePhotoPlaceholder.classList.add(
+'hidden'
+);    
  
 certificateCertificationsList.innerHTML = '';
  
