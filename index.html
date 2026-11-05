@@ -318,6 +318,12 @@ filter: drop-shadow(0 0 12px rgba(255,255,255,0.8));
                             <i class="fa-solid fa-file-excel text-sm"></i>
                             <span>Descargar Todo en 1 Excel</span>
                         </button>
+                        <button id="btn-add-manual-cert"
+    class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-lg shadow transition flex items-center gap-2">
+    <i class="fa-solid fa-graduation-cap"></i>
+    <span>Registrar Curso</span>
+</button>
+
                         <button id="btn-clear-history"
 class="hidden px-3 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold rounded-lg transition flex items-center justify-center space-x-1"
 title="Borrar Historial">
@@ -720,7 +726,89 @@ Selecciona las fotografías directamente desde la galería del dispositivo.
             </div>
         </div>
     </div>
+    <!-- MODAL CURSOS -->
+<div id="manual-cert-modal"
+class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
 
+<div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6">
+
+<h3 class="text-xl font-black text-slate-800 mb-4">
+Registrar Curso / Certificación
+</h3>
+
+<div class="space-y-3">
+
+<input
+id="manual-name"
+type="text"
+placeholder="Nombre del técnico"
+class="w-full border rounded-lg p-2">
+
+<input
+id="manual-id"
+type="text"
+placeholder="Número de empleado"
+class="w-full border rounded-lg p-2">
+
+<select
+id="manual-type"
+class="w-full border rounded-lg p-2">
+
+<option value="CURSO">
+CURSO
+</option>
+
+<option value="CERTIFICACION">
+CERTIFICACIÓN
+</option>
+
+</select>
+
+<input
+id="manual-course"
+type="text"
+placeholder="Nombre del curso o certificación"
+class="w-full border rounded-lg p-2">
+
+<select
+id="manual-status"
+class="w-full border rounded-lg p-2">
+
+<option value="APROBADO">
+APROBADO
+</option>
+
+<option value="NO APROBADO">
+NO APROBADO
+</option>
+
+</select>
+
+</div>
+
+<div class="flex justify-end gap-2 mt-5">
+
+<button
+id="btn-close-manual-cert"
+class="px-4 py-2 bg-slate-300 rounded-lg">
+
+Cancelar
+
+</button>
+
+<button
+id="btn-save-manual-cert"
+class="px-4 py-2 bg-purple-600 text-white rounded-lg">
+
+Guardar
+
+</button>
+
+</div>
+
+</div>
+</div>
+    
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500">
         <p>Sistema de Certificación Operativa AME &copy; 2026 &bull; Control de Calidad y Procesos Industriales</p>
