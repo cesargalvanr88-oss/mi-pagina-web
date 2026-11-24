@@ -2600,10 +2600,18 @@ reader.readAsArrayBuffer(file);
 
         adminOpSelector.value = '';
 
-        btnNewQuestion.disabled = true;
-        btnRenameOp.disabled = true;
-        btnDeleteCurrentOp.disabled = true;
-        btnResetDefaultQuestions.disabled = true;
+      if (btnNewQuestion)
+    btnNewQuestion.disabled = true;
+
+if (btnRenameOp)
+    btnRenameOp.disabled = true;
+
+if (btnDeleteCurrentOp)
+    btnDeleteCurrentOp.disabled = true;
+
+if (btnResetDefaultQuestions)
+    btnResetDefaultQuestions.disabled = true;
+
 
         qModalCount.textContent = '0';
 
@@ -2670,9 +2678,16 @@ reader.readAsArrayBuffer(file);
     const tieneOperacion =
         adminOpSelector.value !== '';
 
+   if (btnNewQuestion)
     btnNewQuestion.disabled = !tieneOperacion;
+
+if (btnRenameOp)
     btnRenameOp.disabled = !tieneOperacion;
+
+if (btnDeleteCurrentOp)
     btnDeleteCurrentOp.disabled = !tieneOperacion;
+
+if (btnResetDefaultQuestions)
     btnResetDefaultQuestions.disabled = !tieneOperacion;
 
     loadAdminQuestions();
