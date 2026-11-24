@@ -602,10 +602,7 @@ class="divide-y divide-slate-100">
                             <i class="fa-solid fa-plus text-sm"></i>
                             <span>Nueva Pregunta</span>
                         </button>
-                        <button id="btn-reset-default-questions" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg transition flex items-center space-x-1" title="Restaurar por defecto">
-                            <i class="fa-solid fa-rotate-left"></i>
-                            <span>Restablecer</span>
-                        </button>
+                       
                     </div>
                 </div>
 
@@ -3109,19 +3106,7 @@ behavior: 'smooth',
 block: 'start'
 });
 });
-        btnResetDefaultQuestions.addEventListener('click', () => {
-            if (confirm("¿Desea restaurar las preguntas por defecto para esta operación? Se sobrescribirán los cambios realizados.")) {
-                const currentOp = adminOpSelector.value;
-                if (DEFAULT_OPERATIONS[currentOp]) {
-                    dbOperations[currentOp] = JSON.parse(JSON.stringify(DEFAULT_OPERATIONS[currentOp]));
-                    saveOperationsToCloud();
-                    loadAdminQuestions();
-                    alert("Operación restaurada a valores por defecto.");
-                } else {
-                    alert("No hay plantilla por defecto para esta operación personalizada.");
-                }
-            }
-        });
+
         
         btnAddManualCert.addEventListener('click', () => {
 
